@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.emirhankarci.tutorly.ui.screen.GeminiScreen
-import com.emirhankarci.tutorly.ui.theme.TutorlyTheme
+import com.emirhankarci.tutorly.presentation.ui.screen.GeminiScreen
+import com.emirhankarci.tutorly.presentation.ui.theme.TutorlyTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

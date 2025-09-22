@@ -11,6 +11,6 @@ data class ApiRootResponse(
 )
 
 data class AvailableModelsResponse(
-    val available_models: List<String>,
-    val current_model: String
+    val available_models: List<String>?,
+    val current_model: String?
 )

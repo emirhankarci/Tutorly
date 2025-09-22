@@ -1,4 +1,4 @@
-package com.emirhankarci.tutorly.ui.screen
+package com.emirhankarci.tutorly.presentation.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.emirhankarci.tutorly.ui.viewmodel.GeminiViewModel
+import com.emirhankarci.tutorly.presentation.viewmodel.GeminiViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

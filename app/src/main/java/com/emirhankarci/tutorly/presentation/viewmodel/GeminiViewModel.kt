@@ -1,4 +1,4 @@
-package com.emirhankarci.tutorly.ui.viewmodel
+package com.emirhankarci.tutorly.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -91,8 +91,8 @@ class GeminiViewModel : ViewModel() {
             repository.getAvailableModels().fold(
                 onSuccess = { response ->
                     _uiState.value = _uiState.value.copy(
-                        availableModels = response.available_models,
-                        currentModel = response.current_model
+                        availableModels = response.available_models ?: emptyList(),
+                        currentModel = response.current_model ?: ""
                     )
                 },
                 onFailure = {
