@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.emirhankarci.tutorly.presentation.ui.screen.GeminiScreen
+import com.emirhankarci.tutorly.presentation.ui.screen.HomeScreen
 import com.emirhankarci.tutorly.presentation.ui.theme.TutorlyTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
                     GeminiScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
+
                 }
             }
         }
