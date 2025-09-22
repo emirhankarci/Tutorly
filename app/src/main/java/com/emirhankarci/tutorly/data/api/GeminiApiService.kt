@@ -15,6 +15,9 @@ interface GeminiApiService {
     @POST("/generate")
     suspend fun generateText(@Body request: TextGenerationRequest): Response<TextGenerationResponse>
 
+//    @POST("/generate/stream")
+//    suspend fun streamText(@Body request: TextGenerationRequest): Response<TextGenerationResponse>
+
     @GET("/models")
     suspend fun getAvailableModels(): Response<AvailableModelsResponse>
 }
