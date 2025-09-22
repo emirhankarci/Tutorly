@@ -1,4 +1,4 @@
-package com.emirhankarci.tutorly.ui.viewmodel
+package com.emirhankarci.tutorly.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

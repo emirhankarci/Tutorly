@@ -67,4 +67,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Adaptive
+    implementation(libs.androidx.adaptive.navigation)
+    implementation(libs.androidx.adaptive)
+    implementation(libs.androidx.window.core)
 }
