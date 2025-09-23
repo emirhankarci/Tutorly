@@ -57,9 +57,20 @@ fun BottomNavigationBar(
 
     NavigationBar {
         bottomNavItems.forEach { item ->
-            val isSelected = currentDestination?.hierarchy?.any {
-                it.route == item.route::class.qualifiedName
-            } == true
+            val isSelected = if (item.route == Route.LessonsScreen) {
+                // For "Dersler" button, also consider lesson-related screens as selected
+                currentDestination?.hierarchy?.any { destination ->
+                    destination.route == Route.LessonsScreen::class.qualifiedName ||
+                    destination.route == Route.GradeSelectionScreen::class.qualifiedName ||
+                    destination.route == Route.SubjectSelectionScreen::class.qualifiedName ||
+                    destination.route == Route.ChapterSelectionScreen::class.qualifiedName ||
+                    destination.route == Route.StudyMethodScreen::class.qualifiedName
+                } == true
+            } else {
+                currentDestination?.hierarchy?.any {
+                    it.route == item.route::class.qualifiedName
+                } == true
+            }
 
             NavigationBarItem(
                 icon = {
@@ -71,21 +82,32 @@ fun BottomNavigationBar(
                 label = { Text(item.title) },
                 selected = isSelected,
                 onClick = {
-                    if (item.route == Route.LessonsScreen) {
-                        navController.navigate(Route.GradeSelectionScreen) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                    when (item.route) {
+                        Route.LessonsScreen -> {
+                            navController.navigate(Route.GradeSelectionScreen) {
+                                popUpTo(Route.HomeScreen) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    } else {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                        Route.HomeScreen -> {
+                            navController.navigate(Route.HomeScreen) {
+                                popUpTo(Route.HomeScreen) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
+                        }
+                        else -> {
+                            navController.navigate(item.route) {
+                                popUpTo(Route.HomeScreen) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 }

@@ -33,6 +33,9 @@ fun Navigation() {
                         modifier = modifier,
                         onNavigateToGradeSelection = {
                             navController.navigate(Route.GradeSelectionScreen)
+                        },
+                        onNavigateToSchedule = {
+                            navController.navigate(Route.ScheduleScreen)
                         }
                     )
                 }
@@ -42,7 +45,16 @@ fun Navigation() {
                 }
 
                 composable<Route.ScheduleScreen> {
-                    ScheduleScreen(modifier = modifier)
+                    ScheduleScreen(
+                        modifier = modifier,
+                        onAddLesson = {
+                            navController.navigate(Route.AddLessonScreen)
+                        },
+                        onEditLesson = { lesson ->
+                            // For demo purposes, navigate to edit with lesson subject as ID
+                            navController.navigate(Route.EditLessonScreen(lesson.subject))
+                        }
+                    )
                 }
 
                 composable<Route.SettingsScreen> {
@@ -93,6 +105,38 @@ fun Navigation() {
                         },
                         onQuizClick = {
                             // TODO: Navigate to Quiz screen
+                        }
+                    )
+                }
+
+                composable<Route.AddLessonScreen> {
+                    AddLessonScreen(
+                        modifier = modifier,
+                        onSaveLesson = { lesson ->
+                            // TODO: Save lesson to data source
+                            navController.popBackStack()
+                        },
+                        onBackPressed = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable<Route.EditLessonScreen> { backStackEntry ->
+                    val editRoute = backStackEntry.arguments?.getString("lessonId")
+                    EditLessonScreen(
+                        modifier = modifier,
+                        lesson = com.emirhankarci.tutorly.domain.entity.ScheduleData.sampleSchedule.find { it.subject == editRoute },
+                        onSaveLesson = { lesson ->
+                            // TODO: Update lesson in data source
+                            navController.popBackStack()
+                        },
+                        onDeleteLesson = { lesson ->
+                            // TODO: Delete lesson from data source
+                            navController.popBackStack()
+                        },
+                        onBackPressed = {
+                            navController.popBackStack()
                         }
                     )
                 }

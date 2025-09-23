@@ -3,7 +3,11 @@ package com.emirhankarci.tutorly.presentation.ui.screen
 import android.util.Size
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.material3.CardDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +48,6 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.R
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -56,18 +59,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.emirhankarci.tutorly.R
 import com.emirhankarci.tutorly.domain.entity.TutorlyCardItem
 import com.emirhankarci.tutorly.domain.entity.TutorlyCardItemResult
+import com.emirhankarci.tutorly.domain.entity.ScheduleData
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onNavigateToGradeSelection: () -> Unit = {}
+    onNavigateToGradeSelection: () -> Unit = {},
+    onNavigateToSchedule: () -> Unit = {}
 ) {
     HomeScreenContent(
         modifier = modifier,
-        onNavigateToGradeSelection = onNavigateToGradeSelection
+        onNavigateToGradeSelection = onNavigateToGradeSelection,
+        onNavigateToSchedule = onNavigateToSchedule
     )
 }
 
@@ -75,60 +82,73 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier,
-    onNavigateToGradeSelection: () -> Unit = {}
+    onNavigateToGradeSelection: () -> Unit = {},
+    onNavigateToSchedule: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
         item {
             TutorlyCard(
-                borderColor = Color.Blue,
-                textColor = Color.Black,
-                icon = Icons.Default.Face,
-                title = "Derslere Git",
-                description = "Sınıf seçimi yaparak derslere başla",
+                borderColor = Color(0xFF667eea),
+                textColor = Color.White,
+                icon = R.drawable.homescreen_ai_1,
+                title = "AI Chat",
+                description = "Yapay zeka modeliyle konuş",
                 cardHeight = 150.dp,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                onClick = { onNavigateToGradeSelection() }
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onNavigateToGradeSelection() },
+                isMainCard = true
             )
         }
 
-        item { Spacer(Modifier.height(4.dp)) }
-
+        item { Spacer(Modifier.height(8.dp)) }
 
         item {
             Text(
                 "Quick Actions",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                color = Color.Black
             )
         }
 
-        item { Spacer(Modifier.height(12.dp)) }
-
+        item { Spacer(Modifier.height(4.dp)) }
 
         items(TutorlyCardItemResult.chunked(2)) { rowItems ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                rowItems.forEach { item ->
+                rowItems.forEachIndexed { index, item ->
+                    val cardIndex = TutorlyCardItemResult.indexOf(item)
+                    val borderColor = when (cardIndex) {
+                        0 -> Color(0xFF2196F3) // Blue
+                        1 -> Color(0xFFF44336) // Red
+                        2 -> Color(0xFF4CAF50) // Green
+                        3 -> Color(0xFF9C27B0) // Purple
+                        else -> Color(0xFF4C9AFF) // Default blue
+                    }
+
                     Box(modifier = Modifier.weight(1f)) {
                         TutorlyCard(
-                            borderColor = Color.Blue,
-                            textColor = Color.Black,
+                            borderColor = borderColor,
+                            textColor = Color(0xFF2D3748),
                             icon = item.icon,
                             title = item.title,
                             cardHeight = 130.dp,
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 8.dp)
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = if (item.title == "Go to Subjects") {
+                                { onNavigateToGradeSelection() }
+                            } else {
+                                { }
+                            }
                         )
                     }
                 }
@@ -150,13 +170,16 @@ fun HomeScreenContent(
                     "Study Plan",
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    color = Color.Black
                 )
                 Text(
                     "View All",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    color = Color.Black,
+                    modifier = Modifier.clickable { onNavigateToSchedule() }
                 )
             }
 
@@ -164,18 +187,31 @@ fun HomeScreenContent(
 
         item { Spacer(Modifier.height(8.dp)) }
 
-
         item {
-            TutorlyCard(
-                borderColor = Color.Blue,
-                textColor = Color.Black,
-                icon = Icons.Default.DateRange,
-                title = "Study Plan",
-                description = "Study plan buraya",
-                cardHeight = 150.dp,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-            )
+            val nextLesson = ScheduleData.getNextLesson()
+            if (nextLesson != null) {
+                TutorlyCard(
+                    borderColor = nextLesson.color,
+                    textColor = Color.White,
+                    icon = Icons.Default.DateRange,
+                    title = nextLesson.subject,
+                    description = "${nextLesson.day} • ${nextLesson.time} • ${nextLesson.duration}",
+                    cardHeight = 150.dp,
+                    modifier = Modifier.fillMaxWidth(),
+                    isMainCard = true
+                )
+            } else {
+                TutorlyCard(
+                    borderColor = Color(0xFFed8936),
+                    textColor = Color.White,
+                    icon = Icons.Default.DateRange,
+                    title = "Ders Yok",
+                    description = "Bugün hiç ders yok 🎉",
+                    cardHeight = 150.dp,
+                    modifier = Modifier.fillMaxWidth(),
+                    isMainCard = true
+                )
+            }
         }
     }
 }
@@ -192,7 +228,8 @@ fun TutorlyCard(
     cardWidth: Dp? = null,  // opsiyonel
     cardHeight: Dp,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    isMainCard: Boolean = false
 ) {
     Card(
         onClick = onClick,
@@ -200,38 +237,147 @@ fun TutorlyCard(
             modifier
                 .width(cardWidth)
                 .height(cardHeight)
-                .border(1.5.dp, borderColor, RoundedCornerShape(14.dp))
         } else {
             modifier
                 .fillMaxWidth()
                 .height(cardHeight)
-                .border(1.5.dp, borderColor, RoundedCornerShape(14.dp))
         },
-        shape = RoundedCornerShape(14.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = if (isMainCard) {
+                        Brush.linearGradient(
+                            colors = listOf(
+                                borderColor,
+                                borderColor.copy(alpha = 0.8f)
+                            )
+                        )
+                    } else {
+                        Brush.linearGradient(
+                            colors = listOf(
+                                Color.White,
+                                Color.White
+                            )
+                        )
+                    }
+                )
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = "cardicon",
-                tint = textColor,
-                modifier = Modifier.size(70.dp)
-            )
-            Text(
-                title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = textColor,
-            )
-            Text(
-                description.toString(),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Normal,
-                color = textColor,
-            )
+            Column(
+                modifier = Modifier.fillMaxSize().padding(16.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "cardicon",
+                    tint = if (isMainCard) textColor else borderColor,
+                    modifier = Modifier.size(if (isMainCard) 48.dp else 40.dp)
+                )
+                Text(
+                    title,
+                    fontSize = if (isMainCard) 18.sp else 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor,
+                    textAlign = TextAlign.Center
+                )
+                if (!description.isNullOrEmpty()) {
+                    Text(
+                        description.toString(),
+                        fontSize = if (isMainCard) 14.sp else 11.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = if (isMainCard) textColor.copy(alpha = 0.9f) else textColor.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TutorlyCard(
+    borderColor: Color,
+    textColor: Color,
+    icon: Int,
+    title: String,
+    description: String? = "",
+    cardWidth: Dp? = null,  // opsiyonel
+    cardHeight: Dp,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    isMainCard: Boolean = false
+) {
+    Card(
+        onClick = onClick,
+        modifier = if (cardWidth != null) {
+            modifier
+                .width(cardWidth)
+                .height(cardHeight)
+        } else {
+            modifier
+                .fillMaxWidth()
+                .height(cardHeight)
+        },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = if (isMainCard) {
+                        Brush.linearGradient(
+                            colors = listOf(
+                                borderColor,
+                                borderColor.copy(alpha = 0.8f)
+                            )
+                        )
+                    } else {
+                        Brush.linearGradient(
+                            colors = listOf(
+                                Color.White,
+                                Color.White
+                            )
+                        )
+                    }
+                )
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(16.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(id = icon),
+                    contentDescription = "cardicon",
+                    tint = if (isMainCard) textColor else borderColor,
+                    modifier = Modifier.size(if (isMainCard) 48.dp else 40.dp)
+                )
+                Text(
+                    title,
+                    fontSize = if (isMainCard) 18.sp else 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor,
+                    textAlign = TextAlign.Center
+                )
+                if (!description.isNullOrEmpty()) {
+                    Text(
+                        description.toString(),
+                        fontSize = if (isMainCard) 14.sp else 11.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = if (isMainCard) textColor.copy(alpha = 0.9f) else textColor.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
     }
 }

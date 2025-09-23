@@ -38,4 +38,10 @@ sealed interface Route {
     @Serializable
     data object StudyMethodScreen : Route
 
+    @Serializable
+    data object AddLessonScreen : Route
+
+    @Serializable
+    data class EditLessonScreen(val lessonId: String) : Route
+
 }
