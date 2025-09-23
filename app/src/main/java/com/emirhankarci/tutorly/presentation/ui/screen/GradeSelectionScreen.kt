@@ -8,47 +8,27 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.emirhankarci.tutorly.R
+import com.emirhankarci.tutorly.domain.entity.grades
+import com.emirhankarci.tutorly.presentation.ui.components.GradeCard
 
-data class GradeInfo(
-    val number: Int,
-    val title: String,
-    val subtitle: String,
-    val backgroundColor: Color,
-    val borderColor: Color
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradeSelectionScreen() {
-    val grades = listOf(
-        GradeInfo(12, "Grade 12", "Senior Year", Color(0xFF1976D2), Color(0xFF1976D2)),
-        GradeInfo(11, "Grade 11", "Junior Year", Color(0xFF4CAF50), Color(0xFF4CAF50)),
-        GradeInfo(10, "Grade 10", "Sophomore", Color(0xFFE91E63), Color(0xFFE91E63)),
-        GradeInfo(9, "Grade 9", "Freshman", Color(0xFFFF5722), Color(0xFFFF5722)),
-        GradeInfo(8, "Grade 8", "Middle School", Color(0xFFFFC107), Color(0xFFFFC107)),
-        GradeInfo(7, "Grade 7", "Middle School", Color(0xFF673AB7), Color(0xFF673AB7)),
-        GradeInfo(6, "Grade 6", "Elementary", Color(0xFF009688), Color(0xFF009688)),
-        GradeInfo(5, "Grade 5", "Elementary", Color(0xFFFF9800), Color(0xFFFF9800)),
-        GradeInfo(4, "Grade 4", "Elementary", Color(0xFF795548), Color(0xFF795548)),
-        GradeInfo(3, "Grade 3", "Elementary", Color(0xFF607D8B), Color(0xFF607D8B)),
-        GradeInfo(2, "Grade 2", "Elementary", Color(0xFF9C27B0), Color(0xFF9C27B0)),
-        GradeInfo(1, "Grade 1", "Elementary", Color(0xFFFF6B6B), Color(0xFFFF6B6B))
-    )
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -141,8 +121,8 @@ fun GradeSelectionScreen() {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "School",
+                        painter = painterResource(id = R.drawable.gradescreen_school),
+                        contentDescription = "School Icon",
                         tint = Color(0xFF1976D2),
                         modifier = Modifier.size(48.dp)
                     )
@@ -179,69 +159,6 @@ fun GradeSelectionScreen() {
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun GradeCard(
-    gradeInfo: GradeInfo,
-    onClick: () -> Unit
-) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-            .border(
-                width = 2.dp,
-                color = gradeInfo.borderColor.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(12.dp)
-            ),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Grade number box
-            Box(
-                modifier = Modifier
-                    .size(55.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(gradeInfo.backgroundColor),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = gradeInfo.number.toString(),
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Grade title
-            Text(
-                text = gradeInfo.title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = gradeInfo.backgroundColor,
-                textAlign = TextAlign.Center
-            )
-
-            // Grade subtitle
-            Text(
-                text = gradeInfo.subtitle,
-                fontSize = 12.sp,
-                color = Color(0xFF9197A2),
-                textAlign = TextAlign.Center
-            )
         }
     }
 }
