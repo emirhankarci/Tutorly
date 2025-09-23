@@ -38,7 +38,7 @@ fun Navigation() {
                 }
 
                 composable<Route.LessonsScreen> {
-                    LessonsScreen(modifier = modifier)
+                    // This will be handled by BottomNavigationBar directly
                 }
 
                 composable<Route.ScheduleScreen> {

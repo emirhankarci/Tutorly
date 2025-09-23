@@ -162,7 +162,6 @@ fun MainScaffold(
                             ) {
                                 Text(
                                     text = when (currentRoute) {
-                                        Route.LessonsScreen::class.qualifiedName -> "Dersler"
                                         Route.ScheduleScreen::class.qualifiedName -> "Ders Programı"
                                         Route.SettingsScreen::class.qualifiedName -> "Ayarlar"
                                         else -> "Tutorly"
