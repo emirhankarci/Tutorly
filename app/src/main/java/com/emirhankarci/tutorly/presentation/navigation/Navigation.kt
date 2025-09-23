@@ -74,10 +74,25 @@ fun Navigation() {
                     ChapterSelectionScreen(
                         modifier = modifier,
                         onChapterSelected = { chapter ->
-                            // TODO: Navigate to lesson detail screen when ready
+                            navController.navigate(Route.StudyMethodScreen)
                         },
                         onBackPressed = {
                             navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable<Route.StudyMethodScreen> {
+                    StudyMethodScreen(
+                        modifier = modifier,
+                        onAIChatClick = {
+                            // TODO: Navigate to AI Chat screen
+                        },
+                        onSummaryClick = {
+                            // TODO: Navigate to Summary screen
+                        },
+                        onQuizClick = {
+                            // TODO: Navigate to Quiz screen
                         }
                     )
                 }

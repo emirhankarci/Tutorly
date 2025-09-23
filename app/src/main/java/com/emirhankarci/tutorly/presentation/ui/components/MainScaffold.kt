@@ -99,7 +99,8 @@ fun MainScaffold(
                 }
                 Route.GradeSelectionScreen::class.qualifiedName,
                 Route.SubjectSelectionScreen::class.qualifiedName,
-                Route.ChapterSelectionScreen::class.qualifiedName -> {
+                Route.ChapterSelectionScreen::class.qualifiedName,
+                Route.StudyMethodScreen::class.qualifiedName -> {
                     TopAppBar(
                         title = {
                             Box(
@@ -111,6 +112,7 @@ fun MainScaffold(
                                         Route.GradeSelectionScreen::class.qualifiedName -> "Sınıf Seçim Ekranı"
                                         Route.SubjectSelectionScreen::class.qualifiedName -> "Ders Seçim Ekranı"
                                         Route.ChapterSelectionScreen::class.qualifiedName -> "Konu Seçim Ekranı"
+                                        Route.StudyMethodScreen::class.qualifiedName -> "Çalışma Yöntemi"
                                         else -> "Tutorly"
                                     },
                                     fontSize = 22.sp,
@@ -160,13 +162,14 @@ fun MainScaffold(
                             ) {
                                 Text(
                                     text = when (currentRoute) {
-                                        Route.LessonsScreen::class.qualifiedName -> "Lessons"
-                                        Route.ScheduleScreen::class.qualifiedName -> "Schedule"
-                                        Route.SettingsScreen::class.qualifiedName -> "Settings"
+                                        Route.LessonsScreen::class.qualifiedName -> "Dersler"
+                                        Route.ScheduleScreen::class.qualifiedName -> "Ders Programı"
+                                        Route.SettingsScreen::class.qualifiedName -> "Ayarlar"
                                         else -> "Tutorly"
                                     },
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
                                 )
                             }
                         },
