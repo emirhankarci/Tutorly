@@ -3,9 +3,8 @@ package com.emirhankarci.tutorly.presentation.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -22,14 +21,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emirhankarci.tutorly.R
-import com.emirhankarci.tutorly.domain.entity.subjects
-import com.emirhankarci.tutorly.presentation.ui.components.SubjectCard
-
+import com.emirhankarci.tutorly.domain.entity.chapters
+import com.emirhankarci.tutorly.presentation.ui.components.ChapterCard
 
 @Composable
-fun SubjectSelectionScreen(
+fun ChapterSelectionScreen(
     modifier: Modifier = Modifier,
-    onSubjectSelected: (String) -> Unit = {},
+    onChapterSelected: (String) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
     Column(
@@ -85,7 +83,7 @@ fun SubjectSelectionScreen(
                 }
 
                 Text(
-                    "Ders Seç",
+                    "Konu Seç",
                     color = Color.White,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp
@@ -117,7 +115,7 @@ fun SubjectSelectionScreen(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.subject_book),
-                        contentDescription = "School Icon",
+                        contentDescription = "Chapter Icon",
                         tint = Color(0xFF1976D2),
                         modifier = Modifier.size(48.dp)
                     )
@@ -125,7 +123,7 @@ fun SubjectSelectionScreen(
             }
 
             Text(
-                text = "Ders Seçim Ekranı",
+                text = "Konu Seçim Ekranı",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF3C0A8D),
@@ -133,24 +131,22 @@ fun SubjectSelectionScreen(
             )
 
             Text(
-                text = "Ders materyallerine ve kaynaklara erişmek için bir konu seç.",
+                text = "Öğrenmek istediğin konuyu seç ve derslere başla.",
                 fontSize = 12.sp,
                 color = Color(0xFF6B7280),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // Grade grid
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            // Chapter list
+            LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(subjects) { subject ->
-                    SubjectCard(
-                        subjectInfo = subject,
-                        onClick = { onSubjectSelected(subject.title) }
+                items(chapters) { chapter ->
+                    ChapterCard(
+                        chapterInfo = chapter,
+                        onClick = { onChapterSelected(chapter.title) }
                     )
                 }
             }
@@ -160,8 +156,8 @@ fun SubjectSelectionScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun SubjectSelectionScreenPreview() {
+fun ChapterSelectionScreenPreview() {
     MaterialTheme {
-        SubjectSelectionScreen()
+        ChapterSelectionScreen()
     }
 }

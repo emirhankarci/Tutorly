@@ -62,7 +62,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    onNavigateToGradeSelection: () -> Unit = {}
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -108,14 +111,18 @@ fun HomeScreen(modifier: Modifier) {
         }
     ) { paddingValues ->
         HomeScreenContent(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            onNavigateToGradeSelection = onNavigateToGradeSelection
         )
     }
 }
 
 
 @Composable
-fun HomeScreenContent(modifier: Modifier) {
+fun HomeScreenContent(
+    modifier: Modifier,
+    onNavigateToGradeSelection: () -> Unit = {}
+) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -128,11 +135,12 @@ fun HomeScreenContent(modifier: Modifier) {
                 borderColor = Color.Blue,
                 textColor = Color.Black,
                 icon = Icons.Default.Face,
-                title = "Ask AI Tutor",
-                description = "Get instant help with any topic",
+                title = "Derslere Git",
+                description = "Sınıf seçimi yaparak derslere başla",
                 cardHeight = 150.dp,
                 modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp),
+                onClick = { onNavigateToGradeSelection() }
             )
         }
 
@@ -229,9 +237,11 @@ fun TutorlyCard(
     description: String? = "",
     cardWidth: Dp? = null,  // opsiyonel
     cardHeight: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = if (cardWidth != null) {
             modifier
                 .width(cardWidth)
