@@ -1,14 +1,32 @@
 package com.emirhankarci.tutorly.presentation.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.emirhankarci.tutorly.presentation.navigation.Route
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(
     navController: NavController,
@@ -17,8 +35,151 @@ fun MainScaffold(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
+    val brush = Brush.horizontalGradient(
+        colors = listOf(
+            Color(0xFFFF8A80),
+            Color(0xFF81C784),
+            Color(0xFF81D4FA)
+        )
+    )
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(brush),
+        topBar = {
+            when (currentRoute) {
+                Route.HomeScreen::class.qualifiedName -> {
+                    TopAppBar(
+                        title = {
+                            Column {
+                                Text(
+                                    text = "Tutorly",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    text = "Good morning, Kaan!",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color.Black
+                                )
+                            }
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { }) {
+                                Icon(
+                                    imageVector = Icons.Default.Home,
+                                    contentDescription = "Home"
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { }) {
+                                Icon(
+                                    imageVector = Icons.Default.ShoppingCart,
+                                    contentDescription = "Cart"
+                                )
+                            }
+                            IconButton(onClick = { }) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings"
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .background(brush)
+                            .statusBarsPadding()
+                    )
+                }
+                Route.GradeSelectionScreen::class.qualifiedName,
+                Route.SubjectSelectionScreen::class.qualifiedName,
+                Route.ChapterSelectionScreen::class.qualifiedName -> {
+                    TopAppBar(
+                        title = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = when (currentRoute) {
+                                        Route.GradeSelectionScreen::class.qualifiedName -> "Sınıf Seçim Ekranı"
+                                        Route.SubjectSelectionScreen::class.qualifiedName -> "Ders Seçim Ekranı"
+                                        Route.ChapterSelectionScreen::class.qualifiedName -> "Konu Seçim Ekranı"
+                                        else -> "Tutorly"
+                                    },
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(
+                                            color = Color.White,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Back",
+                                        tint = Color(0xFF0C83B7),
+                                        modifier = Modifier
+                                            .size(22.dp)
+                                    )
+                                }
+                            }
+                        },
+                        actions = {
+                            Box(modifier = Modifier.size(48.dp))
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .background(brush)
+                            .statusBarsPadding()
+                    )
+                }
+                else -> {
+                    TopAppBar(
+                        title = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = when (currentRoute) {
+                                        Route.LessonsScreen::class.qualifiedName -> "Lessons"
+                                        Route.ScheduleScreen::class.qualifiedName -> "Schedule"
+                                        Route.SettingsScreen::class.qualifiedName -> "Settings"
+                                        else -> "Tutorly"
+                                    },
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .background(brush)
+                            .statusBarsPadding()
+                    )
+                }
+            }
+        },
         bottomBar = {
             BottomNavigationBar(navController = navController)
         }

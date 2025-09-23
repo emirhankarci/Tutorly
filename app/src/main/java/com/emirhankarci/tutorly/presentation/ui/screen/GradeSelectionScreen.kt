@@ -36,64 +36,6 @@ fun GradeSelectionScreen(
             .fillMaxSize()
             .background(Color(0xFFF8F9FA))
     ) {
-        // Top Bar
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFFFF8A80),
-                            Color(0xFF81C784),
-                            Color(0xFF81D4FA)
-                        )
-                    )
-                )
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = { /* Handle back navigation */ },
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    Color.White,
-                                    Color(0xFFF8F9FA)
-                                )
-                            ),
-                            shape = RoundedCornerShape(18.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color.White.copy(alpha = 0.3f),
-                            shape = RoundedCornerShape(18.dp)
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF6B46C1),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Text(
-                    "Choose Grade",
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 18.sp
-                )
-
-                Spacer(modifier = Modifier.width(36.dp))
-            }
-        }
-
         // Content
         Column(
             modifier = Modifier
@@ -124,7 +66,7 @@ fun GradeSelectionScreen(
             }
 
             Text(
-                text = "Select Your Grade Level",
+                text = "Kaçıncı sınıf olduğunu seç!",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF3C0A8D),
@@ -132,7 +74,7 @@ fun GradeSelectionScreen(
             )
 
             Text(
-                text = "Choose your current grade to access relevant study \n materials",
+                text = "Geçerli sınıfını seçerek ilgili çalışma materyallerine erişebilirsin.",
                 fontSize = 12.sp,
                 color = Color(0xFF6B7280),
                 textAlign = TextAlign.Center,

@@ -60,61 +60,15 @@ import com.emirhankarci.tutorly.domain.entity.TutorlyCardItem
 import com.emirhankarci.tutorly.domain.entity.TutorlyCardItemResult
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToGradeSelection: () -> Unit = {}
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Tutorly",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Good morning, Kaan!",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Kep gelcek buraya"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {  }) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "profil fotosu gelcek"
-                        )
-                    }
-                    IconButton(onClick = {  }) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        HomeScreenContent(
-            modifier = Modifier.padding(paddingValues),
-            onNavigateToGradeSelection = onNavigateToGradeSelection
-        )
-    }
+    HomeScreenContent(
+        modifier = modifier,
+        onNavigateToGradeSelection = onNavigateToGradeSelection
+    )
 }
 
 

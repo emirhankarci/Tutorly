@@ -35,64 +35,6 @@ fun ChapterSelectionScreen(
             .fillMaxSize()
             .background(Color(0xFFF8F9FA))
     ) {
-        // Top Bar
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFFFF8A80),
-                            Color(0xFF81C784),
-                            Color(0xFF81D4FA)
-                        )
-                    )
-                )
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBackPressed,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    Color.White,
-                                    Color(0xFFF8F9FA)
-                                )
-                            ),
-                            shape = RoundedCornerShape(18.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color.White.copy(alpha = 0.3f),
-                            shape = RoundedCornerShape(18.dp)
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF6B46C1),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Text(
-                    "Konu Seç",
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 18.sp
-                )
-
-                Spacer(modifier = Modifier.width(36.dp))
-            }
-        }
-
         // Content
         Column(
             modifier = Modifier
