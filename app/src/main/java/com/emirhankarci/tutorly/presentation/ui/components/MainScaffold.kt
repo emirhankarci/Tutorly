@@ -35,13 +35,42 @@ fun MainScaffold(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-    val brush = Brush.horizontalGradient(
-        colors = listOf(
-            Color(0xFFFF8A80),
-            Color(0xFF81C784),
-            Color(0xFF81D4FA)
+    val brush = when (currentRoute) {
+        Route.HomeScreen::class.qualifiedName -> Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF667eea), // Blue
+                Color(0xFF764ba2), // Purple
+                Color(0xFF4C9AFF)  // Light Blue
+            )
         )
-    )
+        Route.ScheduleScreen::class.qualifiedName -> Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF8E24AA), // Purple
+                Color(0xFF5E35B1)  // Darker Purple
+            )
+        )
+        Route.SettingsScreen::class.qualifiedName -> Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF424242), // Dark Gray
+                Color(0xFF616161)  // Lighter Dark Gray
+            )
+        )
+        Route.GradeSelectionScreen::class.qualifiedName,
+        Route.SubjectSelectionScreen::class.qualifiedName,
+        Route.ChapterSelectionScreen::class.qualifiedName,
+        Route.StudyMethodScreen::class.qualifiedName -> Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF1976D2), // Dark Blue
+                Color(0xFF1565C0)  // Darker Blue
+            )
+        )
+        else -> Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF37474F), // Blue Gray
+                Color(0xFF455A64)  // Darker Blue Gray
+            )
+        )
+    }
 
     Scaffold(
         modifier = Modifier
@@ -57,13 +86,13 @@ fun MainScaffold(
                                     text = "Tutorly",
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.Black
+                                    color = Color.White
                                 )
                                 Text(
                                     text = "Good morning, Kaan!",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,
-                                    color = Color.Black
+                                    color = Color.White.copy(alpha = 0.8f)
                                 )
                             }
                         },
@@ -71,7 +100,8 @@ fun MainScaffold(
                             IconButton(onClick = { }) {
                                 Icon(
                                     imageVector = Icons.Default.Home,
-                                    contentDescription = "Home"
+                                    contentDescription = "Home",
+                                    tint = Color.White
                                 )
                             }
                         },
@@ -79,13 +109,15 @@ fun MainScaffold(
                             IconButton(onClick = { }) {
                                 Icon(
                                     imageVector = Icons.Default.ShoppingCart,
-                                    contentDescription = "Cart"
+                                    contentDescription = "Cart",
+                                    tint = Color.White
                                 )
                             }
                             IconButton(onClick = { }) {
                                 Icon(
                                     imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings"
+                                    contentDescription = "Settings",
+                                    tint = Color.White
                                 )
                             }
                         },
