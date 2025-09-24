@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Kullanıcılar sadece kendi verilerine erişebilir
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Dersler herkese açık okunabilir, sadece sahipleri yazabilir
+    match /courses/{courseId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Rezervasyonlar sadece kullanıcının kendisine ait olanları
+    match /bookings/{bookingId} {
+      allow read, write: if request.auth != null && 
+        (resource.data.studentId == request.auth.uid || 
+         resource.data.tutorId == request.auth.uid);
+    }
+  }
+}

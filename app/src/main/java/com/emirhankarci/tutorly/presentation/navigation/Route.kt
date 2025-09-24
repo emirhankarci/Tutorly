@@ -21,10 +21,10 @@ sealed interface Route {
     data object GradeSelectionScreen : Route
 
     @Serializable
-    data object SubjectSelectionScreen : Route
+    data class SubjectSelectionScreen(val grade: Int) : Route
 
     @Serializable
-    data object ChapterSelectionScreen : Route
+    data class ChapterSelectionScreen(val grade: Int, val subject: String) : Route
 
     @Serializable
     data object LessonsScreen : Route
@@ -36,12 +36,18 @@ sealed interface Route {
     data object SettingsScreen : Route
 
     @Serializable
-    data object StudyMethodScreen : Route
+    data class StudyMethodScreen(val grade: Int, val subject: String, val chapter: String) : Route
 
     @Serializable
     data object AddLessonScreen : Route
 
     @Serializable
     data class EditLessonScreen(val lessonId: String) : Route
+
+    @Serializable
+    data object FirestoreTestScreen : Route
+
+    @Serializable
+    data class AIChatScreen(val grade: Int, val subject: String, val chapter: String) : Route
 
 }

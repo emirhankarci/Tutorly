@@ -58,23 +58,35 @@ fun Navigation() {
                 }
 
                 composable<Route.SettingsScreen> {
-                    SettingsScreen(modifier = modifier)
+                    SettingsScreen(
+                        modifier = modifier,
+                        onFirestoreTest = {
+                            navController.navigate(Route.FirestoreTestScreen)
+                        }
+                    )
+                }
+
+                composable<Route.FirestoreTestScreen> {
+                    FirestoreTestScreen()
                 }
 
                 composable<Route.GradeSelectionScreen> {
                     GradeSelectionScreen(
                         modifier = modifier,
-                        onGradeSelected = { grade ->
-                            navController.navigate(Route.SubjectSelectionScreen)
+                        onGradeSelected = { gradeString ->
+                            val gradeNumber = gradeString.replace("Grade ", "").toIntOrNull() ?: 9
+                            navController.navigate(Route.SubjectSelectionScreen(gradeNumber))
                         }
                     )
                 }
 
-                composable<Route.SubjectSelectionScreen> {
+                composable<Route.SubjectSelectionScreen> { backStackEntry ->
+                    val args = backStackEntry.arguments
+                    val grade = args?.getInt("grade") ?: 9
                     SubjectSelectionScreen(
                         modifier = modifier,
                         onSubjectSelected = { subject ->
-                            navController.navigate(Route.ChapterSelectionScreen)
+                            navController.navigate(Route.ChapterSelectionScreen(grade, subject))
                         },
                         onBackPressed = {
                             navController.popBackStack()
@@ -82,11 +94,16 @@ fun Navigation() {
                     )
                 }
 
-                composable<Route.ChapterSelectionScreen> {
+                composable<Route.ChapterSelectionScreen> { backStackEntry ->
+                    val args = backStackEntry.arguments
+                    val grade = args?.getInt("grade") ?: 9
+                    val subject = args?.getString("subject") ?: "Matematik"
                     ChapterSelectionScreen(
                         modifier = modifier,
+                        grade = grade,
+                        subject = subject,
                         onChapterSelected = { chapter ->
-                            navController.navigate(Route.StudyMethodScreen)
+                            navController.navigate(Route.StudyMethodScreen(grade, subject, chapter))
                         },
                         onBackPressed = {
                             navController.popBackStack()
@@ -94,11 +111,18 @@ fun Navigation() {
                     )
                 }
 
-                composable<Route.StudyMethodScreen> {
+                composable<Route.StudyMethodScreen> { backStackEntry ->
+                    val args = backStackEntry.arguments
+                    val grade = args?.getInt("grade") ?: 9
+                    val subject = args?.getString("subject") ?: "Matematik"
+                    val chapter = args?.getString("chapter") ?: "Sayılar ve İşlemler"
                     StudyMethodScreen(
                         modifier = modifier,
+                        grade = grade,
+                        subject = subject,
+                        chapter = chapter,
                         onAIChatClick = {
-                            // TODO: Navigate to AI Chat screen
+                            navController.navigate(Route.AIChatScreen(grade, subject, chapter))
                         },
                         onSummaryClick = {
                             // TODO: Navigate to Summary screen
@@ -138,6 +162,19 @@ fun Navigation() {
                         onBackPressed = {
                             navController.popBackStack()
                         }
+                    )
+                }
+
+                composable<Route.AIChatScreen> { backStackEntry ->
+                    val args = backStackEntry.arguments
+                    val grade = args?.getInt("grade") ?: 9
+                    val subject = args?.getString("subject") ?: "Matematik"
+                    val chapter = args?.getString("chapter") ?: "Sayılar ve İşlemler"
+                    AIChatScreen(
+                        modifier = modifier,
+                        grade = grade,
+                        subject = subject,
+                        chapter = chapter
                     )
                 }
             }

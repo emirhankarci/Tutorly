@@ -9,13 +9,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+data class ChatMessage(
+    val content: String,
+    val isUser: Boolean,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
 data class GeminiUiState(
     val isLoading: Boolean = false,
-    val generatedText: String = "",
+    val messages: List<ChatMessage> = emptyList(),
     val errorMessage: String = "",
     val isConnected: Boolean = false,
     val availableModels: List<String> = emptyList(),
-    val currentModel: String = ""
+    val currentModel: String = "",
+    val isInitialized: Boolean = false
 )
 
 class GeminiViewModel : ViewModel() {
@@ -52,37 +59,63 @@ class GeminiViewModel : ViewModel() {
         }
     }
 
-    fun generateText(
-        prompt: String,
-        maxTokens: Int = 1000,
-        temperature: Float = 0.7f
-    ) {
-        if (prompt.isBlank()) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Please enter a prompt")
+    fun initializeChat(grade: Int, subject: String, chapter: String) {
+        if (_uiState.value.isInitialized) return
+
+        val welcomeMessage = generateWelcomeMessage(grade, subject, chapter)
+        _uiState.value = _uiState.value.copy(
+            messages = listOf(
+                ChatMessage(content = welcomeMessage, isUser = false)
+            ),
+            isInitialized = true
+        )
+    }
+
+    private fun generateWelcomeMessage(grade: Int, subject: String, chapter: String): String {
+        return "Merhaba! Ben ${grade}. sınıf $subject dersi '$chapter' konusu hakkında sana yardımcı olacak AI asistanınım. \n\nBu konu hakkında sorularını sorabilir, kavramları açıklamamı isteyebilir veya örnekler vermemi sağlayabilirsin. \n\nNe öğrenmek istersin?"
+    }
+
+    fun sendMessage(message: String) {
+        if (message.isBlank()) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Lütfen bir mesaj girin")
             return
         }
 
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                errorMessage = "",
-                generatedText = ""
-            )
+        val userMessage = ChatMessage(content = message, isUser = true)
+        _uiState.value = _uiState.value.copy(
+            messages = _uiState.value.messages + userMessage,
+            isLoading = true,
+            errorMessage = ""
+        )
 
-            repository.generateText(prompt, maxTokens, temperature).fold(
+        viewModelScope.launch {
+            val conversationContext = buildConversationContext()
+            repository.generateText(conversationContext, 1000, 0.7f).fold(
                 onSuccess = { response ->
+                    val aiMessage = ChatMessage(content = response.generated_text, isUser = false)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        generatedText = response.generated_text
+                        messages = _uiState.value.messages + aiMessage
                     )
                 },
                 onFailure = { error ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = "Generation failed: ${error.message}"
+                        errorMessage = "Mesaj gönderilemedi: ${error.message}"
                     )
                 }
             )
+        }
+    }
+
+    private fun buildConversationContext(): String {
+        val messages = _uiState.value.messages
+        return messages.joinToString("\n\n") { message ->
+            if (message.isUser) {
+                "Öğrenci: ${message.content}"
+            } else {
+                "AI Öğretmen: ${message.content}"
+            }
         }
     }
 
@@ -106,7 +139,10 @@ class GeminiViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(errorMessage = "")
     }
 
-    fun clearGeneratedText() {
-        _uiState.value = _uiState.value.copy(generatedText = "")
+    fun clearChat() {
+        _uiState.value = _uiState.value.copy(
+            messages = emptyList(),
+            isInitialized = false
+        )
     }
 }

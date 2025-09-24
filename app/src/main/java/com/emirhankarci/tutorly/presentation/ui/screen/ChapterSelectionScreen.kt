@@ -10,6 +10,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -20,16 +23,40 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.emirhankarci.tutorly.R
 import com.emirhankarci.tutorly.domain.entity.chapters
 import com.emirhankarci.tutorly.presentation.ui.components.ChapterCard
+import com.emirhankarci.tutorly.presentation.viewmodel.ChapterViewModel
 
 @Composable
 fun ChapterSelectionScreen(
     modifier: Modifier = Modifier,
+    grade: Int? = null,
+    subject: String? = null,
     onChapterSelected: (String) -> Unit = {},
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    viewModel: ChapterViewModel = hiltViewModel()
 ) {
+    val chaptersState by viewModel.chapters.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+
+    LaunchedEffect(grade, subject) {
+        if (grade != null && subject != null) {
+            viewModel.setGrade(grade)
+            viewModel.setSubject(subject)
+        }
+    }
+
+    val displayChapters = if (grade != null && subject != null && chaptersState.isNotEmpty()) {
+        chaptersState
+    } else if (grade != null && subject != null) {
+        // If ViewModel returned empty list, try to get chapters directly
+        viewModel.getChaptersByGradeAndSubject(grade, subject)
+    } else {
+        chapters
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -80,12 +107,42 @@ fun ChapterSelectionScreen(
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
+            // Loading indicator
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = Color(0xFF1976D2)
+                    )
+                }
+            }
+
+            // Error message
+            errorMessage?.let { message ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = message,
+                        color = Color(0xFFD32F2F),
+                        modifier = Modifier.padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
             // Chapter list
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(chapters) { chapter ->
+                items(displayChapters) { chapter ->
                     ChapterCard(
                         chapterInfo = chapter,
                         onClick = { onChapterSelected(chapter.title) }

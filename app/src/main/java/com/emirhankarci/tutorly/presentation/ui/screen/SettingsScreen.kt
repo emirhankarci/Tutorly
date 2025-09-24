@@ -27,7 +27,8 @@ fun SettingsScreen(
     onLanguageSettings: () -> Unit = {},
     onPrivacySettings: () -> Unit = {},
     onHelpSupport: () -> Unit = {},
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onFirestoreTest: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -102,6 +103,17 @@ fun SettingsScreen(
                         title = "Hakkında",
                         subtitle = "Uygulama sürümü v1.0.0",
                         onClick = { }
+                    )
+                }
+            }
+
+            item {
+                SettingsCategory(title = "Geliştirici Araçları") {
+                    SettingsItem(
+                        icon = Icons.Default.Build,
+                        title = "Firestore Test",
+                        subtitle = "Firestore bağlantısını test edin",
+                        onClick = onFirestoreTest
                     )
                 }
             }

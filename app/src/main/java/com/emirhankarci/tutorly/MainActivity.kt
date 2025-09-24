@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import com.emirhankarci.tutorly.presentation.navigation.Navigation
 // import com.emirhankarci.tutorly.presentation.ui.screen.GeminiScreen
 import com.emirhankarci.tutorly.presentation.ui.theme.TutorlyTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,217 +1,274 @@
 package com.emirhankarci.tutorly.presentation.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.emirhankarci.tutorly.presentation.viewmodel.ChatMessage
 import com.emirhankarci.tutorly.presentation.viewmodel.GeminiViewModel
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GeminiScreen(
+fun AIChatScreen(
     modifier: Modifier = Modifier,
+    grade: Int,
+    subject: String,
+    chapter: String,
     viewModel: GeminiViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var promptText by remember { mutableStateOf("") }
-    var maxTokens by remember { mutableStateOf("1000") }
-    var temperature by remember { mutableStateOf("0.7") }
+    var messageText by remember { mutableStateOf("") }
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // Initialize chat on first composition
+    LaunchedEffect(grade, subject, chapter) {
+        viewModel.checkConnection()
+        viewModel.initializeChat(grade, subject, chapter)
+    }
+
+    // Auto-scroll to bottom when new messages arrive
+    LaunchedEffect(uiState.messages.size) {
+        if (uiState.messages.isNotEmpty()) {
+            coroutineScope.launch {
+                listState.animateScrollToItem(uiState.messages.size - 1)
+            }
+        }
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(Color(0xFFF5F5F5))
     ) {
-        // Header
-        Text(
-            text = "Gemini AI Text Generator",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        // Connection Status
+        // Header with context
         Card(
-            colors = CardDefaults.cardColors(
-                containerColor = if (uiState.isConnected)
-                    MaterialTheme.colorScheme.primaryContainer
-                else
-                    MaterialTheme.colorScheme.errorContainer
-            )
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2)),
+            shape = RoundedCornerShape(bottomStart = 0.dp, bottomEnd = 0.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (uiState.isConnected) "Connected" else "Disconnected",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Button(
-                    onClick = { viewModel.checkConnection() },
-                    enabled = !uiState.isLoading
-                ) {
-                    Text("Refresh")
-                }
-            }
-        }
-
-        // Model Info
-        if (uiState.isConnected && uiState.currentModel.isNotEmpty()) {
-            Card {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Current Model: ${uiState.currentModel}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-        }
-
-        // Input Section
-        Card {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Input Parameters",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
+                    text = "AI Öğretmen",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${grade}. Sınıf $subject - $chapter",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.9f)
                 )
 
-                OutlinedTextField(
-                    value = promptText,
-                    onValueChange = { promptText = it },
-                    label = { Text("Prompt") },
-                    placeholder = { Text("Enter your prompt here...") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 100.dp),
-                    maxLines = 5,
-                    enabled = !uiState.isLoading
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = maxTokens,
-                        onValueChange = { maxTokens = it },
-                        label = { Text("Max Tokens") },
-                        modifier = Modifier.weight(1f),
-                        enabled = !uiState.isLoading
-                    )
-
-                    OutlinedTextField(
-                        value = temperature,
-                        onValueChange = { temperature = it },
-                        label = { Text("Temperature") },
-                        modifier = Modifier.weight(1f),
-                        enabled = !uiState.isLoading
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        viewModel.generateText(
-                            prompt = promptText,
-                            maxTokens = maxTokens.toIntOrNull() ?: 1000,
-                            temperature = temperature.toFloatOrNull() ?: 0.7f
+                // Connection status indicator
+                if (!uiState.isConnected) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFF5722)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Bağlantı Yok",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                            color = Color.White,
+                            fontSize = 12.sp
                         )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !uiState.isLoading && uiState.isConnected && promptText.isNotBlank()
-                ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
                     }
-                    Text(if (uiState.isLoading) "Generating..." else "Generate Text")
                 }
             }
         }
 
-        // Error Display
+        // Chat messages
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
+            items(uiState.messages) { message ->
+                ChatMessageBubble(
+                    message = message,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            // Loading indicator
+            if (uiState.isLoading) {
+                item {
+                    ChatMessageBubble(
+                        message = ChatMessage(
+                            content = "Yazıyor...",
+                            isUser = false
+                        ),
+                        isLoading = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+
+        // Error message
         if (uiState.errorMessage.isNotEmpty()) {
             Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
+                    containerColor = Color(0xFFFFEBEE)
                 )
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = uiState.errorMessage,
-                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFD32F2F),
+                        fontSize = 12.sp,
                         modifier = Modifier.weight(1f)
                     )
                     TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss")
+                        Text(
+                            text = "Kapat",
+                            color = Color(0xFFD32F2F),
+                            fontSize = 12.sp
+                        )
                     }
                 }
             }
         }
 
-        // Generated Text Display
-        if (uiState.generatedText.isNotEmpty()) {
-            Card {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+        // Message input
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                OutlinedTextField(
+                    value = messageText,
+                    onValueChange = { messageText = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("Mesajınızı yazın...") },
+                    shape = RoundedCornerShape(24.dp),
+                    maxLines = 4,
+                    enabled = uiState.isConnected && !uiState.isLoading
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                FloatingActionButton(
+                    onClick = {
+                        if (messageText.isNotBlank() && uiState.isConnected && !uiState.isLoading) {
+                            viewModel.sendMessage(messageText)
+                            messageText = ""
+                        }
+                    },
+                    containerColor = if (messageText.isNotBlank() && uiState.isConnected && !uiState.isLoading) {
+                        Color(0xFF1976D2)
+                    } else {
+                        Color(0xFF9E9E9E)
+                    },
+                    contentColor = Color.White,
+                    modifier = Modifier.size(48.dp)
                 ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Mesaj Gönder"
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChatMessageBubble(
+    message: ChatMessage,
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start
+    ) {
+        Card(
+            modifier = Modifier.widthIn(max = 280.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (message.isUser) {
+                    Color(0xFF1976D2)
+                } else {
+                    Color.White
+                }
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(
+                topStart = 16.dp,
+                topEnd = 16.dp,
+                bottomStart = if (message.isUser) 16.dp else 4.dp,
+                bottomEnd = if (message.isUser) 4.dp else 16.dp
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(12.dp)
+            ) {
+                if (isLoading) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Generated Text",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Medium
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = Color(0xFF1976D2),
+                            strokeWidth = 2.dp
                         )
-                        TextButton(onClick = { viewModel.clearGeneratedText() }) {
-                            Text("Clear")
-                        }
-                    }
-
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
-                    ) {
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = uiState.generatedText,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(16.dp)
+                            text = message.content,
+                            color = if (message.isUser) Color.White else Color.Black,
+                            fontSize = 14.sp
                         )
                     }
+                } else {
+                    Text(
+                        text = message.content,
+                        color = if (message.isUser) Color.White else Color.Black,
+                        fontSize = 14.sp,
+                        lineHeight = 18.sp
+                    )
                 }
             }
         }
