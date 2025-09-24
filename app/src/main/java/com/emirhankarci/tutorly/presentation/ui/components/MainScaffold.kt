@@ -34,34 +34,36 @@ fun MainScaffold(
 ) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
+    val arguments = navBackStackEntry.value?.arguments
 
-    val brush = when (currentRoute) {
-        Route.HomeScreen::class.qualifiedName -> Brush.linearGradient(
+    val brush = when {
+        currentRoute == Route.HomeScreen::class.qualifiedName -> Brush.linearGradient(
             colors = listOf(
                 Color(0xFF667eea), // Blue
                 Color(0xFF764ba2), // Purple
                 Color(0xFF4C9AFF)  // Light Blue
             )
         )
-        Route.ScheduleScreen::class.qualifiedName -> Brush.linearGradient(
+        currentRoute == Route.ScheduleScreen::class.qualifiedName -> Brush.linearGradient(
             colors = listOf(
                 Color(0xFF8E24AA), // Purple
                 Color(0xFF5E35B1)  // Darker Purple
             )
         )
-        Route.SettingsScreen::class.qualifiedName -> Brush.linearGradient(
+        currentRoute == Route.SettingsScreen::class.qualifiedName -> Brush.linearGradient(
             colors = listOf(
                 Color(0xFF424242), // Dark Gray
                 Color(0xFF616161)  // Lighter Dark Gray
             )
         )
-        Route.GradeSelectionScreen::class.qualifiedName,
-        Route.SubjectSelectionScreen::class.qualifiedName,
-        Route.ChapterSelectionScreen::class.qualifiedName,
-        Route.StudyMethodScreen::class.qualifiedName -> Brush.linearGradient(
+        currentRoute == Route.GradeSelectionScreen::class.qualifiedName ||
+        currentRoute?.startsWith("${Route.SubjectSelectionScreen::class.qualifiedName}") == true ||
+        currentRoute?.startsWith("${Route.ChapterSelectionScreen::class.qualifiedName}") == true ||
+        currentRoute?.startsWith("${Route.StudyMethodScreen::class.qualifiedName}") == true ||
+        currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> Brush.linearGradient(
             colors = listOf(
                 Color(0xFF1976D2), // Dark Blue
-                Color(0xFF1565C0)  // Darker Blue
+                Color(0xFF041D5A)  // Darker Blue
             )
         )
         else -> Brush.linearGradient(
@@ -77,8 +79,8 @@ fun MainScaffold(
             .fillMaxSize()
             .background(brush),
         topBar = {
-            when (currentRoute) {
-                Route.HomeScreen::class.qualifiedName -> {
+            when {
+                currentRoute == Route.HomeScreen::class.qualifiedName -> {
                     TopAppBar(
                         title = {
                             Column {
@@ -129,28 +131,54 @@ fun MainScaffold(
                             .statusBarsPadding()
                     )
                 }
-                Route.GradeSelectionScreen::class.qualifiedName,
-                Route.SubjectSelectionScreen::class.qualifiedName,
-                Route.ChapterSelectionScreen::class.qualifiedName,
-                Route.StudyMethodScreen::class.qualifiedName -> {
+                currentRoute == Route.GradeSelectionScreen::class.qualifiedName ||
+                currentRoute?.startsWith("${Route.SubjectSelectionScreen::class.qualifiedName}") == true ||
+                currentRoute?.startsWith("${Route.ChapterSelectionScreen::class.qualifiedName}") == true ||
+                currentRoute?.startsWith("${Route.StudyMethodScreen::class.qualifiedName}") == true ||
+                currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> {
                     TopAppBar(
                         title = {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = when (currentRoute) {
-                                        Route.GradeSelectionScreen::class.qualifiedName -> "Sınıf Seçim Ekranı"
-                                        Route.SubjectSelectionScreen::class.qualifiedName -> "Ders Seçim Ekranı"
-                                        Route.ChapterSelectionScreen::class.qualifiedName -> "Konu Seçim Ekranı"
-                                        Route.StudyMethodScreen::class.qualifiedName -> "Çalışma Yöntemi"
-                                        else -> "Tutorly"
-                                    },
-                                    fontSize = 22.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
+                                when {
+                                    currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> {
+                                        val grade = arguments?.getInt("grade") ?: 9
+                                        val subject = arguments?.getString("subject") ?: "Matematik"
+                                        val chapter = arguments?.getString("chapter") ?: "Konu"
+
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = "AI Sohbet",
+                                                fontSize = 22.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+                                            Text(
+                                                text = "${grade}. Sınıf $subject - $chapter",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = Color.White.copy(alpha = 0.9f)
+                                            )
+                                        }
+                                    }
+                                    else -> {
+                                        Text(
+                                            text = when {
+                                                currentRoute == Route.GradeSelectionScreen::class.qualifiedName -> "Sınıf Seçim Ekranı"
+                                                currentRoute?.startsWith("${Route.SubjectSelectionScreen::class.qualifiedName}") == true -> "Ders Seçim Ekranı"
+                                                currentRoute?.startsWith("${Route.ChapterSelectionScreen::class.qualifiedName}") == true -> "Konu Seçim Ekranı"
+                                                currentRoute?.startsWith("${Route.StudyMethodScreen::class.qualifiedName}") == true -> "Çalışma Yöntemi"
+                                                else -> "Tutorly"
+                                            },
+                                            fontSize = 22.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
                             }
                         },
                         navigationIcon = {
@@ -193,9 +221,9 @@ fun MainScaffold(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = when (currentRoute) {
-                                        Route.ScheduleScreen::class.qualifiedName -> "Ders Programı"
-                                        Route.SettingsScreen::class.qualifiedName -> "Ayarlar"
+                                    text = when {
+                                        currentRoute == Route.ScheduleScreen::class.qualifiedName -> "Ders Programı"
+                                        currentRoute == Route.SettingsScreen::class.qualifiedName -> "Ayarlar"
                                         else -> "Tutorly"
                                     },
                                     fontSize = 22.sp,

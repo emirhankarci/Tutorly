@@ -55,48 +55,23 @@ fun AIChatScreen(
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
-        // Header with context
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2)),
-            shape = RoundedCornerShape(bottomStart = 0.dp, bottomEnd = 0.dp)
-        ) {
-            Column(
+        // Connection status indicator (if needed)
+        if (!uiState.isConnected) {
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFFF5722)
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = "AI Öğretmen",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    text = "Bağlantı Yok - AI ile iletişim kurulamadı",
+                    modifier = Modifier.padding(12.dp),
+                    color = Color.White,
+                    fontSize = 14.sp
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${grade}. Sınıf $subject - $chapter",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.9f)
-                )
-
-                // Connection status indicator
-                if (!uiState.isConnected) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFF5722)
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = "Bağlantı Yok",
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                            color = Color.White,
-                            fontSize = 12.sp
-                        )
-                    }
-                }
             }
         }
 
