@@ -60,7 +60,9 @@ fun MainScaffold(
         currentRoute?.startsWith("${Route.SubjectSelectionScreen::class.qualifiedName}") == true ||
         currentRoute?.startsWith("${Route.ChapterSelectionScreen::class.qualifiedName}") == true ||
         currentRoute?.startsWith("${Route.StudyMethodScreen::class.qualifiedName}") == true ||
-        currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> Brush.linearGradient(
+        currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true ||
+        currentRoute?.startsWith("${Route.SummaryScreen::class.qualifiedName}") == true ||
+        currentRoute?.startsWith("${Route.QuizScreen::class.qualifiedName}") == true -> Brush.linearGradient(
             colors = listOf(
                 Color(0xFF1976D2), // Dark Blue
                 Color(0xFF041D5A)  // Darker Blue
@@ -135,7 +137,9 @@ fun MainScaffold(
                 currentRoute?.startsWith("${Route.SubjectSelectionScreen::class.qualifiedName}") == true ||
                 currentRoute?.startsWith("${Route.ChapterSelectionScreen::class.qualifiedName}") == true ||
                 currentRoute?.startsWith("${Route.StudyMethodScreen::class.qualifiedName}") == true ||
-                currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> {
+                currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true ||
+                currentRoute?.startsWith("${Route.SummaryScreen::class.qualifiedName}") == true ||
+                currentRoute?.startsWith("${Route.QuizScreen::class.qualifiedName}") == true -> {
                     TopAppBar(
                         title = {
                             Box(
@@ -153,6 +157,48 @@ fun MainScaffold(
                                         ) {
                                             Text(
                                                 text = "AI Sohbet",
+                                                fontSize = 22.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+                                            Text(
+                                                text = "${grade}. Sınıf $subject - $chapter",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = Color.White.copy(alpha = 0.9f)
+                                            )
+                                        }
+                                    }
+                                    currentRoute?.startsWith("${Route.SummaryScreen::class.qualifiedName}") == true -> {
+                                        val grade = arguments?.getInt("grade") ?: 9
+                                        val subject = arguments?.getString("subject") ?: "Matematik"
+                                        val chapter = arguments?.getString("chapter") ?: "Konu"
+
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = "Konu Özeti",
+                                                fontSize = 22.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+                                            Text(
+                                                text = "${grade}. Sınıf $subject - $chapter",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = Color.White.copy(alpha = 0.9f)
+                                            )
+                                        }
+                                    }
+                                    currentRoute?.startsWith("${Route.QuizScreen::class.qualifiedName}") == true -> {
+                                        val grade = arguments?.getInt("grade") ?: 9
+                                        val subject = arguments?.getString("subject") ?: "Matematik"
+                                        val chapter = arguments?.getString("chapter") ?: "Konu"
+
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = "Quiz",
                                                 fontSize = 22.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = Color.White

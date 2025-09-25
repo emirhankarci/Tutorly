@@ -50,4 +50,16 @@ sealed interface Route {
     @Serializable
     data class AIChatScreen(val grade: Int, val subject: String, val chapter: String) : Route
 
+    @Serializable
+    data class SummaryScreen(val grade: Int, val subject: String, val chapter: String) : Route
+
+    @Serializable
+    data class QuizScreen(
+        val grade: Int,
+        val subject: String,
+        val chapter: String,
+        val questionCount: Int,
+        val questionType: String
+    ) : Route
+
 }

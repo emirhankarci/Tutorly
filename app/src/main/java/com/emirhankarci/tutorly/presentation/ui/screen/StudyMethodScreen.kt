@@ -6,7 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,6 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.emirhankarci.tutorly.presentation.ui.components.QuestionCountDialog
+import com.emirhankarci.tutorly.presentation.ui.components.QuestionFormatDialog
 
 @Composable
 fun StudyMethodScreen(
@@ -25,8 +27,12 @@ fun StudyMethodScreen(
     chapter: String? = null,
     onAIChatClick: () -> Unit = {},
     onSummaryClick: () -> Unit = {},
-    onQuizClick: () -> Unit = {}
+    onQuizClick: (Int, String) -> Unit = { _, _ -> } // questionCount, questionType
 ) {
+    // Dialog states
+    var showQuestionCountDialog by remember { mutableStateOf(false) }
+    var showQuestionFormatDialog by remember { mutableStateOf(false) }
+    var selectedQuestionCount by remember { mutableIntStateOf(5) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -99,8 +105,35 @@ fun StudyMethodScreen(
                 subtitle = "Konuyla ilgili quiz çöz",
                 icon = Icons.Default.Home,
                 backgroundColor = Color(0xFFFF9800),
-                onClick = onQuizClick,
+                onClick = { showQuestionCountDialog = true },
                 modifier = Modifier.weight(1f)
+            )
+        }
+
+        // Dialogs
+        if (showQuestionCountDialog) {
+            QuestionCountDialog(
+                onDismiss = { showQuestionCountDialog = false },
+                onConfirm = { count ->
+                    selectedQuestionCount = count
+                    showQuestionCountDialog = false
+                    showQuestionFormatDialog = true
+                }
+            )
+        }
+
+        if (showQuestionFormatDialog) {
+            QuestionFormatDialog(
+                questionCount = selectedQuestionCount,
+                onDismiss = {
+                    showQuestionFormatDialog = false
+                    // Reset to first dialog if user goes back
+                    showQuestionCountDialog = true
+                },
+                onConfirm = { format ->
+                    showQuestionFormatDialog = false
+                    onQuizClick(selectedQuestionCount, format)
+                }
             )
         }
     }

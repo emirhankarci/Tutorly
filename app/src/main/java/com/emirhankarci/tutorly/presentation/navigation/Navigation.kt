@@ -126,10 +126,10 @@ fun Navigation() {
                             navController.navigate(Route.AIChatScreen(grade, subject, chapter))
                         },
                         onSummaryClick = {
-                            // TODO: Navigate to Summary screen
+                            navController.navigate(Route.SummaryScreen(grade, subject, chapter))
                         },
-                        onQuizClick = {
-                            // TODO: Navigate to Quiz screen
+                        onQuizClick = { questionCount, questionType ->
+                            navController.navigate(Route.QuizScreen(grade, subject, chapter, questionCount, questionType))
                         }
                     )
                 }
@@ -176,6 +176,38 @@ fun Navigation() {
                         grade = grade,
                         subject = subject,
                         chapter = chapter
+                    )
+                }
+
+                composable<Route.SummaryScreen> { backStackEntry ->
+                    val route = backStackEntry.toRoute<Route.SummaryScreen>()
+                    SummaryScreen(
+                        modifier = modifier,
+                        grade = route.grade,
+                        subject = route.subject,
+                        chapter = route.chapter,
+                        onBackPressed = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable<Route.QuizScreen> { backStackEntry ->
+                    val route = backStackEntry.toRoute<Route.QuizScreen>()
+                    QuizScreen(
+                        modifier = modifier,
+                        grade = route.grade,
+                        subject = route.subject,
+                        chapter = route.chapter,
+                        questionCount = route.questionCount,
+                        questionType = route.questionType,
+                        onBackPressed = {
+                            navController.popBackStack()
+                        },
+                        onQuizCompleted = { score, total ->
+                            // Quiz completed, stay on result screen
+                            // User can choose to retake or go back
+                        }
                     )
                 }
             }
