@@ -63,6 +63,10 @@ import com.emirhankarci.tutorly.R
 import com.emirhankarci.tutorly.domain.entity.TutorlyCardItem
 import com.emirhankarci.tutorly.domain.entity.TutorlyCardItemResult
 import com.emirhankarci.tutorly.domain.entity.ScheduleData
+import com.emirhankarci.tutorly.presentation.viewmodel.UserProfileViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,14 +87,72 @@ fun HomeScreen(
 fun HomeScreenContent(
     modifier: Modifier,
     onNavigateToGradeSelection: () -> Unit = {},
-    onNavigateToSchedule: () -> Unit = {}
+    onNavigateToSchedule: () -> Unit = {},
+    userProfileViewModel: UserProfileViewModel = hiltViewModel()
 ) {
+    val userProfileState by userProfileViewModel.uiState.collectAsState()
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+
+        // Greeting section
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFF8F9FA)
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Profile Avatar
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(
+                                color = Color(0xFF667eea),
+                                shape = RoundedCornerShape(24.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Face,
+                            contentDescription = "Profile",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column {
+                        Text(
+                            text = userProfileState.greeting,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF2D3748)
+                        )
+                        Text(
+                            text = "Ready to learn something new?",
+                            fontSize = 14.sp,
+                            color = Color(0xFF6B7280),
+                            modifier = Modifier.padding(top = 2.dp)
+                        )
+                    }
+                }
+            }
+        }
 
         item {
             TutorlyCard(

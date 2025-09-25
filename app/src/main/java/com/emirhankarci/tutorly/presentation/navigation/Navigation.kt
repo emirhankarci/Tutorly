@@ -1,35 +1,57 @@
 package com.emirhankarci.tutorly.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.*
 import androidx.navigation.toRoute
 import com.emirhankarci.tutorly.presentation.ui.components.MainScaffold
 import com.emirhankarci.tutorly.presentation.ui.screen.*
+import com.emirhankarci.tutorly.presentation.viewmodel.LoginViewModel
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
+    val loginViewModel: LoginViewModel = hiltViewModel()
+    val uiState by loginViewModel.uiState.collectAsState()
 
-    MainScaffold(navController = navController) { modifier ->
-        NavHost(
-            navController = navController,
-            startDestination = Route.MainGraph
-        ) {
-            // Auth Graph - Authentication flow
-            navigation<Route.AuthGraph>(
-                startDestination = Route.LoginScreen
-            ) {
-                composable<Route.LoginScreen> {
-                    // TODO: Add login screen when ready
-                }
+    // Handle authentication state changes
+    LaunchedEffect(uiState.isSignedIn) {
+        if (uiState.isSignedIn) {
+            navController.navigate(Route.MainGraph) {
+                popUpTo(Route.AuthGraph) { inclusive = true }
             }
+        }
+    }
 
-            // Main App Graph - Main application flow
-            navigation<Route.MainGraph>(
-                startDestination = Route.HomeScreen
-            ) {
-                composable<Route.HomeScreen> {
+    NavHost(
+        navController = navController,
+        startDestination = if (uiState.isSignedIn) Route.MainGraph else Route.AuthGraph
+    ) {
+        // Auth Graph - Authentication flow (No Scaffold)
+        navigation<Route.AuthGraph>(
+            startDestination = Route.LoginScreen
+        ) {
+            composable<Route.LoginScreen> {
+                LoginScreen(
+                    onSignInSuccess = {
+                        navController.navigate(Route.MainGraph) {
+                            popUpTo(Route.AuthGraph) { inclusive = true }
+                        }
+                    }
+                )
+            }
+        }
+
+        // Main App Graph - Main application flow (With Scaffold)
+        navigation<Route.MainGraph>(
+            startDestination = Route.HomeScreen
+        ) {
+            composable<Route.HomeScreen> {
+                MainScaffold(navController = navController) { modifier ->
                     HomeScreen(
                         modifier = modifier,
                         onNavigateToGradeSelection = {
@@ -40,12 +62,16 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.LessonsScreen> {
+            composable<Route.LessonsScreen> {
+                MainScaffold(navController = navController) { modifier ->
                     // This will be handled by BottomNavigationBar directly
                 }
+            }
 
-                composable<Route.ScheduleScreen> {
+            composable<Route.ScheduleScreen> {
+                MainScaffold(navController = navController) { modifier ->
                     ScheduleScreen(
                         modifier = modifier,
                         onAddLesson = {
@@ -57,21 +83,33 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.SettingsScreen> {
+            composable<Route.SettingsScreen> {
+                MainScaffold(navController = navController) { modifier ->
                     SettingsScreen(
                         modifier = modifier,
                         onFirestoreTest = {
                             navController.navigate(Route.FirestoreTestScreen)
+                        },
+                        onLogout = {
+                            loginViewModel.signOut()
+                            navController.navigate(Route.AuthGraph) {
+                                popUpTo(Route.MainGraph) { inclusive = true }
+                            }
                         }
                     )
                 }
+            }
 
-                composable<Route.FirestoreTestScreen> {
+            composable<Route.FirestoreTestScreen> {
+                MainScaffold(navController = navController) { modifier ->
                     FirestoreTestScreen()
                 }
+            }
 
-                composable<Route.GradeSelectionScreen> {
+            composable<Route.GradeSelectionScreen> {
+                MainScaffold(navController = navController) { modifier ->
                     GradeSelectionScreen(
                         modifier = modifier,
                         onGradeSelected = { gradeString ->
@@ -80,9 +118,11 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.SubjectSelectionScreen> { backStackEntry ->
-                    val route = backStackEntry.toRoute<Route.SubjectSelectionScreen>()
+            composable<Route.SubjectSelectionScreen> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.SubjectSelectionScreen>()
+                MainScaffold(navController = navController) { modifier ->
                     SubjectSelectionScreen(
                         grade = route.grade,
                         modifier = modifier,
@@ -94,11 +134,13 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.ChapterSelectionScreen> { backStackEntry ->
-                    val args = backStackEntry.arguments
-                    val grade = args?.getInt("grade") ?: 9
-                    val subject = args?.getString("subject") ?: "Matematik"
+            composable<Route.ChapterSelectionScreen> { backStackEntry ->
+                val args = backStackEntry.arguments
+                val grade = args?.getInt("grade") ?: 9
+                val subject = args?.getString("subject") ?: "Matematik"
+                MainScaffold(navController = navController) { modifier ->
                     ChapterSelectionScreen(
                         modifier = modifier,
                         grade = grade,
@@ -111,12 +153,14 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.StudyMethodScreen> { backStackEntry ->
-                    val args = backStackEntry.arguments
-                    val grade = args?.getInt("grade") ?: 9
-                    val subject = args?.getString("subject") ?: "Matematik"
-                    val chapter = args?.getString("chapter") ?: "Sayılar ve İşlemler"
+            composable<Route.StudyMethodScreen> { backStackEntry ->
+                val args = backStackEntry.arguments
+                val grade = args?.getInt("grade") ?: 9
+                val subject = args?.getString("subject") ?: "Matematik"
+                val chapter = args?.getString("chapter") ?: "Sayılar ve İşlemler"
+                MainScaffold(navController = navController) { modifier ->
                     StudyMethodScreen(
                         modifier = modifier,
                         grade = grade,
@@ -133,8 +177,10 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.AddLessonScreen> {
+            composable<Route.AddLessonScreen> {
+                MainScaffold(navController = navController) { modifier ->
                     AddLessonScreen(
                         modifier = modifier,
                         onSaveLesson = { lesson ->
@@ -146,9 +192,11 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.EditLessonScreen> { backStackEntry ->
-                    val editRoute = backStackEntry.arguments?.getString("lessonId")
+            composable<Route.EditLessonScreen> { backStackEntry ->
+                val editRoute = backStackEntry.arguments?.getString("lessonId")
+                MainScaffold(navController = navController) { modifier ->
                     EditLessonScreen(
                         modifier = modifier,
                         lesson = com.emirhankarci.tutorly.domain.entity.ScheduleData.sampleSchedule.find { it.subject == editRoute },
@@ -165,12 +213,14 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.AIChatScreen> { backStackEntry ->
-                    val args = backStackEntry.arguments
-                    val grade = args?.getInt("grade") ?: 9
-                    val subject = args?.getString("subject") ?: "Matematik"
-                    val chapter = args?.getString("chapter") ?: "Sayılar ve İşlemler"
+            composable<Route.AIChatScreen> { backStackEntry ->
+                val args = backStackEntry.arguments
+                val grade = args?.getInt("grade") ?: 9
+                val subject = args?.getString("subject") ?: "Matematik"
+                val chapter = args?.getString("chapter") ?: "Sayılar ve İşlemler"
+                MainScaffold(navController = navController) { modifier ->
                     AIChatScreen(
                         modifier = modifier,
                         grade = grade,
@@ -178,9 +228,11 @@ fun Navigation() {
                         chapter = chapter
                     )
                 }
+            }
 
-                composable<Route.SummaryScreen> { backStackEntry ->
-                    val route = backStackEntry.toRoute<Route.SummaryScreen>()
+            composable<Route.SummaryScreen> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.SummaryScreen>()
+                MainScaffold(navController = navController) { modifier ->
                     SummaryScreen(
                         modifier = modifier,
                         grade = route.grade,
@@ -191,9 +243,11 @@ fun Navigation() {
                         }
                     )
                 }
+            }
 
-                composable<Route.QuizScreen> { backStackEntry ->
-                    val route = backStackEntry.toRoute<Route.QuizScreen>()
+            composable<Route.QuizScreen> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.QuizScreen>()
+                MainScaffold(navController = navController) { modifier ->
                     QuizScreen(
                         modifier = modifier,
                         grade = route.grade,

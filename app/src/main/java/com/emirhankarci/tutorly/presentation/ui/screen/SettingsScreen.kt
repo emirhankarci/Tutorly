@@ -18,6 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.emirhankarci.tutorly.presentation.viewmodel.UserProfileViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @Composable
 fun SettingsScreen(
@@ -28,8 +32,12 @@ fun SettingsScreen(
     onPrivacySettings: () -> Unit = {},
     onHelpSupport: () -> Unit = {},
     onLogout: () -> Unit = {},
-    onFirestoreTest: () -> Unit = {}
+    onFirestoreTest: () -> Unit = {},
+    userProfileViewModel: UserProfileViewModel = hiltViewModel()
 ) {
+    val userProfileState by userProfileViewModel.uiState.collectAsState()
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -43,8 +51,8 @@ fun SettingsScreen(
             // Profile Section
             item {
                 ProfileSection(
-                    name = "Kaan Yılmaz",
-                    email = "kaan.yilmaz@email.com",
+                    name = userProfileState.user.fullName,
+                    email = userProfileState.user.email,
                     onEditProfile = onEditProfile
                 )
             }
@@ -120,9 +128,22 @@ fun SettingsScreen(
 
             item {
                 Spacer(modifier = Modifier.height(16.dp))
-                LogoutButton(onClick = onLogout)
+                LogoutButton(onClick = { showLogoutDialog = true })
             }
         }
+    }
+
+    // Logout Confirmation Dialog
+    if (showLogoutDialog) {
+        LogoutConfirmationDialog(
+            onConfirm = {
+                showLogoutDialog = false
+                onLogout()
+            },
+            onDismiss = {
+                showLogoutDialog = false
+            }
+        )
     }
 }
 
@@ -299,6 +320,63 @@ private fun LogoutButton(onClick: () -> Unit) {
             )
         }
     }
+}
+
+@Composable
+private fun LogoutConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Çıkış Yap",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color(0xFF2C3E50)
+            )
+        },
+        text = {
+            Text(
+                text = "Hesabınızdan çıkış yapmak istediğinizden emin misiniz?",
+                fontSize = 16.sp,
+                color = Color(0xFF6B7280),
+                lineHeight = 22.sp
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = Color(0xFFFF5252)
+                )
+            ) {
+                Text(
+                    text = "Çıkış Yap",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = Color(0xFF6B7280)
+                )
+            ) {
+                Text(
+                    text = "İptal",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            }
+        },
+        shape = RoundedCornerShape(16.dp),
+        containerColor = Color.White,
+        tonalElevation = 8.dp
+    )
 }
 
 @Preview(showBackground = true)

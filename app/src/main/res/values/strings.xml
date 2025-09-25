@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Tutorly</string>
+    <!-- TODO: Replace with your actual web client ID from Firebase Console -->
+    <!-- Go to Firebase Console > Project Settings > General > Web apps > Config -->
+    <string name="default_web_client_id">323880773297-j2f7kncj0qjjislb451jiuaaqk6vncpk.apps.googleusercontent.com</string>
 </resources>
