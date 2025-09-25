@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emirhankarci.tutorly.domain.entity.*
+import com.emirhankarci.tutorly.presentation.viewmodel.QuizViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun QuizScreen(
@@ -33,16 +35,62 @@ fun QuizScreen(
     onBackPressed: () -> Unit = {},
     onQuizCompleted: (Int, Int) -> Unit = { _, _ -> } // score, total
 ) {
-    val questions = remember {
-        val type = if (questionType == "Test") QuestionType.TEST else QuestionType.OPEN_ENDED
-        getQuizQuestions(subject, chapter, type, questionCount)
+    val vm: QuizViewModel = viewModel()
+    val ui by vm.uiState.collectAsState()
+
+    LaunchedEffect(grade, subject, chapter, questionCount, questionType) {
+        vm.loadQuiz(grade, subject, chapter, questionCount, questionType)
     }
+
+    if (ui.isLoading) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(0xFFF8F9FA)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color(0xFF6366F1))
+        }
+        return
+    }
+
+    if (ui.errorMessage.isNotBlank()) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(0xFFF8F9FA)),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "Quiz yüklenemedi", color = Color(0xFFDC2626))
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(onClick = { vm.loadQuiz(grade, subject, chapter, questionCount, questionType) }) {
+                    Text("Tekrar dene")
+                }
+            }
+        }
+        return
+    }
+
+    val questions = ui.questions
 
     var quizState by remember { mutableStateOf(QuizState()) }
     var currentAnswer by remember { mutableStateOf("") }
     var selectedOption by remember { mutableIntStateOf(-1) }
     var showFeedback by remember { mutableStateOf(false) }
     var showExplanation by remember { mutableStateOf(false) }
+
+    if (questions.isEmpty()) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(0xFFF8F9FA)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Soru bulunamadı", color = Color(0xFF6B7280))
+        }
+        return
+    }
 
     val currentQuestion = questions[quizState.currentQuestionIndex]
     val isLastQuestion = quizState.currentQuestionIndex == questions.size - 1

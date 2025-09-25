@@ -14,3 +14,10 @@ data class AvailableModelsResponse(
     val available_models: List<String>?,
     val current_model: String?
 )
+
+// Generic API envelope: { success, message, data }
+data class ApiEnvelope<T>(
+    val success: Boolean,
+    val message: String?,
+    val data: T?
+)

@@ -20,4 +20,7 @@ interface GeminiApiService {
 
     @GET("/models")
     suspend fun getAvailableModels(): Response<AvailableModelsResponse>
+
+    @POST("/quiz/generate")
+    suspend fun generateQuiz(@Body request: QuizRequest): Response<ApiEnvelope<QuizResponse>>
 }
