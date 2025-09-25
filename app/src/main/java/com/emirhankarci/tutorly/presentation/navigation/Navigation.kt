@@ -3,6 +3,7 @@ package com.emirhankarci.tutorly.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.*
+import androidx.navigation.toRoute
 import com.emirhankarci.tutorly.presentation.ui.components.MainScaffold
 import com.emirhankarci.tutorly.presentation.ui.screen.*
 
@@ -81,12 +82,12 @@ fun Navigation() {
                 }
 
                 composable<Route.SubjectSelectionScreen> { backStackEntry ->
-                    val args = backStackEntry.arguments
-                    val grade = args?.getInt("grade") ?: 9
+                    val route = backStackEntry.toRoute<Route.SubjectSelectionScreen>()
                     SubjectSelectionScreen(
+                        grade = route.grade,
                         modifier = modifier,
                         onSubjectSelected = { subject ->
-                            navController.navigate(Route.ChapterSelectionScreen(grade, subject))
+                            navController.navigate(Route.ChapterSelectionScreen(route.grade, subject))
                         },
                         onBackPressed = {
                             navController.popBackStack()

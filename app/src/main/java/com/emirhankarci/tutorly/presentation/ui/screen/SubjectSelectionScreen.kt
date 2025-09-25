@@ -22,12 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emirhankarci.tutorly.R
-import com.emirhankarci.tutorly.domain.entity.subjects
+import com.emirhankarci.tutorly.domain.entity.getSubjectsForGrade
 import com.emirhankarci.tutorly.presentation.ui.components.SubjectCard
 
 
 @Composable
 fun SubjectSelectionScreen(
+    grade: Int,
     modifier: Modifier = Modifier,
     onSubjectSelected: (String) -> Unit = {},
     onBackPressed: () -> Unit = {}
@@ -89,7 +90,7 @@ fun SubjectSelectionScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(subjects) { subject ->
+                items(getSubjectsForGrade(grade)) { subject ->
                     SubjectCard(
                         subjectInfo = subject,
                         onClick = { onSubjectSelected(subject.title) }
@@ -104,6 +105,6 @@ fun SubjectSelectionScreen(
 @Composable
 fun SubjectSelectionScreenPreview() {
     MaterialTheme {
-        SubjectSelectionScreen()
+        SubjectSelectionScreen(grade = 10)
     }
 }

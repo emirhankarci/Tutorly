@@ -48,32 +48,67 @@ val grade11ChemistryChapters = listOf(
 )
 
 // Grade 10
-val grade10ChemistryChapters = listOf(
-    ChapterInfo("Asit ve Bazlar", "pH kavramı ve nötrleşme", 7, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Kimyasal Hesaplamalar", "Mol kavramı ve stokiyometri", 9, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Gazlar", "Gaz yasaları ve davranışları", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Çözeltiler", "Derişim ve çözünürlük", 5, Color(0xFFFF5722), Color(0xFFFF5722))
+val grade10BiologyChapters = listOf(
+    ChapterInfo("Enerji", "Hücrede enerji dönüşümleri ve metabolizma", 7, Color(0xFF4CAF50), Color(0xFF4CAF50)),
+    ChapterInfo("Ekoloji", "Canlılar ve çevre arasındaki ilişkiler", 8, Color(0xFF4CAF50), Color(0xFF4CAF50))
 )
 
-val grade10MathChapters = listOf(
-    ChapterInfo("İkinci Dereceden Denklemler", "Parabol ve köklerin özellikleri", 7, Color(0xFF1976D2), Color(0xFF1976D2)),
-    ChapterInfo("Trigonometri", "Sinüs, kosinüs ve tanjant kavramları", 9, Color(0xFF1976D2), Color(0xFF1976D2)),
-    ChapterInfo("Analitik Geometri", "Koordinat sistemi ve doğru denklemi", 6, Color(0xFF1976D2), Color(0xFF1976D2)),
-    ChapterInfo("Olasılık", "Basit olasılık hesaplamaları", 5, Color(0xFF1976D2), Color(0xFF1976D2))
+val grade10GeographyChapters = listOf(
+    ChapterInfo("Coğrafyanın Doğası", "Coğrafya biliminin tanımı, kapsamı ve araştırma yöntemleri", 5, Color(0xFF2196F3), Color(0xFF2196F3)),
+    ChapterInfo("Mekânsal Bilgi Teknolojileri", "Harita, GPS ve coğrafi bilgi sistemlerinin kullanımı", 6, Color(0xFF2196F3), Color(0xFF2196F3)),
+    ChapterInfo("Doğal Sistemler ve Süreçler", "İklim, topografya ve doğal çevrenin özellikleri", 8, Color(0xFF2196F3), Color(0xFF2196F3)),
+    ChapterInfo("Beşeri Sistemler ve Süreçler", "Nüfus, yerleşme ve toplumsal yapıların coğrafi dağılımı", 7, Color(0xFF2196F3), Color(0xFF2196F3)),
+    ChapterInfo("Ekonomik Faaliyetler ve Etkileri", "Tarım, sanayi ve ticaretin mekânsal etkileri", 7, Color(0xFF2196F3), Color(0xFF2196F3)),
+    ChapterInfo("Afetler ve Sürdürülebilir Çevre", "Doğal afetler ve çevresel sürdürülebilirlik ilkeleri", 6, Color(0xFF2196F3), Color(0xFF2196F3)),
+    ChapterInfo("Bölgeler, Ülkeler ve Küresel Bağlantılar", "Dünya coğrafyası ve küresel etkileşimler", 8, Color(0xFF2196F3), Color(0xFF2196F3))
 )
 
-val grade10TurkishChapters = listOf(
-    ChapterInfo("Divan Edebiyatı", "Klasik Türk edebiyatı dönemi", 6, Color(0xFF4CAF50), Color(0xFF4CAF50)),
-    ChapterInfo("Halk Edebiyatı", "Anonim halk edebiyatı türleri", 5, Color(0xFF4CAF50), Color(0xFF4CAF50)),
-    ChapterInfo("Dilbilgisi İleri", "Fiil çekimi ve söz dizimi", 8, Color(0xFF4CAF50), Color(0xFF4CAF50)),
-    ChapterInfo("Yazılı Anlatım", "Deneme ve makale yazımı", 4, Color(0xFF4CAF50), Color(0xFF4CAF50))
+val grade10PhilosophyChapters = listOf(
+    ChapterInfo("Felsefenin Doğuşu", "Felsefenin tarihi ve temel kavramları", 5, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Felsefe Mantık ve Argümantasyon", "Mantıksal düşünme ve doğru akıl yürütme yöntemleri", 7, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Varlık Felsefesi", "Var olan hakkında felsefi sorgulamalar", 6, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Bilgi Felsefesi", "Bilginin kaynağı, doğası ve sınırları", 6, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Ahlak Felsefesi", "Ahlaki değerler ve doğru davranış sorgulaması", 7, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Estetik ve Sanat Felsefesi", "Güzellik ve sanat üzerine felsefi düşünceler", 5, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Siyaset Felsefesi", "Devlet, adalet ve toplum felsefesi", 6, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Din Felsefesi", "Dini inançların felsefi temelleri", 5, Color(0xFF9C27B0), Color(0xFF9C27B0)),
+    ChapterInfo("Bilim Felsefesi", "Bilimsel bilginin doğası ve yöntemleri", 6, Color(0xFF9C27B0), Color(0xFF9C27B0))
 )
 
 val grade10PhysicsChapters = listOf(
-    ChapterInfo("Elektrik ve Manyetizma", "Elektrik yükü ve elektrik alanı", 9, Color(0xFFE91E63), Color(0xFFE91E63)),
-    ChapterInfo("Basınç ve Kaldırma Kuvveti", "Sıvı ve gazlarda basınç", 6, Color(0xFFE91E63), Color(0xFFE91E63)),
-    ChapterInfo("Dalgalar", "Ses dalgaları ve özellikleri", 7, Color(0xFFE91E63), Color(0xFFE91E63)),
-    ChapterInfo("Optik", "Işığın kırılması ve mercekler", 8, Color(0xFFE91E63), Color(0xFFE91E63))
+    ChapterInfo("Kuvvet ve Hareket", "Kuvvetlerin etkileri ve hareket yasalarının incelenmesi", 8, Color(0xFFFF5722), Color(0xFFFF5722)),
+    ChapterInfo("Enerji", "Enerjinin çeşitleri, dönüşümleri ve korunumu yasaları", 7, Color(0xFFFF5722), Color(0xFFFF5722)),
+    ChapterInfo("Elektrik", "Elektrik yükleri, akım ve devreler", 8, Color(0xFFFF5722), Color(0xFFFF5722)),
+    ChapterInfo("Dalgalar", "Dalga hareketi ve özellikleri", 7, Color(0xFFFF5722), Color(0xFFFF5722))
+)
+
+val grade10ChemistryChapters = listOf(
+    ChapterInfo("Etkileşim", "Atomlar arası etkileşimler ve kimyasal bağların oluşumu", 7, Color(0xFF00BCD4), Color(0xFF00BCD4)),
+    ChapterInfo("Çeşitlilik", "Maddenin farklı halleri ve karışımların özellikleri", 8, Color(0xFF00BCD4), Color(0xFF00BCD4)),
+    ChapterInfo("Sürdürülebilirlik", "Doğal kaynakların korunması ve çevre dostu kimya uygulamaları", 6, Color(0xFF00BCD4), Color(0xFF00BCD4))
+)
+
+val grade10MathChapters = listOf(
+    ChapterInfo("Geometrik Şekiller", "Düzlemde ve uzayda geometrik şekillerin özellikleri", 7, Color(0xFF1976D2), Color(0xFF1976D2)),
+    ChapterInfo("İstatistiksel Araştırma Süreci", "Veri toplama, düzenleme ve analiz yöntemleri", 6, Color(0xFF1976D2), Color(0xFF1976D2)),
+    ChapterInfo("Sayılar", "Rasyonel ve irrasyonel sayılar", 6, Color(0xFF1976D2), Color(0xFF1976D2)),
+    ChapterInfo("Nicelikler ve Değişimler", "Cebirsel ifadeler, denklemler ve eşitsizlikler", 8, Color(0xFF1976D2), Color(0xFF1976D2)),
+    ChapterInfo("Sayma, Algoritma ve Bilişim", "Sayma yöntemleri ve problem çözme algoritmaları", 6, Color(0xFF1976D2), Color(0xFF1976D2)),
+    ChapterInfo("Analitik İnceleme", "Analitik geometri ve koordinat sistemi", 7, Color(0xFF1976D2), Color(0xFF1976D2)),
+    ChapterInfo("Veriden Olasılığa", "Olasılık kavramı ve hesaplama yöntemleri", 7, Color(0xFF1976D2), Color(0xFF1976D2))
+)
+
+val grade10HistoryChapters = listOf(
+    ChapterInfo("Türkistan'dan Türkiye'ye", "Türklerin tarih sahnesine çıkışı ve göç hareketleri", 7, Color(0xFF795548), Color(0xFF795548)),
+    ChapterInfo("Beylikten Devlete Osmanlı", "Osmanlı Devleti'nin kuruluşu ve gelişimi", 8, Color(0xFF795548), Color(0xFF795548)),
+    ChapterInfo("Cihan Devleti Osmanlı", "Osmanlı'nın yükseliş dönemi ve dünya hâkimiyeti", 8, Color(0xFF795548), Color(0xFF795548))
+)
+
+val grade10TurkishChapters = listOf(
+    ChapterInfo("Sözün Ezgisi", "Şiir ve edebiyatta ritim ve ahenk", 6, Color(0xFFE91E63), Color(0xFFE91E63)),
+    ChapterInfo("Kelimelerin Ritmi", "Sözcüklerin ses ve anlam uyumu", 6, Color(0xFFE91E63), Color(0xFFE91E63)),
+    ChapterInfo("Dünden Bugüne", "Türk edebiyatının tarihsel gelişimi", 7, Color(0xFFE91E63), Color(0xFFE91E63)),
+    ChapterInfo("Nesillerin Mirası", "Edebî eserler ve kültürel aktarım", 7, Color(0xFFE91E63), Color(0xFFE91E63))
 )
 
 // Grade 9
@@ -258,7 +293,6 @@ val chaptersByGradeAndSubject = mapOf(
     GradeSubjectKey(6, "Matematik") to grade6MathChapters,
     GradeSubjectKey(7, "Matematik") to grade7MathChapters,
     GradeSubjectKey(8, "Matematik") to grade8MathChapters,
-    GradeSubjectKey(10, "Matematik") to grade10MathChapters,
     GradeSubjectKey(11, "Matematik") to grade11MathChapters,
 
     // Turkish
@@ -266,14 +300,12 @@ val chaptersByGradeAndSubject = mapOf(
     GradeSubjectKey(6, "Türkçe") to grade6TurkishChapters,
     GradeSubjectKey(7, "Türkçe") to grade7TurkishChapters,
     GradeSubjectKey(8, "Türkçe") to grade8TurkishChapters,
-    GradeSubjectKey(10, "Türkçe") to grade10TurkishChapters,
     GradeSubjectKey(11, "Türkçe") to grade11TurkishChapters,
 
     // Physics
     GradeSubjectKey(5, "Fizik") to grade5PhysicsChapters,
     GradeSubjectKey(6, "Fizik") to grade6PhysicsChapters,
     GradeSubjectKey(7, "Fizik") to grade7PhysicsChapters,
-    GradeSubjectKey(10, "Fizik") to grade10PhysicsChapters,
     GradeSubjectKey(11, "Fizik") to grade11PhysicsChapters,
 
     // Chemistry
@@ -281,27 +313,27 @@ val chaptersByGradeAndSubject = mapOf(
     GradeSubjectKey(6, "Kimya") to grade6ChemistryChapters,
     GradeSubjectKey(7, "Kimya") to grade7ChemistryChapters,
     GradeSubjectKey(8, "Kimya") to grade8ChemistryChapters,
-    GradeSubjectKey(10, "Kimya") to grade10ChemistryChapters,
     GradeSubjectKey(11, "Kimya") to grade11ChemistryChapters,
 
     // 9th Grade
-    // Chemistry
     GradeSubjectKey(9, "Kimya") to grade9ChemistryChapters,
-    // Physics
     GradeSubjectKey(9, "Fizik") to grade9PhysicsChapters,
-    // Turkish
     GradeSubjectKey(9, "Türk Dili ve Edebiyati") to grade9TurkishChapters,
-    // Mathematics
     GradeSubjectKey(9, "Matematik") to grade9MathChapters,
-    // Biology
     GradeSubjectKey(9, "Biyoloji") to grade9BiologyChapters,
-    // Geography
     GradeSubjectKey(9, "Coğrafya") to grade9GeographyChapters,
-    // Religion
     GradeSubjectKey(9, "Din Kültürü ve Ahlak Bilgisi") to grade9ReligionChapters,
-    // History
     GradeSubjectKey(9, "Tarih") to grade9HistoryChapters,
 
+    // 10th Grade
+    GradeSubjectKey(10, "Kimya") to grade10ChemistryChapters ,
+    GradeSubjectKey(10, "Fizik") to grade10PhysicsChapters ,
+    GradeSubjectKey(10, "Türk Dili ve Edebiyati") to grade10TurkishChapters ,
+    GradeSubjectKey(10, "Matematik") to grade10MathChapters ,
+    GradeSubjectKey(10, "Biyoloji") to grade10BiologyChapters,
+    GradeSubjectKey(10, "Coğrafya") to grade10GeographyChapters,
+    GradeSubjectKey(10, "Felsefe") to grade10PhilosophyChapters ,
+    GradeSubjectKey(10, "Tarih") to grade10HistoryChapters ,
 )
 
 // Default chapters for backward compatibility

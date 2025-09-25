@@ -19,5 +19,13 @@ val subjects = listOf(
     SubjectInfo(R.drawable.subject_book, "Biyoloji", "2 Konu", Color(0xFFFF5722), Color(0xFFFF5722)),
     SubjectInfo(R.drawable.subject_book, "Coğrafya", "7 Konu", Color(0xFFFF5722), Color(0xFFFF5722)),
     SubjectInfo(R.drawable.subject_book, "Din Kültürü ve Ahlak Bilgisi", "5 Konu", Color(0xFF4CAF50), Color(0xFF4CAF50)),
+    SubjectInfo(R.drawable.subject_book, "Felsefe", "9 Konu", Color(0xFF9C27B0), Color(0xFF9C27B0)),
     SubjectInfo(R.drawable.subject_book, "Tarih", "3 Konu", Color(0xFF795548), Color(0xFF795548)),
 )
+
+fun getSubjectsForGrade(grade: Int): List<SubjectInfo> {
+    return when (grade) {
+        10 -> subjects.filter { it.title != "Din Kültürü ve Ahlak Bilgisi" }
+        else -> subjects.filter { it.title != "Felsefe" }
+    }
+}
