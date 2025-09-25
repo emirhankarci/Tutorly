@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.emirhankarci.tutorly" />
+                  <option name="mobileSdkAppId" value="1:323880773297:android:cb7e23f51adda9df4ba490" />
+                  <option name="projectId" value="tutorly-2815f" />
+                  <option name="projectNumber" value="323880773297" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
