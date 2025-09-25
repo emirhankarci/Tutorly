@@ -44,7 +44,6 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.R
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -164,9 +163,9 @@ fun HomeScreenContent(modifier: Modifier) {
                             textColor = Color.Black,
                             icon = item.icon,
                             title = item.title,
-                            cardHeight = 130.dp,
+                            cardHeight = 120.dp,
                             modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 8.dp)
+                                .padding(horizontal = 6.dp)
                         )
                     }
                 }
