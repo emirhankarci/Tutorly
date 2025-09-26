@@ -77,8 +77,20 @@ class LoginViewModel @Inject constructor(
             isLoading = true,
             errorMessage = null
         )
-        val signInIntent = authRepositoryImpl.provideGoogleSignInClient().signInIntent
-        onIntentReady(signInIntent)
+
+        // Create a fresh Google Sign-In client to ensure account picker is shown
+        viewModelScope.launch {
+            try {
+                val freshClient = authRepositoryImpl.createFreshGoogleSignInClient()
+                val signInIntent = freshClient.signInIntent
+                onIntentReady(signInIntent)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Failed to initialize sign-in: ${e.message}"
+                )
+            }
+        }
     }
 
     fun signInWithGoogleAccount(account: GoogleSignInAccount) {

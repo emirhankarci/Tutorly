@@ -29,8 +29,23 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = if (uiState.isSignedIn) Route.MainGraph else Route.AuthGraph
+        startDestination = Route.SplashScreen
     ) {
+        // Splash Screen - First screen shown
+        composable<Route.SplashScreen> {
+            SplashScreen(
+                onNavigateToAuth = {
+                    navController.navigate(Route.AuthGraph) {
+                        popUpTo(Route.SplashScreen) { inclusive = true }
+                    }
+                },
+                onNavigateToMain = {
+                    navController.navigate(Route.MainGraph) {
+                        popUpTo(Route.SplashScreen) { inclusive = true }
+                    }
+                }
+            )
+        }
         // Auth Graph - Authentication flow (No Scaffold)
         navigation<Route.AuthGraph>(
             startDestination = Route.OnboardingFlow

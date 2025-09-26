@@ -26,13 +26,36 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
     private val googleSignInClient: GoogleSignInClient by lazy {
+        createGoogleSignInClient()
+    }
+
+    private fun createGoogleSignInClient(): GoogleSignInClient {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(context.getString(com.emirhankarci.tutorly.R.string.default_web_client_id))
             .requestServerAuthCode(context.getString(com.emirhankarci.tutorly.R.string.default_web_client_id))
             .requestEmail()
             .requestProfile()
             .build()
-        GoogleSignIn.getClient(context, gso)
+        return GoogleSignIn.getClient(context, gso)
+    }
+
+    suspend fun createFreshGoogleSignInClient(): GoogleSignInClient {
+        // Clear the cached account first
+        try {
+            googleSignInClient.signOut().await()
+        } catch (e: Exception) {
+            // Ignore sign out errors when creating fresh client
+        }
+
+        // Create a new client instance to ensure fresh state
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(com.emirhankarci.tutorly.R.string.default_web_client_id))
+            .requestServerAuthCode(context.getString(com.emirhankarci.tutorly.R.string.default_web_client_id))
+            .requestEmail()
+            .requestProfile()
+            .build()
+
+        return GoogleSignIn.getClient(context, gso)
     }
 
     fun provideGoogleSignInClient(): GoogleSignInClient = googleSignInClient
