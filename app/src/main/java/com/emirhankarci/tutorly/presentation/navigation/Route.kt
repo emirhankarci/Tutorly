@@ -15,6 +15,9 @@ sealed interface Route {
     data object HomeScreen : Route
 
     @Serializable
+    data object OnboardingFlow : Route
+
+    @Serializable
     data object LoginScreen : Route
 
     @Serializable

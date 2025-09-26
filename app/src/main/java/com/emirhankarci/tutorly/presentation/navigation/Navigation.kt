@@ -33,8 +33,18 @@ fun Navigation() {
     ) {
         // Auth Graph - Authentication flow (No Scaffold)
         navigation<Route.AuthGraph>(
-            startDestination = Route.LoginScreen
+            startDestination = Route.OnboardingFlow
         ) {
+            composable<Route.OnboardingFlow> {
+                OnboardingFlow(
+                    onSignInSuccess = {
+                        navController.navigate(Route.MainGraph) {
+                            popUpTo(Route.AuthGraph) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable<Route.LoginScreen> {
                 LoginScreen(
                     onSignInSuccess = {
