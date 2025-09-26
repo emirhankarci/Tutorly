@@ -1,12 +1,20 @@
 package com.emirhankarci.tutorly.domain.entity
 
+import com.google.firebase.firestore.PropertyName
+
 data class AppUser(
     val uid: String = "",
     val displayName: String = "",
     val email: String = "",
     val photoUrl: String? = null,
     val firstName: String = "",
-    val lastName: String = ""
+    val lastName: String = "",
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis(),
+    @PropertyName("schedule_items")
+    val scheduleItems: List<UserScheduleItem> = emptyList(),
+    @PropertyName("study_progress")
+    val studyProgress: UserProgress = UserProgress()
 ) {
     companion object {
         fun empty() = AppUser()
@@ -26,3 +34,32 @@ data class AppUser(
             else -> "there"
         }
 }
+
+data class UserScheduleItem(
+    val id: String = "",
+    val subject: String = "",
+    val day: String = "",
+    val time: String = "",
+    val duration: String = "",
+    val location: String = "",
+    val notes: String = "",
+    val createdAt: Long = System.currentTimeMillis(),
+    val isCompleted: Boolean = false
+)
+
+data class UserProgress(
+    @PropertyName("total_study_time")
+    val totalStudyTime: Long = 0L, // in minutes
+    @PropertyName("completed_lessons")
+    val completedLessons: Int = 0,
+    @PropertyName("weekly_goal")
+    val weeklyGoal: Int = 300, // minutes per week
+    @PropertyName("current_streak")
+    val currentStreak: Int = 0,
+    @PropertyName("best_streak")
+    val bestStreak: Int = 0,
+    @PropertyName("last_study_date")
+    val lastStudyDate: Long = 0L,
+    @PropertyName("subjects_studied")
+    val subjectsStudied: Map<String, Int> = emptyMap() // subject -> minutes studied
+)

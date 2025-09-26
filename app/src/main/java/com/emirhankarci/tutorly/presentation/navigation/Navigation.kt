@@ -95,6 +95,20 @@ fun Navigation() {
                         onEditLesson = { lesson ->
                             // For demo purposes, navigate to edit with lesson subject as ID
                             navController.navigate(Route.EditLessonScreen(lesson.subject))
+                        },
+                        onNavigateToProgress = {
+                            navController.navigate(Route.ProgressScreen)
+                        }
+                    )
+                }
+            }
+
+            composable<Route.ProgressScreen> {
+                MainScaffold(navController = navController) { modifier ->
+                    ProgressScreen(
+                        modifier = modifier,
+                        onBackPressed = {
+                            navController.popBackStack()
                         }
                     )
                 }

@@ -39,6 +39,9 @@ sealed interface Route {
     data object ScheduleScreen : Route
 
     @Serializable
+    data object ProgressScreen : Route
+
+    @Serializable
     data object SettingsScreen : Route
 
     @Serializable
