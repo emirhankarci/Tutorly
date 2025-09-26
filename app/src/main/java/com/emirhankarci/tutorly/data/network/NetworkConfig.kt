@@ -1,6 +1,7 @@
 package com.emirhankarci.tutorly.data.network
 
 import com.emirhankarci.tutorly.data.api.GeminiApiService
+import com.emirhankarci.tutorly.data.api.EnglishLearningApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -28,4 +29,5 @@ object NetworkConfig {
         .build()
 
     val geminiApiService: GeminiApiService = retrofit.create(GeminiApiService::class.java)
+    val englishLearningApiService: EnglishLearningApiService = retrofit.create(EnglishLearningApiService::class.java)
 }

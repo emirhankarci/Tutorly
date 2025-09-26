@@ -74,6 +74,9 @@ fun Navigation() {
                         },
                         onNavigateToSchedule = {
                             navController.navigate(Route.ScheduleScreen)
+                        },
+                        onNavigateToEnglishLearning = {
+                            navController.navigate(Route.EnglishLearningScreen)
                         }
                     )
                 }
@@ -291,6 +294,14 @@ fun Navigation() {
                             // Quiz completed, stay on result screen
                             // User can choose to retake or go back
                         }
+                    )
+                }
+            }
+
+            composable<Route.EnglishLearningScreen> {
+                MainScaffold(navController = navController) { modifier ->
+                    EnglishLearningScreen(
+                        modifier = modifier
                     )
                 }
             }

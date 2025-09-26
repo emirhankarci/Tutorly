@@ -71,4 +71,7 @@ sealed interface Route {
         val questionType: String
     ) : Route
 
+    @Serializable
+    data object EnglishLearningScreen : Route
+
 }

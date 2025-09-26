@@ -73,12 +73,14 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToGradeSelection: () -> Unit = {},
-    onNavigateToSchedule: () -> Unit = {}
+    onNavigateToSchedule: () -> Unit = {},
+    onNavigateToEnglishLearning: () -> Unit = {}
 ) {
     HomeScreenContent(
         modifier = modifier,
         onNavigateToGradeSelection = onNavigateToGradeSelection,
-        onNavigateToSchedule = onNavigateToSchedule
+        onNavigateToSchedule = onNavigateToSchedule,
+        onNavigateToEnglishLearning = onNavigateToEnglishLearning
     )
 }
 
@@ -88,6 +90,7 @@ fun HomeScreenContent(
     modifier: Modifier,
     onNavigateToGradeSelection: () -> Unit = {},
     onNavigateToSchedule: () -> Unit = {},
+    onNavigateToEnglishLearning: () -> Unit = {},
     userProfileViewModel: UserProfileViewModel = hiltViewModel()
 ) {
     val userProfileState by userProfileViewModel.uiState.collectAsState()
@@ -160,10 +163,10 @@ fun HomeScreenContent(
                 textColor = Color.White,
                 icon = R.drawable.homescreen_ai_1,
                 title = "AI Chat",
-                description = "Yapay zeka modeliyle konuş",
+                description = "İngilizce öğrenmek için AI ile konuş",
                 cardHeight = 150.dp,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { onNavigateToGradeSelection() },
+                onClick = { onNavigateToEnglishLearning() },
                 isMainCard = true
             )
         }
