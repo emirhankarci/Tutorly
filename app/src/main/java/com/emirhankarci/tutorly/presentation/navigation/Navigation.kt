@@ -16,16 +16,6 @@ import com.emirhankarci.tutorly.presentation.viewmodel.LoginViewModel
 fun Navigation() {
     val navController = rememberNavController()
     val loginViewModel: LoginViewModel = hiltViewModel()
-    val uiState by loginViewModel.uiState.collectAsState()
-
-    // Handle authentication state changes
-    LaunchedEffect(uiState.isSignedIn) {
-        if (uiState.isSignedIn) {
-            navController.navigate(Route.MainGraph) {
-                popUpTo(Route.AuthGraph) { inclusive = true }
-            }
-        }
-    }
 
     NavHost(
         navController = navController,
