@@ -7,6 +7,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -53,23 +54,33 @@ fun BottomNavigationBar(
     navController: NavController
 ) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry.value?.destination
+    val currentRoute = navBackStackEntry.value?.destination?.route
+
+    // Pre-compute lesson-related routes for better performance
+    val lessonRelatedRoutes = remember {
+        setOf(
+            Route.LessonsScreen::class.qualifiedName,
+            Route.GradeSelectionScreen::class.qualifiedName,
+            Route.SubjectSelectionScreen::class.qualifiedName?.substringBefore("/"),
+            Route.ChapterSelectionScreen::class.qualifiedName?.substringBefore("/"),
+            Route.StudyMethodScreen::class.qualifiedName?.substringBefore("/"),
+            Route.AIChatScreen::class.qualifiedName?.substringBefore("/"),
+            Route.SummaryScreen::class.qualifiedName?.substringBefore("/"),
+            Route.QuizScreen::class.qualifiedName?.substringBefore("/")
+        ).filterNotNull().toSet()
+    }
 
     NavigationBar {
         bottomNavItems.forEach { item ->
-            val isSelected = if (item.route == Route.LessonsScreen) {
-                // For "Dersler" button, also consider lesson-related screens as selected
-                currentDestination?.hierarchy?.any { destination ->
-                    destination.route == Route.LessonsScreen::class.qualifiedName ||
-                    destination.route == Route.GradeSelectionScreen::class.qualifiedName ||
-                    destination.route == Route.SubjectSelectionScreen::class.qualifiedName ||
-                    destination.route == Route.ChapterSelectionScreen::class.qualifiedName ||
-                    destination.route == Route.StudyMethodScreen::class.qualifiedName
-                } == true
-            } else {
-                currentDestination?.hierarchy?.any {
-                    it.route == item.route::class.qualifiedName
-                } == true
+            val isSelected = remember(currentRoute) {
+                when (item.route) {
+                    Route.LessonsScreen -> {
+                        currentRoute?.substringBefore("/") in lessonRelatedRoutes
+                    }
+                    else -> {
+                        currentRoute == item.route::class.qualifiedName
+                    }
+                }
             }
 
             NavigationBarItem(
@@ -82,31 +93,39 @@ fun BottomNavigationBar(
                 label = { Text(item.title) },
                 selected = isSelected,
                 onClick = {
+                    // Optimized navigation with minimal operations
                     when (item.route) {
                         Route.LessonsScreen -> {
-                            navController.navigate(Route.GradeSelectionScreen) {
-                                popUpTo(Route.HomeScreen) {
-                                    saveState = true
+                            if (currentRoute != Route.GradeSelectionScreen::class.qualifiedName) {
+                                navController.navigate(Route.GradeSelectionScreen) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
                         }
                         Route.HomeScreen -> {
-                            navController.navigate(Route.HomeScreen) {
-                                popUpTo(Route.HomeScreen) {
-                                    inclusive = true
+                            if (currentRoute != Route.HomeScreen::class.qualifiedName) {
+                                navController.navigate(Route.HomeScreen) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
                             }
                         }
                         else -> {
-                            navController.navigate(item.route) {
-                                popUpTo(Route.HomeScreen) {
-                                    saveState = true
+                            if (currentRoute != item.route::class.qualifiedName) {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
                         }
                     }

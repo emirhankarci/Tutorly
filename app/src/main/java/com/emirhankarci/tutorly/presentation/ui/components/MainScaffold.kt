@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -36,44 +37,51 @@ fun MainScaffold(
     val currentRoute = navBackStackEntry.value?.destination?.route
     val arguments = navBackStackEntry.value?.arguments
 
-    val brush = when {
-        currentRoute == Route.HomeScreen::class.qualifiedName -> Brush.linearGradient(
+    // Pre-compute gradient brushes for better performance
+    val homeGradient = remember {
+        Brush.linearGradient(
             colors = listOf(
-                Color(0xFF667eea), // Blue
-                Color(0xFF764ba2), // Purple
-                Color(0xFF4C9AFF)  // Light Blue
+                Color(0xFF667eea), Color(0xFF764ba2), Color(0xFF4C9AFF)
             )
         )
-        currentRoute == Route.ScheduleScreen::class.qualifiedName -> Brush.linearGradient(
-            colors = listOf(
-                Color(0xFF8E24AA), // Purple
-                Color(0xFF5E35B1)  // Darker Purple
-            )
+    }
+    val scheduleGradient = remember {
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF8E24AA), Color(0xFF5E35B1))
         )
-        currentRoute == Route.SettingsScreen::class.qualifiedName -> Brush.linearGradient(
-            colors = listOf(
-                Color(0xFF424242), // Dark Gray
-                Color(0xFF616161)  // Lighter Dark Gray
-            )
+    }
+    val settingsGradient = remember {
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF424242), Color(0xFF616161))
         )
-        currentRoute == Route.GradeSelectionScreen::class.qualifiedName ||
-        currentRoute?.startsWith("${Route.SubjectSelectionScreen::class.qualifiedName}") == true ||
-        currentRoute?.startsWith("${Route.ChapterSelectionScreen::class.qualifiedName}") == true ||
-        currentRoute?.startsWith("${Route.StudyMethodScreen::class.qualifiedName}") == true ||
-        currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true ||
-        currentRoute?.startsWith("${Route.SummaryScreen::class.qualifiedName}") == true ||
-        currentRoute?.startsWith("${Route.QuizScreen::class.qualifiedName}") == true -> Brush.linearGradient(
-            colors = listOf(
-                Color(0xFF1976D2), // Dark Blue
-                Color(0xFF041D5A)  // Darker Blue
-            )
+    }
+    val studyGradient = remember {
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF1976D2), Color(0xFF041D5A))
         )
-        else -> Brush.linearGradient(
-            colors = listOf(
-                Color(0xFF37474F), // Blue Gray
-                Color(0xFF455A64)  // Darker Blue Gray
-            )
+    }
+    val defaultGradient = remember {
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF37474F), Color(0xFF455A64))
         )
+    }
+
+    val brush = remember(currentRoute) {
+        when {
+            currentRoute == Route.HomeScreen::class.qualifiedName -> homeGradient
+            currentRoute == Route.ScheduleScreen::class.qualifiedName -> scheduleGradient
+            currentRoute == Route.SettingsScreen::class.qualifiedName -> settingsGradient
+            currentRoute == Route.GradeSelectionScreen::class.qualifiedName ||
+            currentRoute?.substringBefore("/") in setOf(
+                Route.SubjectSelectionScreen::class.qualifiedName?.substringBefore("/"),
+                Route.ChapterSelectionScreen::class.qualifiedName?.substringBefore("/"),
+                Route.StudyMethodScreen::class.qualifiedName?.substringBefore("/"),
+                Route.AIChatScreen::class.qualifiedName?.substringBefore("/"),
+                Route.SummaryScreen::class.qualifiedName?.substringBefore("/"),
+                Route.QuizScreen::class.qualifiedName?.substringBefore("/")
+            ) -> studyGradient
+            else -> defaultGradient
+        }
     }
 
     Scaffold(
