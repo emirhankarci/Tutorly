@@ -85,18 +85,15 @@ fun MainScaffold(
                 currentRoute == Route.HomeScreen::class.qualifiedName -> {
                     TopAppBar(
                         title = {
-                            Column {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Text(
                                     text = "Tutorly",
-                                    fontSize = 18.sp,
+                                    fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
-                                )
-                                Text(
-                                    text = "Good morning, Kaan!",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color.White.copy(alpha = 0.8f)
                                 )
                             }
                         },
@@ -110,13 +107,6 @@ fun MainScaffold(
                             }
                         },
                         actions = {
-                            IconButton(onClick = { }) {
-                                Icon(
-                                    imageVector = Icons.Default.ShoppingCart,
-                                    contentDescription = "Cart",
-                                    tint = Color.White
-                                )
-                            }
                             IconButton(onClick = { }) {
                                 Icon(
                                     imageVector = Icons.Default.Settings,
