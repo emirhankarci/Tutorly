@@ -1,6 +1,7 @@
 package com.emirhankarci.tutorly.di
 
 import com.emirhankarci.tutorly.data.network.AuthInterceptor
+import com.emirhankarci.tutorly.data.network.ApiKeyInterceptor
 import com.emirhankarci.tutorly.data.repository.TokenRepository
 import dagger.Module
 import dagger.Provides
@@ -26,6 +27,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideApiKeyInterceptor(): ApiKeyInterceptor = ApiKeyInterceptor()
+
+    @Provides
+    @Singleton
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -37,13 +42,15 @@ object NetworkModule {
     @Named("authenticated")
     fun provideAuthenticatedOkHttpClient(
         authInterceptor: AuthInterceptor,
+        apiKeyInterceptor: ApiKeyInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor(apiKeyInterceptor)
             .addInterceptor(authInterceptor)
             .addNetworkInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
@@ -52,12 +59,14 @@ object NetworkModule {
     @Singleton
     @Named("unauthenticated")
     fun provideUnauthenticatedOkHttpClient(
+        apiKeyInterceptor: ApiKeyInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor(apiKeyInterceptor)
             .addNetworkInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
@@ -69,7 +78,7 @@ object NetworkModule {
         @Named("authenticated") okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://your-api-base-url.com/api/") // Replace with your API base URL
+            .baseUrl("http://81.214.137.5:8000/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -82,7 +91,7 @@ object NetworkModule {
         @Named("unauthenticated") okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://your-api-base-url.com/api/") // Replace with your API base URL
+            .baseUrl("http://81.214.137.5:8000/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

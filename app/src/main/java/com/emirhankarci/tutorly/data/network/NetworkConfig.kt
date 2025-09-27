@@ -17,6 +17,7 @@ object NetworkConfig {
     }
 
     private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(ApiKeyInterceptor())
         .addInterceptor(loggingInterceptor)
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(300, TimeUnit.SECONDS) // 5 dakika AI görsel üretimi için
