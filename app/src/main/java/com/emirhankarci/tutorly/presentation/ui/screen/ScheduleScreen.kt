@@ -20,8 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.emirhankarci.tutorly.domain.entity.ScheduleData
 import com.emirhankarci.tutorly.domain.entity.ScheduleItem
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.emirhankarci.tutorly.presentation.viewmodel.UserProfileViewModel
 
 @Composable
 fun ScheduleScreen(
@@ -30,6 +31,8 @@ fun ScheduleScreen(
     onEditLesson: (ScheduleItem) -> Unit = {},
     onNavigateToProgress: () -> Unit = {}
 ) {
+    val profileViewModel: UserProfileViewModel = hiltViewModel()
+    val uiState by profileViewModel.uiState.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -92,7 +95,17 @@ fun ScheduleScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(ScheduleData.sampleSchedule) { lesson ->
+            val lessons = uiState.user.scheduleItems.map {
+                // Map UserScheduleItem to ScheduleItem visuals (use a default color)
+                ScheduleItem(
+                    subject = it.subject,
+                    time = it.time,
+                    duration = it.duration,
+                    color = Color(0xFF2196F3),
+                    day = it.day
+                )
+            }
+            items(lessons) { lesson ->
                 BasicLessonCard(
                     lesson = lesson,
                     onEditLesson = { onEditLesson(lesson) }

@@ -1,7 +1,9 @@
 package com.emirhankarci.tutorly.domain.entity
 
+import com.google.firebase.firestore.IgnoreExtraProperties
 import com.google.firebase.firestore.PropertyName
 
+@IgnoreExtraProperties
 data class AppUser(
     val uid: String = "",
     val displayName: String = "",
@@ -11,10 +13,12 @@ data class AppUser(
     val lastName: String = "",
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
-    @PropertyName("schedule_items")
-    val scheduleItems: List<UserScheduleItem> = emptyList(),
-    @PropertyName("study_progress")
-    val studyProgress: UserProgress = UserProgress()
+    @get:PropertyName("schedule_items")
+    @set:PropertyName("schedule_items")
+    var scheduleItems: List<UserScheduleItem> = emptyList(),
+    @get:PropertyName("study_progress")
+    @set:PropertyName("study_progress")
+    var studyProgress: UserProgress = UserProgress()
 ) {
     companion object {
         fun empty() = AppUser()
@@ -44,6 +48,7 @@ data class UserScheduleItem(
     val location: String = "",
     val notes: String = "",
     val createdAt: Long = System.currentTimeMillis(),
+    @get:PropertyName("completed")
     val isCompleted: Boolean = false
 )
 

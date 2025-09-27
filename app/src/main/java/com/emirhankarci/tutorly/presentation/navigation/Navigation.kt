@@ -96,7 +96,7 @@ fun Navigation() {
                     ScheduleScreen(
                         modifier = modifier,
                         onAddLesson = {
-                            navController.navigate(Route.AddLessonScreen)
+                            navController.navigate(Route.ScheduleBuilderScreen)
                         },
                         onEditLesson = { lesson ->
                             // For demo purposes, navigate to edit with lesson subject as ID
@@ -209,6 +209,17 @@ fun Navigation() {
                         },
                         onQuizClick = { questionCount, questionType ->
                             navController.navigate(Route.QuizScreen(grade, subject, chapter, questionCount, questionType))
+                        }
+                    )
+                }
+            }
+
+            composable<Route.ScheduleBuilderScreen> {
+                MainScaffold(navController = navController) { modifier ->
+                    ScheduleBuilderScreen(
+                        modifier = modifier,
+                        onSaved = {
+                            navController.popBackStack()
                         }
                     )
                 }

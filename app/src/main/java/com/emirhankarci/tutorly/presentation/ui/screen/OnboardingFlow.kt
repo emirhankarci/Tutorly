@@ -1,6 +1,7 @@
 package com.emirhankarci.tutorly.presentation.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,25 +42,30 @@ fun OnboardingFlow(
     onSignInSuccess: () -> Unit = {},
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val pagerState = rememberPagerState(pageCount = { 4 }) // 3 onboarding + 1 login
+    val pagerState = rememberPagerState(pageCount = { 5 }) // 4 onboarding + 1 login
     val scope = rememberCoroutineScope()
 
     val onboardingPages = remember {
         listOf(
             OnboardingPageData(
-                imageRes = R.drawable.homescreen_ai_1,
-                title = "FAL-AI ile Güçlendirilmiş Eğitim",
-                description = "Kişiselleştirilmiş eğitimi, öğrenme tarzınıza ve hızınıza uyum sağlayan gelişmiş yapay zekâ teknolojisiyle deneyimleyin."
+                imageRes = R.drawable.onb1,
+                title = "Ders Çalışmanın Akıllı Yolu",
+                description = "Yapay zekâ destekli çalışma arkadaşınla öğrenmeyi daha kolay, eğlenceli ve verimli hale getir."
             ),
             OnboardingPageData(
-                imageRes = R.drawable.homescreen_ai_2,
-                title = "Akıllı Çalışma Oturumları",
-                description = "Size özel çalışma materyalleri, pratik sorular ve öğrenme yolları için akıllı öneriler alın."
+                imageRes = R.drawable.onb2,
+                title = "Her An Yanında Bir Öğretmen",
+                description = "Zorlandığın konuları sor, yapay zekâ sana kolay ve anlaşılır şekilde anlatsın"
             ),
             OnboardingPageData(
-                imageRes = R.drawable.homescreen_ai_3,
-                title = "İlerlemeni Takip Et",
-                description = "Akademik hedeflerinize ulaşmanıza yardımcı olacak ayrıntılı analizler ve içgörülerle öğrenme yolculuğunuzu izleyin."
+                imageRes = R.drawable.onb3,
+                title = "Kendi Quizlerini Hazırla",
+                description = "Yapay zekâ senin için testler ve görsel sorular oluştursun, kendini dene ve bilgini pekiştir"
+            ),
+            OnboardingPageData(
+                imageRes = R.drawable.onb4,
+                title = "Sana Özel Çalışma Planı",
+                description = "Yapay zekâ hedeflerine göre kişisel ders programı hazırlasın, ilerlemeni takip et"
             )
         )
     }
@@ -73,13 +80,13 @@ fun OnboardingFlow(
             modifier = Modifier.weight(1f)
         ) { page ->
             when (page) {
-                in 0..2 -> {
+                in 0 until onboardingPages.size -> {
                     OnboardingPage(
                         pageData = onboardingPages[page],
-                        isLastPage = page == 2,
+                        isLastPage = page == onboardingPages.size - 1,
                         onSkip = {
                             scope.launch {
-                                pagerState.animateScrollToPage(3) // Go to login page
+                                pagerState.animateScrollToPage(onboardingPages.size) // Go to login page
                             }
                         },
                         onNext = {
@@ -89,7 +96,7 @@ fun OnboardingFlow(
                         }
                     )
                 }
-                3 -> {
+                else -> {
                     LoginScreen(
                         onSignInSuccess = onSignInSuccess,
                         viewModel = viewModel
@@ -99,14 +106,14 @@ fun OnboardingFlow(
         }
 
         // Page indicators - only show for onboarding pages (not login)
-        if (pagerState.currentPage < 3) {
+        if (pagerState.currentPage < onboardingPages.size) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 32.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                repeat(3) { iteration ->
+                repeat(onboardingPages.size) { iteration ->
                     val color = if (pagerState.currentPage == iteration) {
                         MaterialTheme.colorScheme.primary
                     } else {
@@ -114,7 +121,7 @@ fun OnboardingFlow(
                     }
                     Box(
                         modifier = Modifier
-                            .padding(horizontal = 4.dp)
+                            .padding(horizontal = 4.dp, vertical = 24.dp)
                             .clip(CircleShape)
                             .background(color)
                             .size(if (pagerState.currentPage == iteration) 12.dp else 8.dp)
@@ -140,7 +147,7 @@ private fun OnboardingPage(
     ) {
         // Skip button
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.End
         ) {
             TextButton(
@@ -164,12 +171,13 @@ private fun OnboardingPage(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Image
         Card(
             modifier = Modifier
-                .size(200.dp)
+                .fillMaxWidth()
+                .height(400.dp)
                 .padding(16.dp),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
@@ -181,16 +189,18 @@ private fun OnboardingPage(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(pageData.imageRes),
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                Image(
+                    painter = painterResource(id = pageData.imageRes),
+                    contentDescription = "Skip",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                        .padding(end = 4.dp)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Header text
         Text(
@@ -215,7 +225,7 @@ private fun OnboardingPage(
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(48.dp))
 
         // Next button
         Button(
@@ -245,6 +255,6 @@ private fun OnboardingPage(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+
     }
 }

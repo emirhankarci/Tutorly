@@ -5,6 +5,7 @@ import com.emirhankarci.tutorly.domain.entity.UserProgress
 import com.emirhankarci.tutorly.domain.entity.UserScheduleItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -115,6 +116,62 @@ class UserDataRepository @Inject constructor(
                 .update("schedule_items", updatedScheduleItems)
                 .await()
 
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun upsertScheduleItems(uid: String, newItems: List<UserScheduleItem>): Result<Unit> {
+        return try {
+            val docSnap = usersCollection.document(uid).get().await()
+            if (docSnap.exists()) {
+                val current = docSnap.toObject(AppUser::class.java)
+                val merged = (current?.scheduleItems.orEmpty()) + newItems
+                usersCollection.document(uid).update("schedule_items", merged).await()
+            } else {
+                val newUser = hashMapOf(
+                    "uid" to uid,
+                    "schedule_items" to newItems
+                )
+                usersCollection.document(uid).set(newUser).await()
+            }
+            // Clean up any legacy/camelCase fields written previously
+            usersCollection.document(uid).update(
+                mapOf(
+                    "scheduleItems" to FieldValue.delete(),
+                    "studyProgress" to FieldValue.delete(),
+                    "greetingName" to FieldValue.delete(),
+                    "fullName" to FieldValue.delete()
+                )
+            ).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun replaceScheduleItems(uid: String, newItems: List<UserScheduleItem>): Result<Unit> {
+        return try {
+            val docSnap = usersCollection.document(uid).get().await()
+            if (docSnap.exists()) {
+                usersCollection.document(uid).update("schedule_items", newItems).await()
+            } else {
+                val newUser = hashMapOf(
+                    "uid" to uid,
+                    "schedule_items" to newItems
+                )
+                usersCollection.document(uid).set(newUser).await()
+            }
+            // Clean up any legacy/camelCase fields
+            usersCollection.document(uid).update(
+                mapOf(
+                    "scheduleItems" to FieldValue.delete(),
+                    "studyProgress" to FieldValue.delete(),
+                    "greetingName" to FieldValue.delete(),
+                    "fullName" to FieldValue.delete()
+                )
+            ).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
