@@ -74,4 +74,7 @@ sealed interface Route {
     @Serializable
     data object EnglishLearningScreen : Route
 
+    @Serializable
+    data object StudyWithImageScreen : Route
+
 }

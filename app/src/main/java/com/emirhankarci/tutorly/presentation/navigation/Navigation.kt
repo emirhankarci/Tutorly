@@ -77,6 +77,9 @@ fun Navigation() {
                         },
                         onNavigateToEnglishLearning = {
                             navController.navigate(Route.EnglishLearningScreen)
+                        },
+                        onNavigateToStudyWithImage = {
+                            navController.navigate(Route.StudyWithImageScreen)
                         }
                     )
                 }
@@ -302,6 +305,17 @@ fun Navigation() {
                 MainScaffold(navController = navController) { modifier ->
                     EnglishLearningScreen(
                         modifier = modifier
+                    )
+                }
+            }
+
+            composable<Route.StudyWithImageScreen> {
+                MainScaffold(navController = navController) { modifier ->
+                    StudyWithImageScreen(
+                        modifier = modifier,
+                        onBackPressed = {
+                            navController.popBackStack()
+                        }
                     )
                 }
             }

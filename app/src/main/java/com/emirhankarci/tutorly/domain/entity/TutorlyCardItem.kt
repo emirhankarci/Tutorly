@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class TutorlyCardItem(
@@ -15,7 +16,7 @@ data class TutorlyCardItem(
 
 val TutorlyCardItemResult = listOf(
     TutorlyCardItem(Icons.Default.Face, "Go to Subjects", "Get instant help with any topic"),
-    TutorlyCardItem(Icons.Default.Star, "Upload PDF", "See your saved items"),
+    TutorlyCardItem(Icons.Default.Create, "Study with Image", "Generate educational images"),
     TutorlyCardItem(Icons.Default.Home, "Study Plan", "Go to main screen"),
     TutorlyCardItem(Icons.Default.Settings, "Progress", "Adjust preferences"),
     )

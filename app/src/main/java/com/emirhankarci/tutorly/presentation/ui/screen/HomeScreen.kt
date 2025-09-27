@@ -74,13 +74,15 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToGradeSelection: () -> Unit = {},
     onNavigateToSchedule: () -> Unit = {},
-    onNavigateToEnglishLearning: () -> Unit = {}
+    onNavigateToEnglishLearning: () -> Unit = {},
+    onNavigateToStudyWithImage: () -> Unit = {}
 ) {
     HomeScreenContent(
         modifier = modifier,
         onNavigateToGradeSelection = onNavigateToGradeSelection,
         onNavigateToSchedule = onNavigateToSchedule,
-        onNavigateToEnglishLearning = onNavigateToEnglishLearning
+        onNavigateToEnglishLearning = onNavigateToEnglishLearning,
+        onNavigateToStudyWithImage = onNavigateToStudyWithImage
     )
 }
 
@@ -91,6 +93,7 @@ fun HomeScreenContent(
     onNavigateToGradeSelection: () -> Unit = {},
     onNavigateToSchedule: () -> Unit = {},
     onNavigateToEnglishLearning: () -> Unit = {},
+    onNavigateToStudyWithImage: () -> Unit = {},
     userProfileViewModel: UserProfileViewModel = hiltViewModel()
 ) {
     val userProfileState by userProfileViewModel.uiState.collectAsState()
@@ -203,19 +206,22 @@ fun HomeScreenContent(
 
                     Box(modifier = Modifier.weight(1f)) {
                         TutorlyCard(
-                            borderColor = borderColor,
-                            textColor = Color(0xFF2D3748),
-                            icon = item.icon,
-                            title = item.title,
-                            cardHeight = 130.dp,
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = if (item.title == "Go to Subjects") {
-                                { onNavigateToGradeSelection() }
-                            } else {
-                                { }
+                            borderColor,
+                            Color(0xFF2D3748),
+                            item.icon,
+                            item.title,
+                            item.description,
+                            null,
+                            130.dp,
+                            Modifier.fillMaxWidth(),
+                            when (item.title) {
+                                "Go to Subjects" -> { { onNavigateToGradeSelection() } }
+                                "Study with Image" -> { { onNavigateToStudyWithImage() } }
+                                else -> { {} }
                             }
                         )
                     }
+
                 }
 
                 repeat(2 - rowItems.size) {

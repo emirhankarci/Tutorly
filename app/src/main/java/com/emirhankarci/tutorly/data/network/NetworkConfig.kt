@@ -2,6 +2,7 @@ package com.emirhankarci.tutorly.data.network
 
 import com.emirhankarci.tutorly.data.api.GeminiApiService
 import com.emirhankarci.tutorly.data.api.EnglishLearningApiService
+import com.emirhankarci.tutorly.data.api.ImageGenerationApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,9 +18,9 @@ object NetworkConfig {
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(300, TimeUnit.SECONDS) // 5 dakika AI görsel üretimi için
+        .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
     private val retrofit = Retrofit.Builder()
@@ -30,4 +31,5 @@ object NetworkConfig {
 
     val geminiApiService: GeminiApiService = retrofit.create(GeminiApiService::class.java)
     val englishLearningApiService: EnglishLearningApiService = retrofit.create(EnglishLearningApiService::class.java)
+    val imageGenerationApiService: ImageGenerationApiService = retrofit.create(ImageGenerationApiService::class.java)
 }

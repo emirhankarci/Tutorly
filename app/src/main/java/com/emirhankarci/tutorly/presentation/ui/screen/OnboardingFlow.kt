@@ -47,18 +47,18 @@ fun OnboardingFlow(
         listOf(
             OnboardingPageData(
                 imageRes = R.drawable.homescreen_ai_1,
-                title = "AI-Powered Learning",
-                description = "Experience personalized education with advanced AI technology that adapts to your learning style and pace."
+                title = "FAL-AI ile Güçlendirilmiş Eğitim",
+                description = "Kişiselleştirilmiş eğitimi, öğrenme tarzınıza ve hızınıza uyum sağlayan gelişmiş yapay zekâ teknolojisiyle deneyimleyin."
             ),
             OnboardingPageData(
                 imageRes = R.drawable.homescreen_ai_2,
-                title = "Smart Study Sessions",
-                description = "Get intelligent recommendations for study materials, practice questions, and learning paths tailored just for you."
+                title = "Akıllı Çalışma Oturumları",
+                description = "Size özel çalışma materyalleri, pratik sorular ve öğrenme yolları için akıllı öneriler alın."
             ),
             OnboardingPageData(
                 imageRes = R.drawable.homescreen_ai_3,
-                title = "Track Your Progress",
-                description = "Monitor your learning journey with detailed analytics and insights to help you achieve your academic goals."
+                title = "İlerlemeni Takip Et",
+                description = "Akademik hedeflerinize ulaşmanıza yardımcı olacak ayrıntılı analizler ve içgörülerle öğrenme yolculuğunuzu izleyin."
             )
         )
     }
