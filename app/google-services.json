@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "323880773297-jbcv2p9afucm1c9flbae29tafnhr6vql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emirhankarci.tutorly",
+            "certificate_hash": "23e7d5351554c7516b71b4e32d438f5d0b359514"
+          }
+        },
+        {
           "client_id": "323880773297-qjafgoei284avet8qcp3onga2n5i1vlu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
