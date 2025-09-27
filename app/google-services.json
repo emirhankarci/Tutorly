@@ -12,7 +12,28 @@
           "package_name": "com.emirhankarci.tutorly"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "323880773297-b7hp63genu4hurttut5acpsfmahbd55p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emirhankarci.tutorly",
+            "certificate_hash": "6d2c1dce5e93899f627f8392b27076c1a50452ae"
+          }
+        },
+        {
+          "client_id": "323880773297-qjafgoei284avet8qcp3onga2n5i1vlu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emirhankarci.tutorly",
+            "certificate_hash": "d4353adff4fcc576a09609a7245caa8635b916cb"
+          }
+        },
+        {
+          "client_id": "323880773297-j2f7kncj0qjjislb451jiuaaqk6vncpk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDBoJRCYkz1bW-mjiZFTPZm-ve1QFrKzfo"
@@ -20,7 +41,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323880773297-j2f7kncj0qjjislb451jiuaaqk6vncpk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

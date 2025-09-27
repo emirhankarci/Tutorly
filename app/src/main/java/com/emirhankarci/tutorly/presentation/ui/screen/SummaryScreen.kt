@@ -6,7 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -14,6 +14,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.emirhankarci.tutorly.presentation.viewmodel.SummaryViewModel
+import com.emirhankarci.tutorly.domain.entity.GradeSubjectKey
+import com.emirhankarci.tutorly.domain.entity.chaptersByGradeAndSubject
 
 @Composable
 fun SummaryScreen(
@@ -23,10 +27,23 @@ fun SummaryScreen(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit = {}
 ) {
+    val viewModel: SummaryViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(grade, subject, chapter) {
+        viewModel.loadSummary(grade, subject, chapter)
+    }
+
+    val subjectColor = remember(grade, subject) {
+        chaptersByGradeAndSubject[GradeSubjectKey(grade, subject)]
+            ?.firstOrNull()
+            ?.backgroundColor ?: Color(0xFF1976D2)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F9FA))
+            .background(subjectColor)
     ) {
         Column(
             modifier = Modifier
@@ -39,46 +56,83 @@ fun SummaryScreen(
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(
-                        text = "$subject - $chapter",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1976D2),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                when {
+                    uiState.isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp),
+                            contentAlignment = androidx.compose.ui.Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
 
-                    Text(
-                        text = "Sınıf: $grade",
-                        fontSize = 14.sp,
-                        color = Color(0xFF6B7280),
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
+                    uiState.errorMessage != null -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = uiState.errorMessage ?: "Hata",
+                                color = MaterialTheme.colorScheme.error,
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
 
-                    HorizontalDivider(
-                        color = Color(0xFFE5E7EB),
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
+                    else -> {
+                        val summary = uiState.summary
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            Text(
+                                text = "Sınıf: $grade",
+                                fontSize = 14.sp,
+                                color = Color(0xFF6B7280),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Text(
+                                text = "$subject - $chapter",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                color = Color(0xFF1976D2),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 12.dp)
+                            )
 
-                    Text(
-                        text = """Bu bölümde $chapter konusunu özetleyeceğiz.
+                            summary?.title?.takeIf { it.isNotBlank() }?.let { t ->
+                                Text(
+                                    text = t,
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Start,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                )
+                            }
 
-Temel Kavramlar:
-• Konunun ana hatları ve temel tanımlar
-• Önemli formüller ve kurallar
+                            HorizontalDivider(
+                                color = Color(0xFFE5E7EB),
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
 
-Bu özet, $subject dersinde $chapter konusunun temel noktalarını kapsamaktadır.""",
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        color = Color(0xFF374151),
-                        textAlign = TextAlign.Justify
-                    )
+                            Text(
+                                text = summary?.summary ?: "",
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                color = Color(0xFF374151),
+                                textAlign = TextAlign.Justify
+                            )
+                        }
+                    }
                 }
             }
         }

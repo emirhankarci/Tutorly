@@ -13,7 +13,7 @@ data class SubjectInfo(
 
 val subjects = listOf(
     SubjectInfo(R.drawable.subject_math, "Matematik", "7 Konu", Color(0xFF1976D2), Color(0xFF1976D2)),
-    SubjectInfo(R.drawable.subject_turkish, "Türk Dili ve Edebiyati", "4 Konu", Color(0xFFE91E63), Color(0xFFE91E63)),
+    SubjectInfo(R.drawable.subject_turkish, "Türk Dili ve Edebiyatı", "4 Konu", Color(0xFFE91E63), Color(0xFFE91E63)),
     SubjectInfo(R.drawable.subject_phy, "Fizik", "4 Konu", Color(0xFFE91E63), Color(0xFFE91E63)),
     SubjectInfo(R.drawable.subject_chem, "Kimya", "3 Konu", Color(0xFFFF5722), Color(0xFFFF5722)),
     SubjectInfo(R.drawable.subject_book, "Biyoloji", "2 Konu", Color(0xFFFF5722), Color(0xFFFF5722)),

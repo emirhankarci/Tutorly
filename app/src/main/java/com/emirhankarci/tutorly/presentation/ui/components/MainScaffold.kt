@@ -21,11 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.emirhankarci.tutorly.presentation.navigation.Route
+import com.emirhankarci.tutorly.domain.entity.GradeSubjectKey
+import com.emirhankarci.tutorly.domain.entity.chaptersByGradeAndSubject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,8 +69,17 @@ fun MainScaffold(
         )
     }
 
-    val brush = remember(currentRoute) {
+    val brush = remember(currentRoute, arguments) {
         when {
+            // SummaryScreen: use subject color as solid background (top bar area)
+            currentRoute?.startsWith("${Route.SummaryScreen::class.qualifiedName}") == true -> {
+                val grade = arguments?.getInt("grade") ?: 9
+                val subject = arguments?.getString("subject") ?: "Matematik"
+                val subjectColor = chaptersByGradeAndSubject[GradeSubjectKey(grade, subject)]
+                    ?.firstOrNull()
+                    ?.backgroundColor ?: Color(0xFF1976D2)
+                Brush.linearGradient(colors = listOf(subjectColor, subjectColor))
+            }
             currentRoute == Route.HomeScreen::class.qualifiedName -> homeGradient
             currentRoute == Route.ScheduleScreen::class.qualifiedName -> scheduleGradient
             currentRoute == Route.SettingsScreen::class.qualifiedName -> settingsGradient
@@ -183,7 +195,8 @@ fun MainScaffold(
                                             Text(
                                                 text = "${grade}. Sınıf $subject - $chapter",
                                                 style = MaterialTheme.typography.bodyMedium,
-                                                color = Color.White.copy(alpha = 0.9f)
+                                                color = Color.White.copy(alpha = 0.9f),
+                                                textAlign = TextAlign.Center
                                             )
                                         }
                                     }

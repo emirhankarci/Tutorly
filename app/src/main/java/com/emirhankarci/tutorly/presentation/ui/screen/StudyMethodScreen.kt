@@ -38,46 +38,6 @@ fun StudyMethodScreen(
             .fillMaxSize()
             .background(Color(0xFFF8F9FA))
     ) {
-        // Context header if grade, subject, and chapter are provided
-        if (grade != null && subject != null && chapter != null) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Çalışma Konun",
-                        fontSize = 14.sp,
-                        color = Color(0xFF6B7280),
-                        fontWeight = FontWeight.Medium
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "${grade}. Sınıf $subject",
-                        fontSize = 16.sp,
-                        color = Color(0xFF1976D2),
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    Text(
-                        text = chapter,
-                        fontSize = 18.sp,
-                        color = Color(0xFF3C0A8D),
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
         // Study method buttons
         Column(
             modifier = Modifier.fillMaxSize()

@@ -77,7 +77,7 @@ val grade10PhilosophyChapters = listOf(
 
 val grade10PhysicsChapters = listOf(
     ChapterInfo("Kuvvet ve Hareket", "Kuvvetlerin etkileri ve hareket yasalarının incelenmesi", 8, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Enerji", "Enerjinin çeşitleri, dönüşümleri ve korunumu yasaları", 7, Color(0xFFFF5722), Color(0xFFFF5722)),
+    ChapterInfo("Enerji", "Enerjinin Çeşitleri, Dönüşümleri ve Korunumu Yasaları", 7, Color(0xFFFF5722), Color(0xFFFF5722)),
     ChapterInfo("Elektrik", "Elektrik yükleri, akım ve devreler", 8, Color(0xFFFF5722), Color(0xFFFF5722)),
     ChapterInfo("Dalgalar", "Dalga hareketi ve özellikleri", 7, Color(0xFFFF5722), Color(0xFFFF5722))
 )
@@ -318,7 +318,7 @@ val chaptersByGradeAndSubject = mapOf(
     // 9th Grade
     GradeSubjectKey(9, "Kimya") to grade9ChemistryChapters,
     GradeSubjectKey(9, "Fizik") to grade9PhysicsChapters,
-    GradeSubjectKey(9, "Türk Dili ve Edebiyati") to grade9TurkishChapters,
+    GradeSubjectKey(9, "Türk Dili ve Edebiyatı") to grade9TurkishChapters,
     GradeSubjectKey(9, "Matematik") to grade9MathChapters,
     GradeSubjectKey(9, "Biyoloji") to grade9BiologyChapters,
     GradeSubjectKey(9, "Coğrafya") to grade9GeographyChapters,
@@ -328,7 +328,7 @@ val chaptersByGradeAndSubject = mapOf(
     // 10th Grade
     GradeSubjectKey(10, "Kimya") to grade10ChemistryChapters ,
     GradeSubjectKey(10, "Fizik") to grade10PhysicsChapters ,
-    GradeSubjectKey(10, "Türk Dili ve Edebiyati") to grade10TurkishChapters ,
+    GradeSubjectKey(10, "Türk Dili ve Edebiyatı") to grade10TurkishChapters ,
     GradeSubjectKey(10, "Matematik") to grade10MathChapters ,
     GradeSubjectKey(10, "Biyoloji") to grade10BiologyChapters,
     GradeSubjectKey(10, "Coğrafya") to grade10GeographyChapters,
