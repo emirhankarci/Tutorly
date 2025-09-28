@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.emirhankarci.tutorly.presentation.ui.components.AutoResizeText
-import com.emirhankarci.tutorly.presentation.viewmodel.LoginViewModel
+import com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowViewModel
 import kotlinx.coroutines.delay
 
 private enum class AnimationState {
@@ -35,7 +35,8 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     onNavigateToAuth: () -> Unit = {},
     onNavigateToMain: () -> Unit = {},
-    viewModel: LoginViewModel = hiltViewModel()
+    onNavigateToProfileBuilding: () -> Unit = {},
+    viewModel: AuthFlowViewModel = hiltViewModel()
 ) {
     var currentState by remember { mutableStateOf(AnimationState.START) }
     val uiState by viewModel.uiState.collectAsState()
@@ -46,11 +47,14 @@ fun SplashScreen(
         currentState = AnimationState.FADE_IN_TEXT
         delay(1500L)
 
-        // Navigate based on authentication state
-        if (uiState.isSignedIn) {
-            onNavigateToMain()
-        } else {
-            onNavigateToAuth()
+        // Navigate based on authentication flow state
+        when (uiState.authFlowState) {
+            com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_LOGIN -> onNavigateToAuth()
+            com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_PROFILE_SETUP -> onNavigateToProfileBuilding()
+            com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.AUTHENTICATED -> onNavigateToMain()
+            com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.LOADING -> {
+                // Stay on splash screen
+            }
         }
     }
 

@@ -33,6 +33,11 @@ fun Navigation() {
                     navController.navigate(Route.MainGraph) {
                         popUpTo(Route.SplashScreen) { inclusive = true }
                     }
+                },
+                onNavigateToProfileBuilding = {
+                    navController.navigate(Route.ProfileBuildingScreen) {
+                        popUpTo(Route.SplashScreen) { inclusive = true }
+                    }
                 }
             )
         }
@@ -43,7 +48,7 @@ fun Navigation() {
             composable<Route.OnboardingFlow> {
                 OnboardingFlow(
                     onSignInSuccess = {
-                        navController.navigate(Route.MainGraph) {
+                        navController.navigate(Route.ProfileBuildingScreen) {
                             popUpTo(Route.AuthGraph) { inclusive = true }
                         }
                     }
@@ -53,7 +58,7 @@ fun Navigation() {
             composable<Route.LoginScreen> {
                 LoginScreen(
                     onSignInSuccess = {
-                        navController.navigate(Route.MainGraph) {
+                        navController.navigate(Route.ProfileBuildingScreen) {
                             popUpTo(Route.AuthGraph) { inclusive = true }
                         }
                     }
@@ -96,7 +101,7 @@ fun Navigation() {
                     ScheduleScreen(
                         modifier = modifier,
                         onAddLesson = {
-                            navController.navigate(Route.ScheduleBuilderScreen)
+                            navController.navigate(Route.AddLessonScreen)
                         },
                         onEditLesson = { lesson ->
                             // For demo purposes, navigate to edit with lesson subject as ID
@@ -330,6 +335,25 @@ fun Navigation() {
                     )
                 }
             }
+
+        }
+
+        // Profile Building Screen - Standalone outside main graph
+        composable<Route.ProfileBuildingScreen> {
+            val authFlowViewModel: com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowViewModel = hiltViewModel()
+            ProfileBuildingScreen(
+                onProfileCompleted = { userProfile ->
+                    authFlowViewModel.onProfileCompleted()
+                    navController.navigate(Route.MainGraph) {
+                        popUpTo(Route.ProfileBuildingScreen) { inclusive = true }
+                    }
+                },
+                onNavigateBack = {
+                    navController.navigate(Route.AuthGraph) {
+                        popUpTo(Route.ProfileBuildingScreen) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

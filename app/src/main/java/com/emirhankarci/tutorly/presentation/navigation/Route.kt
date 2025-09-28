@@ -80,4 +80,7 @@ sealed interface Route {
     @Serializable
     data object StudyWithImageScreen : Route
 
+    @Serializable
+    data object ProfileBuildingScreen : Route
+
 }
