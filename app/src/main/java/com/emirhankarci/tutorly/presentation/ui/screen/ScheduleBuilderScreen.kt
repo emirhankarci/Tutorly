@@ -116,6 +116,7 @@ fun ScheduleBuilderScreen(
 
         var selectedHour by remember(currentDay) { mutableStateOf<String?>(null) }
         var subjectPickerOpen by remember(currentDay) { mutableStateOf(false) }
+        var tempNotes by remember(currentDay) { mutableStateOf("") }
 
         // Hours grid dynamic height
         val hoursColumns = 6
@@ -156,7 +157,7 @@ fun ScheduleBuilderScreen(
                 fontWeight = FontWeight.SemiBold,
                 color = Color.Black
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             // Subjects grid dynamic height
             val subjectsList = uiState.subjects.distinct()
             val subjectsColumns = 3
@@ -176,9 +177,10 @@ fun ScheduleBuilderScreen(
                         MiniSubjectCard(
                             info = info,
                             onClick = {
-                                viewModel.addLesson(currentDay, selectedHour!!, subject)
+                                viewModel.addLesson(currentDay, selectedHour!!, subject, notes = tempNotes)
                                 subjectPickerOpen = false
                                 selectedHour = null
+                                tempNotes = ""
                             }
                         )
                     } else {
@@ -191,14 +193,22 @@ fun ScheduleBuilderScreen(
                             height =140.dp,
                             fontSize = 16.sp,
                             onClick = {
-                                viewModel.addLesson(currentDay, selectedHour!!, subject)
+                                viewModel.addLesson(currentDay, selectedHour!!, subject, notes = tempNotes)
                                 subjectPickerOpen = false
                                 selectedHour = null
+                                tempNotes = ""
                             }
                         )
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            // Temporary notes input positioned under subjects
+            NotesInputSection(
+                notes = tempNotes,
+                onNotesChange = { tempNotes = it }
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -230,7 +240,8 @@ fun ScheduleBuilderScreen(
                         title = item.subject,
                         time = item.time,
                         borderColor = info?.borderColor ?: MaterialTheme.colorScheme.primary,
-                        textColor = Color.Black
+                        textColor = Color.Black,
+                        notes = item.notes
                     )
                 }
             }
@@ -369,7 +380,8 @@ private fun SummaryTutorlyMini(
     title: String,
     time: String,
     borderColor: Color,
-    textColor: Color
+    textColor: Color,
+    notes: String = ""
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -385,6 +397,10 @@ private fun SummaryTutorlyMini(
             Text(title, fontWeight = FontWeight.Bold, color = textColor, textAlign = TextAlign.Center)
             Spacer(Modifier.height(4.dp))
             Text(time, color = textColor.copy(alpha = 0.7f), fontSize = 12.sp, textAlign = TextAlign.Center)
+            if (notes.isNotBlank()) {
+                Spacer(Modifier.height(4.dp))
+                Text(notes, color = textColor.copy(alpha = 0.85f), fontSize = 12.sp, textAlign = TextAlign.Center)
+            }
         }
     }
 }

@@ -40,6 +40,7 @@ fun EditLessonScreen(
     var time by remember { mutableStateOf(lesson?.time ?: "") }
     var duration by remember { mutableStateOf(lesson?.duration?.replace(" dk", "") ?: "") }
     var selectedColor by remember { mutableStateOf(lesson?.color ?: Color(0xFF2196F3)) }
+    var notes by remember { mutableStateOf(lesson?.notes ?: "") }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     val subjectColors = listOf(
@@ -93,6 +94,14 @@ fun EditLessonScreen(
             )
         }
 
+        // Notes Input
+        item {
+            NotesInputSection(
+                notes = notes,
+                onNotesChange = { notes = it }
+            )
+        }
+
         // Color Selection
         item {
             ColorSelectionSection(
@@ -112,7 +121,8 @@ fun EditLessonScreen(
                         time = time,
                         duration = "$duration dk",
                         color = selectedColor,
-                        day = selectedDay
+                        day = selectedDay,
+                        notes = notes
                     )
                     onSaveLesson(updatedLesson)
                 }

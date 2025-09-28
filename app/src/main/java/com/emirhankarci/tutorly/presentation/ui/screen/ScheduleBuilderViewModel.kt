@@ -42,13 +42,14 @@ class ScheduleBuilderViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ScheduleBuilderUiState())
     val uiState: StateFlow<ScheduleBuilderUiState> = _uiState.asStateFlow()
 
-    fun addLesson(day: String, time: String, subject: String) {
+    fun addLesson(day: String, time: String, subject: String, notes: String = "") {
         val newItem = UserScheduleItem(
             id = UUID.randomUUID().toString(),
             subject = subject,
             day = day,
             time = time,
-            duration = "60 dk"
+            duration = "60 dk",
+            notes = notes
         )
         val updated = _uiState.value.selections.toMutableMap()
         val list = updated[day].orEmpty() + newItem

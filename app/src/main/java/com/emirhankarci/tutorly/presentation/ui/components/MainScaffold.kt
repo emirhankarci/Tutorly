@@ -53,6 +53,11 @@ fun MainScaffold(
             colors = listOf(Color(0xFF8E24AA), Color(0xFF5E35B1))
         )
     }
+    val addLessonGradient = remember {
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF667eea), Color(0xFF764ba2))
+        )
+    }
     val settingsGradient = remember {
         Brush.linearGradient(
             colors = listOf(Color(0xFF424242), Color(0xFF616161))
@@ -82,6 +87,7 @@ fun MainScaffold(
             }
             currentRoute == Route.HomeScreen::class.qualifiedName -> homeGradient
             currentRoute == Route.ScheduleScreen::class.qualifiedName -> scheduleGradient
+            currentRoute == Route.AddLessonScreen::class.qualifiedName -> addLessonGradient
             currentRoute == Route.SettingsScreen::class.qualifiedName -> settingsGradient
             currentRoute == Route.GradeSelectionScreen::class.qualifiedName ||
             currentRoute?.substringBefore("/") in setOf(
@@ -280,6 +286,7 @@ fun MainScaffold(
                                 Text(
                                     text = when {
                                         currentRoute == Route.ScheduleScreen::class.qualifiedName -> "Ders Programı"
+                                        currentRoute == Route.AddLessonScreen::class.qualifiedName -> "Yeni Ders Ekle"
                                         currentRoute == Route.SettingsScreen::class.qualifiedName -> "Ayarlar"
                                         else -> "Tutorly"
                                     },

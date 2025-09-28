@@ -7,7 +7,8 @@ data class ScheduleItem(
     val time: String,
     val duration: String,
     val color: Color,
-    val day: String
+    val day: String,
+    val notes: String = ""
 )
 
 object ScheduleData {

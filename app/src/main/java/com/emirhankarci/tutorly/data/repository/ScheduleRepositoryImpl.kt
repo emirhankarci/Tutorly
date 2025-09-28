@@ -25,6 +25,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 "duration" to lesson.duration,
                 "day" to lesson.day,
                 "color" to lesson.color.value.toLong(), // Store color as Long
+                "notes" to lesson.notes,
                 "createdAt" to com.google.firebase.Timestamp.now(),
                 "userId" to userId
             )
@@ -57,7 +58,8 @@ class ScheduleRepositoryImpl @Inject constructor(
                         time = data["time"] as? String ?: "",
                         duration = data["duration"] as? String ?: "",
                         day = data["day"] as? String ?: "",
-                        color = androidx.compose.ui.graphics.Color((data["color"] as? Long ?: 0xFF2196F3).toULong())
+                        color = androidx.compose.ui.graphics.Color((data["color"] as? Long ?: 0xFF2196F3).toULong()),
+                        notes = data["notes"] as? String ?: ""
                     )
                 } catch (e: Exception) {
                     null // Skip malformed lessons
@@ -93,6 +95,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 "duration" to lesson.duration,
                 "day" to lesson.day,
                 "color" to lesson.color.value.toLong(),
+                "notes" to lesson.notes,
                 "updatedAt" to com.google.firebase.Timestamp.now()
             )
 

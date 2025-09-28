@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -26,8 +27,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Calendar
+import com.emirhankarci.tutorly.R
 import com.emirhankarci.tutorly.domain.entity.ScheduleData
 import com.emirhankarci.tutorly.domain.entity.ScheduleItem
+
+@Composable
+fun NotesInputSection(
+    notes: String,
+    onNotesChange: (String) -> Unit
+) {
+    Column {
+        Text(
+            text = "Not / Konu",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF667eea),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        OutlinedTextField(
+            value = notes,
+            onValueChange = onNotesChange,
+            placeholder = { Text("Fonksiyonlar, dil bilgisi, vektörler...") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = Color(0xFF667eea),
+                unfocusedBorderColor = Color.Gray
+            )
+        )
+    }
+}
 
 @Composable
 fun AddLessonScreen(
@@ -40,6 +72,7 @@ fun AddLessonScreen(
     var time by remember { mutableStateOf("") }
     var duration by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf(Color(0xFF2196F3)) }
+    var notes by remember { mutableStateOf("") }
 
     val subjectColors = listOf(
         Color(0xFF2196F3), // Blue
@@ -58,16 +91,20 @@ fun AddLessonScreen(
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // Header
-        item {
-            AddLessonHeader(onBackPressed = onBackPressed)
-        }
+        // Header removed; top bar now shows title
 
         // Subject Input
         item {
             SubjectInputSection(
                 subject = subject,
                 onSubjectChange = { subject = it }
+            )
+        }
+        // Notes Input
+        item {
+            NotesInputSection(
+                notes = notes,
+                onNotesChange = { notes = it }
             )
         }
 
@@ -89,6 +126,8 @@ fun AddLessonScreen(
             )
         }
 
+
+
         // Color Selection
         item {
             ColorSelectionSection(
@@ -108,7 +147,8 @@ fun AddLessonScreen(
                         time = time,
                         duration = "$duration dk",
                         color = selectedColor,
-                        day = selectedDay
+                        day = selectedDay,
+                        notes = notes
                     )
                     onSaveLesson(newLesson)
                 }
@@ -160,7 +200,7 @@ fun SubjectInputSection(
             text = "Ders Adı",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color =  Color(0xFF667eea),
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -190,7 +230,7 @@ fun DaySelectionSection(
             text = "Gün Seçimi",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color =Color(0xFF667eea),
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
@@ -251,7 +291,7 @@ fun TimeInputSection(
             text = "Saat ve Süre",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color =Color(0xFF667eea),
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
@@ -295,7 +335,7 @@ fun ColorSelectionSection(
             text = "Renk Seçimi",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color =Color(0xFF667eea),
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
@@ -399,12 +439,13 @@ private fun TimePickerField(
         trailingIcon = {
             IconButton(onClick = { showTimePicker = true }) {
                 Icon(
-                    imageVector = Icons.Default.Star,
+                    painter = painterResource(id = R.drawable.timer),
                     contentDescription = "Select Time",
                     tint = Color(0xFF667eea)
                 )
             }
-        },
+        }
+        ,
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.White,
