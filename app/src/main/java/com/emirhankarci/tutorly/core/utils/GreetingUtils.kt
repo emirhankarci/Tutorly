@@ -22,7 +22,7 @@ object GreetingUtils {
 
         return when (hour) {
             in 5..11 -> "Günaydın"
-            in 12..16 -> "İyi Öğlen"
+            in 12..16 -> "Tünaydın"
             in 17..21 -> "İyi Akşamlar"
             else -> "İyi Geceler"
         }

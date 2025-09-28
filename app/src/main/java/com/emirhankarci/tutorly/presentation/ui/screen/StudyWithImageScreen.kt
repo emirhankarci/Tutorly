@@ -53,36 +53,6 @@ fun StudyWithImageScreen(
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
-        // Header
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(0.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackPressed) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF2D3748)
-                    )
-                }
-
-                Text(
-                    text = "Study with Image",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2D3748),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
 
         // Content
         LazyColumn(
@@ -94,36 +64,49 @@ fun StudyWithImageScreen(
             // Prompt Input Section
             item {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = "Describe the image you want to generate",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF2D3748),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor =Color(0xFFF0F9FF)),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Öğrenmek istediğin dersi tarif et",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Normal,
+                                color =  Color(0xFF0723A4),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
 
-                        OutlinedTextField(
-                            value = promptText,
-                            onValueChange = { promptText = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = {
-                                Text(
-                                    text = "e.g., A colorful diagram showing the water cycle with labels in Turkish",
-                                    color = Color.Gray
+                            OutlinedTextField(
+                                value = promptText,
+
+                                onValueChange = { promptText = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                placeholder = {
+                                    Text(
+                                        text = "Örn:Fizikte vektörler konusunu baştan sona detaylıca anlat.",
+
+                                        color = Color.Gray
+                                    )
+                                },
+                                minLines = 3,
+                                maxLines = 5,
+                                shape = RoundedCornerShape(8.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = Color.White,
+                                    unfocusedContainerColor = Color.White,
+                                    focusedBorderColor = Color.White,
+                                    unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                                    cursorColor = Color(0xFF5E35B1),
+                                    focusedTextColor = Color(0xFF2D3748),
+                                    unfocusedTextColor = Color(0xFF2D3748),
+                                    focusedPlaceholderColor = Color.Gray,
+                                    unfocusedPlaceholderColor = Color.Gray
                                 )
-                            },
-                            minLines = 3,
-                            maxLines = 5,
-                            shape = RoundedCornerShape(8.dp)
-                        )
+                            )
 
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -133,10 +116,15 @@ fun StudyWithImageScreen(
                                     viewModel.generateImage(promptText)
                                 }
                             },
-                            modifier = Modifier.align(Alignment.End),
+                            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp),
+                            shape = RoundedCornerShape(10.dp),
                             enabled = promptText.isNotBlank() && !uiState.isLoading,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF667eea)
+                                containerColor =Color(0xFF0723A4),
+                                disabledContainerColor = Color.White,
+                                disabledContentColor = Color.Black,
+                                contentColor = Color.White,
+
                             )
                         ) {
                             if (uiState.isLoading) {
@@ -147,7 +135,10 @@ fun StudyWithImageScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                             }
-                            Text("Generate Image")
+                            Text(
+                                text = "Konuyu Görsellerle Anlat",
+
+                            )
                         }
                     }
                 }
@@ -225,7 +216,7 @@ fun StudyWithImageScreen(
                                 }
                             }
 
-                            if (uiState.prompt.isNotEmpty()) {
+                         /*   if (uiState.prompt.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "Prompt: ${uiState.prompt}",
@@ -233,7 +224,7 @@ fun StudyWithImageScreen(
                                     color = Color.Gray,
                                     modifier = Modifier.fillMaxWidth()
                                 )
-                            }
+                            }*/
                         }
                     }
                 }
@@ -281,17 +272,17 @@ fun StudyWithImageScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = "💡 Tips for better results",
+                            text = "💡 Daha iyi sonuçlar için ipuçları",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF1565C0)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "• Be specific about what you want to see\n" +
-                                    "• Include educational context (diagrams, charts, etc.)\n" +
-                                    "• Mention if you want labels or text in Turkish\n" +
-                                    "• Specify colors or style preferences",
+                            text = "• Ne görmek istediğini ayrıntılı yaz\n" +
+                                    "• Eğitim bağlamını belirt (şema, grafik vb.)\n" +
+                                    "• Etiketlerin/metinlerin Türkçe olmasını iste\n" +
+                                    "• Renk veya stil tercihlerini ekle",
                             fontSize = 14.sp,
                             color = Color(0xFF1565C0)
                         )

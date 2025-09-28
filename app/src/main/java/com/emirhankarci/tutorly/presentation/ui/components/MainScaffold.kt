@@ -63,6 +63,11 @@ fun MainScaffold(
             colors = listOf(Color(0xFF424242), Color(0xFF616161))
         )
     }
+    val studyWithImageGradient = remember {
+        Brush.linearGradient(
+            colors = listOf( Color(0xFF0723A4),Color(0xFF5E35B1))
+        )
+    }
     val studyGradient = remember {
         Brush.linearGradient(
             colors = listOf(Color(0xFF1976D2), Color(0xFF041D5A))
@@ -86,6 +91,7 @@ fun MainScaffold(
                 Brush.linearGradient(colors = listOf(subjectColor, subjectColor))
             }
             currentRoute == Route.HomeScreen::class.qualifiedName -> homeGradient
+            currentRoute == Route.StudyWithImageScreen::class.qualifiedName -> studyWithImageGradient
             currentRoute == Route.ScheduleScreen::class.qualifiedName -> scheduleGradient
             currentRoute == Route.AddLessonScreen::class.qualifiedName -> addLessonGradient
             currentRoute == Route.SettingsScreen::class.qualifiedName -> settingsGradient
@@ -140,6 +146,53 @@ fun MainScaffold(
                                     tint = Color.White
                                 )
                             }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .background(brush)
+                            .statusBarsPadding()
+                    )
+                }
+                currentRoute == Route.StudyWithImageScreen::class.qualifiedName -> {
+                    TopAppBar(
+                        title = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Görsel ile Çalış",
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(
+                                            color = Color.White,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Back",
+                                        tint = Color(0xFF0C83B7),
+                                        modifier = Modifier
+                                            .size(22.dp)
+                                    )
+                                }
+                            }
+                        },
+                        actions = {
+                            Box(modifier = Modifier.size(48.dp))
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent
