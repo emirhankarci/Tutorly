@@ -46,23 +46,61 @@ fun Navigation() {
             startDestination = Route.OnboardingFlow
         ) {
             composable<Route.OnboardingFlow> {
+                val authFlowViewModel: com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowViewModel = hiltViewModel()
+                val authFlowState by authFlowViewModel.uiState.collectAsState()
+
                 OnboardingFlow(
                     onSignInSuccess = {
-                        navController.navigate(Route.ProfileBuildingScreen) {
-                            popUpTo(Route.AuthGraph) { inclusive = true }
-                        }
+                        // Let AuthFlowViewModel handle the navigation decision
+                        authFlowViewModel.onLoginSuccess()
                     }
                 )
+
+                // Listen for auth state changes and navigate accordingly
+                LaunchedEffect(authFlowState.authFlowState) {
+                    when (authFlowState.authFlowState) {
+                        com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_PROFILE_SETUP -> {
+                            navController.navigate(Route.ProfileBuildingScreen) {
+                                popUpTo(Route.AuthGraph) { inclusive = true }
+                            }
+                        }
+                        com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.AUTHENTICATED -> {
+                            navController.navigate(Route.MainGraph) {
+                                popUpTo(Route.AuthGraph) { inclusive = true }
+                            }
+                        }
+                        else -> { /* Stay on auth graph */ }
+                    }
+                }
             }
 
             composable<Route.LoginScreen> {
+                val authFlowViewModel: com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowViewModel = hiltViewModel()
+                val authFlowState by authFlowViewModel.uiState.collectAsState()
+
                 LoginScreen(
                     onSignInSuccess = {
-                        navController.navigate(Route.ProfileBuildingScreen) {
-                            popUpTo(Route.AuthGraph) { inclusive = true }
-                        }
+                        // Let AuthFlowViewModel handle the navigation decision
+                        authFlowViewModel.onLoginSuccess()
                     }
                 )
+
+                // Listen for auth state changes and navigate accordingly
+                LaunchedEffect(authFlowState.authFlowState) {
+                    when (authFlowState.authFlowState) {
+                        com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_PROFILE_SETUP -> {
+                            navController.navigate(Route.ProfileBuildingScreen) {
+                                popUpTo(Route.AuthGraph) { inclusive = true }
+                            }
+                        }
+                        com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.AUTHENTICATED -> {
+                            navController.navigate(Route.MainGraph) {
+                                popUpTo(Route.AuthGraph) { inclusive = true }
+                            }
+                        }
+                        else -> { /* Stay on auth graph */ }
+                    }
+                }
             }
         }
 
@@ -341,12 +379,11 @@ fun Navigation() {
         // Profile Building Screen - Standalone outside main graph
         composable<Route.ProfileBuildingScreen> {
             val authFlowViewModel: com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowViewModel = hiltViewModel()
+            val authFlowState by authFlowViewModel.uiState.collectAsState()
+
             ProfileBuildingScreen(
                 onProfileCompleted = { userProfile ->
                     authFlowViewModel.onProfileCompleted()
-                    navController.navigate(Route.MainGraph) {
-                        popUpTo(Route.ProfileBuildingScreen) { inclusive = true }
-                    }
                 },
                 onNavigateBack = {
                     navController.navigate(Route.AuthGraph) {
@@ -354,6 +391,15 @@ fun Navigation() {
                     }
                 }
             )
+
+            // Listen for auth state changes and navigate when profile is completed
+            LaunchedEffect(authFlowState.authFlowState) {
+                if (authFlowState.authFlowState == com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.AUTHENTICATED) {
+                    navController.navigate(Route.MainGraph) {
+                        popUpTo(Route.ProfileBuildingScreen) { inclusive = true }
+                    }
+                }
+            }
         }
     }
 }

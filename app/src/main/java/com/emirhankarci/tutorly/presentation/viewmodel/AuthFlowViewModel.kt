@@ -52,7 +52,7 @@ class AuthFlowViewModel @Inject constructor(
                     val currentUser = authRepository.getCurrentUser()
                     if (currentUser != null) {
                         // Add a small delay to ensure any recent Firestore writes are available
-                        kotlinx.coroutines.delay(100)
+                        kotlinx.coroutines.delay(500)
                         val profileResult = userProfileRepository.isProfileCompleted(currentUser.uid)
 
                         if (profileResult.isSuccess) {
@@ -99,6 +99,8 @@ class AuthFlowViewModel @Inject constructor(
 
     fun onProfileCompleted() {
         viewModelScope.launch {
+            // Add a small delay to ensure Firestore write is committed
+            kotlinx.coroutines.delay(1000)
             // Recheck the auth state to ensure profile is actually saved
             checkAuthState()
         }
