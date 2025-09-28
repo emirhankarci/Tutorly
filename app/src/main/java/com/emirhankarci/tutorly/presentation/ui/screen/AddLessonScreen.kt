@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
@@ -17,12 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Calendar
 import com.emirhankarci.tutorly.domain.entity.ScheduleData
 import com.emirhankarci.tutorly.domain.entity.ScheduleItem
 
@@ -256,19 +259,10 @@ fun TimeInputSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
-                value = time,
-                onValueChange = onTimeChange,
-                placeholder = { Text("09:00") },
-                label = { Text("Saat") },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedBorderColor = Color(0xFF667eea),
-                    unfocusedBorderColor = Color.Gray
-                )
+            TimePickerField(
+                time = time,
+                onTimeChange = onTimeChange,
+                modifier = Modifier.weight(1f)
             )
 
             OutlinedTextField(
@@ -383,6 +377,84 @@ fun SaveButton(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimePickerField(
+    time: String,
+    onTimeChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showTimePicker by remember { mutableStateOf(false) }
+    val timePickerState = rememberTimePickerState()
+
+    OutlinedTextField(
+        value = time,
+        onValueChange = { }, // Read-only
+        placeholder = { Text("09:00") },
+        label = { Text("Saat") },
+        modifier = modifier,
+        readOnly = true,
+        trailingIcon = {
+            IconButton(onClick = { showTimePicker = true }) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Select Time",
+                    tint = Color(0xFF667eea)
+                )
+            }
+        },
+        shape = RoundedCornerShape(12.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedBorderColor = Color(0xFF667eea),
+            unfocusedBorderColor = Color.Gray
+        )
+    )
+
+    if (showTimePicker) {
+        TimePickerDialog(
+            onTimeSelected = { hour, minute ->
+                val formattedTime = String.format("%02d:%02d", hour, minute)
+                onTimeChange(formattedTime)
+                showTimePicker = false
+            },
+            onDismiss = { showTimePicker = false },
+            timePickerState = timePickerState
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimePickerDialog(
+    onTimeSelected: (hour: Int, minute: Int) -> Unit,
+    onDismiss: () -> Unit,
+    timePickerState: TimePickerState
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Select Time") },
+        text = {
+            TimePicker(state = timePickerState)
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onTimeSelected(timePickerState.hour, timePickerState.minute)
+                }
+            ) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)

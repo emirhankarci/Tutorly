@@ -64,10 +64,16 @@ import com.emirhankarci.tutorly.domain.entity.TutorlyCardItem
 import com.emirhankarci.tutorly.domain.entity.TutorlyCardItemResult
 import com.emirhankarci.tutorly.domain.entity.ScheduleData
 import com.emirhankarci.tutorly.presentation.viewmodel.UserProfileViewModel
+import com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel
+import com.emirhankarci.tutorly.domain.entity.ScheduleItem
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @Composable
 fun HomeScreen(
@@ -75,14 +81,16 @@ fun HomeScreen(
     onNavigateToGradeSelection: () -> Unit = {},
     onNavigateToSchedule: () -> Unit = {},
     onNavigateToEnglishLearning: () -> Unit = {},
-    onNavigateToStudyWithImage: () -> Unit = {}
+    onNavigateToStudyWithImage: () -> Unit = {},
+    scheduleViewModel: ScheduleViewModel? = null
 ) {
     HomeScreenContent(
         modifier = modifier,
         onNavigateToGradeSelection = onNavigateToGradeSelection,
         onNavigateToSchedule = onNavigateToSchedule,
         onNavigateToEnglishLearning = onNavigateToEnglishLearning,
-        onNavigateToStudyWithImage = onNavigateToStudyWithImage
+        onNavigateToStudyWithImage = onNavigateToStudyWithImage,
+        scheduleViewModel = scheduleViewModel ?: hiltViewModel()
     )
 }
 
@@ -94,9 +102,15 @@ fun HomeScreenContent(
     onNavigateToSchedule: () -> Unit = {},
     onNavigateToEnglishLearning: () -> Unit = {},
     onNavigateToStudyWithImage: () -> Unit = {},
-    userProfileViewModel: UserProfileViewModel = hiltViewModel()
+    userProfileViewModel: UserProfileViewModel = hiltViewModel(),
+    scheduleViewModel: ScheduleViewModel = hiltViewModel()
 ) {
     val userProfileState by userProfileViewModel.uiState.collectAsState()
+    val scheduleState by scheduleViewModel.uiState.collectAsState()
+
+    // Find next upcoming lesson
+    val nextLesson = findNextUpcomingLesson(scheduleState.lessons)
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -238,7 +252,7 @@ fun HomeScreenContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    "Study Plan",
+                    "What's Next",
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
@@ -259,7 +273,6 @@ fun HomeScreenContent(
         item { Spacer(Modifier.height(8.dp)) }
 
         item {
-            val nextLesson = ScheduleData.getNextLesson()
             if (nextLesson != null) {
                 TutorlyCard(
                     borderColor = nextLesson.color,
@@ -269,18 +282,20 @@ fun HomeScreenContent(
                     description = "${nextLesson.day} • ${nextLesson.time} • ${nextLesson.duration}",
                     cardHeight = 150.dp,
                     modifier = Modifier.fillMaxWidth(),
-                    isMainCard = true
+                    isMainCard = true,
+                    onClick = { onNavigateToSchedule() }
                 )
             } else {
                 TutorlyCard(
                     borderColor = Color(0xFFed8936),
                     textColor = Color.White,
                     icon = Icons.Default.DateRange,
-                    title = "Ders Yok",
-                    description = "Bugün hiç ders yok 🎉",
+                    title = "No Lessons Today",
+                    description = "You're all caught up! 🎉",
                     cardHeight = 150.dp,
                     modifier = Modifier.fillMaxWidth(),
-                    isMainCard = true
+                    isMainCard = true,
+                    onClick = { onNavigateToSchedule() }
                 )
             }
         }
@@ -468,9 +483,73 @@ private fun TutorlyCardPreview() {
 }
 
 
+// Helper function to find the next upcoming lesson
+private fun findNextUpcomingLesson(lessons: List<ScheduleItem>): ScheduleItem? {
+    if (lessons.isEmpty()) return null
+
+    val calendar = Calendar.getInstance()
+    val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+    val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+    val currentMinute = calendar.get(Calendar.MINUTE)
+    val currentTimeInMinutes = currentHour * 60 + currentMinute
+
+    // Map day names to calendar constants
+    val dayMapping = mapOf(
+        "Monday" to Calendar.MONDAY,
+        "Tuesday" to Calendar.TUESDAY,
+        "Wednesday" to Calendar.WEDNESDAY,
+        "Thursday" to Calendar.THURSDAY,
+        "Friday" to Calendar.FRIDAY,
+        "Saturday" to Calendar.SATURDAY,
+        "Sunday" to Calendar.SUNDAY,
+        "Pazartesi" to Calendar.MONDAY,
+        "Salı" to Calendar.TUESDAY,
+        "Çarşamba" to Calendar.WEDNESDAY,
+        "Perşembe" to Calendar.THURSDAY,
+        "Cuma" to Calendar.FRIDAY,
+        "Cumartesi" to Calendar.SATURDAY,
+        "Pazar" to Calendar.SUNDAY
+    )
+
+    // Filter and sort lessons
+    val upcomingLessons = lessons.mapNotNull { lesson ->
+        val lessonDay = dayMapping[lesson.day] ?: return@mapNotNull null
+
+        // Parse lesson time (format: "HH:MM")
+        val timeParts = lesson.time.split(":")
+        if (timeParts.size != 2) return@mapNotNull null
+
+        val lessonHour = timeParts[0].toIntOrNull() ?: return@mapNotNull null
+        val lessonMinute = timeParts[1].toIntOrNull() ?: return@mapNotNull null
+        val lessonTimeInMinutes = lessonHour * 60 + lessonMinute
+
+        // Calculate days until this lesson
+        val daysUntilLesson = when {
+            lessonDay > currentDayOfWeek -> lessonDay - currentDayOfWeek
+            lessonDay < currentDayOfWeek -> 7 - (currentDayOfWeek - lessonDay)
+            else -> { // Same day
+                if (lessonTimeInMinutes > currentTimeInMinutes) 0 // Today, later
+                else 7 // Next week
+            }
+        }
+
+        // Calculate total minutes until lesson
+        val totalMinutesUntil = when (daysUntilLesson) {
+            0 -> lessonTimeInMinutes - currentTimeInMinutes // Today
+            else -> (daysUntilLesson * 24 * 60) + lessonTimeInMinutes - currentTimeInMinutes
+        }
+
+        if (totalMinutesUntil > 0) {
+            Pair(lesson, totalMinutesUntil)
+        } else null
+    }.sortedBy { it.second }
+
+    return upcomingLessons.firstOrNull()?.first
+}
+
 @Preview
 @Composable
 private fun HomeScreenPrev() {
     HomeScreen(modifier = Modifier.fillMaxSize())
-    
+
 }

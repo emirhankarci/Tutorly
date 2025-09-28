@@ -109,6 +109,8 @@ fun Navigation() {
             startDestination = Route.HomeScreen
         ) {
             composable<Route.HomeScreen> {
+                val scheduleViewModel: com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel =
+                    hiltViewModel(navController.getBackStackEntry(Route.MainGraph))
                 MainScaffold(navController = navController) { modifier ->
                     HomeScreen(
                         modifier = modifier,
@@ -123,7 +125,8 @@ fun Navigation() {
                         },
                         onNavigateToStudyWithImage = {
                             navController.navigate(Route.StudyWithImageScreen)
-                        }
+                        },
+                        scheduleViewModel = scheduleViewModel
                     )
                 }
             }
@@ -135,6 +138,8 @@ fun Navigation() {
             }
 
             composable<Route.ScheduleScreen> {
+                val scheduleViewModel: com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel =
+                    hiltViewModel(navController.getBackStackEntry(Route.MainGraph))
                 MainScaffold(navController = navController) { modifier ->
                     ScheduleScreen(
                         modifier = modifier,
@@ -142,12 +147,13 @@ fun Navigation() {
                             navController.navigate(Route.AddLessonScreen)
                         },
                         onEditLesson = { lesson ->
-                            // For demo purposes, navigate to edit with lesson subject as ID
-                            navController.navigate(Route.EditLessonScreen(lesson.subject))
+                            // For demo purposes, navigate to edit with lesson as string
+                            navController.navigate(Route.EditLessonScreen(lesson.toString()))
                         },
                         onNavigateToProgress = {
                             navController.navigate(Route.ProgressScreen)
-                        }
+                        },
+                        viewModel = scheduleViewModel
                     )
                 }
             }
@@ -269,11 +275,13 @@ fun Navigation() {
             }
 
             composable<Route.AddLessonScreen> {
+                val scheduleViewModel: com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel =
+                    hiltViewModel(navController.getBackStackEntry(Route.MainGraph))
                 MainScaffold(navController = navController) { modifier ->
                     AddLessonScreen(
                         modifier = modifier,
                         onSaveLesson = { lesson ->
-                            // TODO: Save lesson to data source
+                            scheduleViewModel.addLesson(lesson)
                             navController.popBackStack()
                         },
                         onBackPressed = {
