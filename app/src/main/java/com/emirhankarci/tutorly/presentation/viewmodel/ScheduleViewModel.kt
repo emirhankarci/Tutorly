@@ -176,4 +176,27 @@ class ScheduleViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearAllLessons() {
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            if (currentUser != null) {
+                // Get all lessons to delete
+                val lessonsToDelete = _uiState.value.lessons.toList()
+
+                // Clear local state immediately for better UX
+                _uiState.value = _uiState.value.copy(lessons = emptyList())
+
+                // Delete each lesson from Firebase
+                lessonsToDelete.forEach { lesson ->
+                    val result = scheduleRepository.deleteLesson(currentUser.uid, lesson.id)
+                    if (!result.isSuccess) {
+                        _uiState.value = _uiState.value.copy(
+                            errorMessage = result.exceptionOrNull()?.message ?: "Failed to delete lesson: ${lesson.subject}"
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

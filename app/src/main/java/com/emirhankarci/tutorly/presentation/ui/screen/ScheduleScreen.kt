@@ -13,6 +13,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider as Divider
@@ -41,20 +42,13 @@ fun ScheduleScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lessons = uiState.lessons
-    var showLessonPlanDialog by remember { mutableStateOf(false) }
     var selectedLesson by remember { mutableStateOf<ScheduleItem?>(null) }
     var showLessonActionDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
+    var showClearAllConfirmation by remember { mutableStateOf(false) }
 
     val days = listOf("Çalışma Saatleri", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar")
     val dayNames = listOf("", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar")
-
-    // Show dialog when lesson plan is generated
-    LaunchedEffect(uiState.generatedLessonPlan) {
-        if (uiState.generatedLessonPlan != null) {
-            showLessonPlanDialog = true
-        }
-    }
 
     // Function to get lesson for a specific time slot and day
     fun getLessonForTimeSlot(rowIndex: Int, columnIndex: Int): ScheduleItem? {
@@ -174,10 +168,12 @@ fun ScheduleScreen(
                                     text = when {
                                         columnIndex == 0 -> "${8 + rowIndex}:00\n${9 + rowIndex}:00"
                                         lesson != null -> {
-                                            if (lesson.notes.isNotBlank()) {
-                                                "${lesson.subject}\n${lesson.notes}\n$remainingDuration dk"
-                                            } else {
-                                                "${lesson.subject}\n$remainingDuration dk"
+                                            buildString {
+                                                append(lesson.subject)
+                                                if (lesson.topic.isNotBlank()) {
+                                                    append("\n${lesson.topic}")
+                                                }
+                                                append("\n$remainingDuration dk")
                                             }
                                         }
                                         else -> ""
@@ -185,7 +181,7 @@ fun ScheduleScreen(
                                     fontSize = 9.sp,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.onSurface,
-                                    maxLines = 4,
+                                    maxLines = 5,
                                     fontWeight = if (lesson != null) FontWeight.Bold else FontWeight.Normal
                                 )
                             }
@@ -198,7 +194,7 @@ fun ScheduleScreen(
             Spacer(modifier = Modifier.height(80.dp))
         }
 
-        // Floating Action Button
+        // Floating Action Button - Add Lesson Plan
         FloatingActionButton(
             onClick = { onNavigateToLessonPlanChat() },
             modifier = Modifier
@@ -208,6 +204,21 @@ fun ScheduleScreen(
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Create Lesson Plan with AI"
+            )
+        }
+
+        // Floating Action Button - Clear All Lessons
+        FloatingActionButton(
+            onClick = { showClearAllConfirmation = true },
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Clear All Lessons"
             )
         }
 
@@ -302,96 +313,40 @@ fun ScheduleScreen(
             )
         }
 
-        // Lesson Plan Dialog
-        if (showLessonPlanDialog && uiState.generatedLessonPlan != null) {
-            Dialog(
+        // Clear All Confirmation Dialog
+        if (showClearAllConfirmation) {
+            AlertDialog(
                 onDismissRequest = {
-                    showLessonPlanDialog = false
-                    viewModel.clearGeneratedLessonPlan()
-                }
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    showClearAllConfirmation = false
+                },
+                title = {
+                    Text("Tüm Dersleri Temizle")
+                },
+                text = {
+                    Text("Tablodaki tüm dersleri silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.clearAllLessons()
+                            showClearAllConfirmation = false
+                        }
                     ) {
-                        Text(
-                            text = "🤖 AI Ders Planı",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Divider()
-
-                        Text(
-                            text = "AI Cevabı:",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-
-                        Text(
-                            text = uiState.generatedLessonPlan!!,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    MaterialTheme.colorScheme.surfaceVariant,
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = "Parse Edilen Dersler:",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-
-                        // Show parsed lessons
-                        val parsedLessons = com.emirhankarci.tutorly.domain.util.LessonPlanParser.parseAILessonPlan(uiState.generatedLessonPlan!!)
-                        parsedLessons.forEach { lesson ->
-                            Text(
-                                text = "• ${lesson.subject} - ${lesson.day} ${lesson.time} (${lesson.duration})",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
+                        Text("Sil", color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showClearAllConfirmation = false
                         }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            TextButton(
-                                onClick = {
-                                    showLessonPlanDialog = false
-                                    viewModel.clearGeneratedLessonPlan()
-                                }
-                            ) {
-                                Text("Kapat")
-                            }
-                        }
+                    ) {
+                        Text("İptal")
                     }
                 }
-            }
+            )
         }
+
     }
 }
 

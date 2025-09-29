@@ -2,6 +2,8 @@ package com.emirhankarci.tutorly.domain.util
 
 import androidx.compose.ui.graphics.Color
 import com.emirhankarci.tutorly.domain.entity.ScheduleItem
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlin.random.Random
 
 object LessonPlanParser {
@@ -23,10 +25,65 @@ object LessonPlanParser {
         "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"
     )
 
+    private fun parseAsJSON(aiResponse: String): List<ScheduleItem> {
+        try {
+            // Try to find JSON array in the response
+            val jsonStartIndex = aiResponse.indexOf('[')
+            val jsonEndIndex = aiResponse.lastIndexOf(']')
+
+            if (jsonStartIndex != -1 && jsonEndIndex != -1 && jsonStartIndex < jsonEndIndex) {
+                val jsonString = aiResponse.substring(jsonStartIndex, jsonEndIndex + 1)
+                val jsonArray = JSONArray(jsonString)
+                val scheduleItems = mutableListOf<ScheduleItem>()
+
+                for (i in 0 until jsonArray.length()) {
+                    val lessonObj = jsonArray.getJSONObject(i)
+
+                    val dersAdi = lessonObj.optString("ders_adi", "")
+                    val dersKonusu = lessonObj.optString("ders_konusu", "")
+                    val sure = lessonObj.optString("sure", "60")
+                    val saat = lessonObj.optString("saat", "09:00")
+                    val gun = lessonObj.optString("gunu", "Pazartesi")
+
+                    // Format duration
+                    val duration = if (sure.contains("dk")) sure else "$sure dk"
+
+                    // Normalize day name
+                    val normalizedDay = daysOfWeek.find {
+                        gun.contains(it, ignoreCase = true)
+                    } ?: gun
+
+                    scheduleItems.add(
+                        ScheduleItem(
+                            subject = dersAdi.ifBlank { "Ders" },
+                            topic = dersKonusu,
+                            time = saat,
+                            duration = duration,
+                            color = subjectColors[i % subjectColors.size],
+                            day = normalizedDay,
+                            notes = ""
+                        )
+                    )
+                }
+
+                return scheduleItems
+            }
+        } catch (e: Exception) {
+            // JSON parsing failed, will try other strategies
+        }
+
+        return emptyList()
+    }
+
     fun parseAILessonPlan(aiResponse: String): List<ScheduleItem> {
         val scheduleItems = mutableListOf<ScheduleItem>()
 
         try {
+            // Strategy 1: Try to parse as JSON first
+            val jsonLessons = parseAsJSON(aiResponse)
+            if (jsonLessons.isNotEmpty()) {
+                return jsonLessons
+            }
             // Normalize the text first
             val normalizedText = aiResponse.lowercase()
             val lines = aiResponse.split("\n").map { it.trim() }.filter { it.isNotEmpty() }

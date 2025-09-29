@@ -22,6 +22,7 @@ class ScheduleRepositoryImpl @Inject constructor(
             val lessonData = mapOf(
                 "id" to lesson.id,
                 "subject" to lesson.subject,
+                "topic" to lesson.topic,
                 "time" to lesson.time,
                 "duration" to lesson.duration,
                 "day" to lesson.day,
@@ -58,6 +59,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                     ScheduleItem(
                         id = data["id"] as? String ?: document.id, // Use stored ID or document ID as fallback
                         subject = data["subject"] as? String ?: "",
+                        topic = data["topic"] as? String ?: "",
                         time = data["time"] as? String ?: "",
                         duration = data["duration"] as? String ?: "",
                         day = data["day"] as? String ?: "",
@@ -94,6 +96,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         return try {
             val lessonData = mapOf(
                 "subject" to lesson.subject,
+                "topic" to lesson.topic,
                 "time" to lesson.time,
                 "duration" to lesson.duration,
                 "day" to lesson.day,

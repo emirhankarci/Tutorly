@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 data class ScheduleItem(
     val id: String = java.util.UUID.randomUUID().toString(),
     val subject: String,
+    val topic: String = "",
     val time: String,
     val duration: String,
     val color: Color,
