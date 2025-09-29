@@ -51,7 +51,7 @@ sealed interface Route {
     data class StudyMethodScreen(val grade: Int, val subject: String, val chapter: String) : Route
 
     @Serializable
-    data object AddLessonScreen : Route
+    data class AddLessonScreen(val day: String? = null, val time: String? = null) : Route
 
     @Serializable
     data class EditLessonScreen(val lessonId: String) : Route

@@ -64,12 +64,14 @@ fun NotesInputSection(
 @Composable
 fun AddLessonScreen(
     modifier: Modifier = Modifier,
+    preSelectedDay: String? = null,
+    preSelectedTime: String? = null,
     onSaveLesson: (ScheduleItem) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
     var subject by remember { mutableStateOf("") }
-    var selectedDay by remember { mutableStateOf("Pazartesi") }
-    var time by remember { mutableStateOf("") }
+    var selectedDay by remember { mutableStateOf(preSelectedDay ?: "Pazartesi") }
+    var time by remember { mutableStateOf(preSelectedTime ?: "") }
     var duration by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf(Color(0xFF2196F3)) }
     var notes by remember { mutableStateOf("") }
@@ -112,7 +114,8 @@ fun AddLessonScreen(
         item {
             DaySelectionSection(
                 selectedDay = selectedDay,
-                onDaySelected = { selectedDay = it }
+                onDaySelected = { selectedDay = it },
+                isEditable = preSelectedDay == null
             )
         }
 
@@ -122,7 +125,8 @@ fun AddLessonScreen(
                 time = time,
                 onTimeChange = { time = it },
                 duration = duration,
-                onDurationChange = { duration = it }
+                onDurationChange = { duration = it },
+                isTimeEditable = preSelectedTime == null
             )
         }
 
@@ -223,7 +227,8 @@ fun SubjectInputSection(
 @Composable
 fun DaySelectionSection(
     selectedDay: String,
-    onDaySelected: (String) -> Unit
+    onDaySelected: (String) -> Unit,
+    isEditable: Boolean = true
 ) {
     Column {
         Text(
@@ -234,15 +239,41 @@ fun DaySelectionSection(
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(ScheduleData.weekDays) { day ->
-                DaySelectionCard(
-                    day = day,
-                    isSelected = day == selectedDay,
-                    onClick = { onDaySelected(day) }
+        if (isEditable) {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(ScheduleData.weekDays) { day ->
+                    DaySelectionCard(
+                        day = day,
+                        isSelected = day == selectedDay,
+                        onClick = { onDaySelected(day) }
+                    )
+                }
+            }
+        } else {
+            // Show selected day as non-editable
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF667eea)
                 )
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = selectedDay,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
@@ -284,7 +315,8 @@ fun TimeInputSection(
     time: String,
     onTimeChange: (String) -> Unit,
     duration: String,
-    onDurationChange: (String) -> Unit
+    onDurationChange: (String) -> Unit,
+    isTimeEditable: Boolean = true
 ) {
     Column {
         Text(
@@ -299,11 +331,29 @@ fun TimeInputSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            TimePickerField(
-                time = time,
-                onTimeChange = onTimeChange,
-                modifier = Modifier.weight(1f)
-            )
+            if (isTimeEditable) {
+                TimePickerField(
+                    time = time,
+                    onTimeChange = onTimeChange,
+                    modifier = Modifier.weight(1f)
+                )
+            } else {
+                // Show time as non-editable
+                OutlinedTextField(
+                    value = time,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("Saat") },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFF5F5F5),
+                        unfocusedContainerColor = Color(0xFFF5F5F5),
+                        focusedBorderColor = Color(0xFF667eea),
+                        unfocusedBorderColor = Color.Gray
+                    )
+                )
+            }
 
             OutlinedTextField(
                 value = duration,

@@ -1,10 +1,15 @@
 package com.emirhankarci.tutorly.presentation.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
@@ -15,8 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.emirhankarci.tutorly.domain.entity.ScheduleData
 import com.emirhankarci.tutorly.domain.entity.ScheduleItem
@@ -25,7 +32,7 @@ import com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    onAddLesson: () -> Unit = {},
+    onAddLesson: (String?, String?) -> Unit = { _, _ -> },
     onEditLesson: (Any) -> Unit = {},
     onNavigateToProgress: () -> Unit = {},
     viewModel: ScheduleViewModel = hiltViewModel()
@@ -33,148 +40,155 @@ fun ScheduleScreen(
     val uiState by viewModel.uiState.collectAsState()
     val lessons = uiState.lessons
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Header
-        Text(
-            text = "Schedule",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+    val days = listOf("Çalışma Saatleri", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar")
+    val dayNames = listOf("", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar")
 
-        // Quick Actions
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+    // Function to get lesson for a specific time slot and day
+    fun getLessonForTimeSlot(rowIndex: Int, columnIndex: Int): ScheduleItem? {
+        if (columnIndex == 0) return null // Time column
+        val dayName = dayNames[columnIndex]
+        val currentHour = 8 + rowIndex
+
+        return lessons.find { lesson ->
+            if (lesson.day != dayName) return@find false
+
+            // Parse lesson start time
+            val lessonStartHour = try {
+                lesson.time.substring(0, 2).toInt()
+            } catch (e: Exception) { 0 }
+
+            // Parse lesson duration (remove "dk" suffix and convert to int)
+            val lessonDurationMinutes = try {
+                lesson.duration.replace(" dk", "").replace("dk", "").trim().toInt()
+            } catch (e: Exception) { 60 }
+
+            // Calculate how many hours this lesson spans
+            val lessonDurationHours = (lessonDurationMinutes + 59) / 60 // Round up to next hour
+            val lessonEndHour = lessonStartHour + lessonDurationHours
+
+            // Check if current time slot falls within this lesson's time range
+            currentHour >= lessonStartHour && currentHour < lessonEndHour
+        }
+    }
+
+    // Function to get the remaining duration for a specific cell in a lesson
+    fun getRemainingDurationForCell(rowIndex: Int, columnIndex: Int, lesson: ScheduleItem?): Int {
+        if (lesson == null || columnIndex == 0) return 0
+
+        val currentHour = 8 + rowIndex
+        val lessonStartHour = try {
+            lesson.time.substring(0, 2).toInt()
+        } catch (e: Exception) { 0 }
+
+        val lessonDurationMinutes = try {
+            lesson.duration.replace(" dk", "").replace("dk", "").trim().toInt()
+        } catch (e: Exception) { 60 }
+
+        // Calculate how many minutes have passed since lesson start
+        val minutesSinceStart = (currentHour - lessonStartHour) * 60
+
+        // Calculate remaining duration for this cell (max 60 minutes per cell)
+        val remainingTotal = lessonDurationMinutes - minutesSinceStart
+        return minOf(remainingTotal, 60) // Each cell represents max 60 minutes
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Add Lesson Button
-            Card(
-                modifier = Modifier.weight(1f),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
-                onClick = onAddLesson
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Lesson",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Add Lesson",
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            // View Progress Button
-            Card(
-                modifier = Modifier.weight(1f),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                ),
-                onClick = onNavigateToProgress
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "View Progress",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Progress",
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-        }
-
-        // Error Message
-        uiState.errorMessage?.let { error ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Text(
-                    text = error,
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-
-        // Loading State
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        // Lessons List
-        else if (lessons.isEmpty()) {
-            // Empty State
+            // Table with horizontal scroll
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .horizontalScroll(rememberScrollState())
             ) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "No lessons yet",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Tap 'Add Lesson' to create your first lesson",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
-            }
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(lessons) { lesson ->
-                    SimpleScheduleCard(
-                        lesson = lesson
-                    )
+                // Header row
+                Row(modifier = Modifier.width(IntrinsicSize.Max)) {
+                    days.forEach { day ->
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .border(1.dp, Color.Black)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = day,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                maxLines = 2
+                            )
+                        }
+                    }
+                }
+
+                // Data rows - 10 rows for better visibility
+                repeat(10) { rowIndex ->
+                    Row(modifier = Modifier.width(IntrinsicSize.Max)) {
+                        repeat(8) { columnIndex ->
+                            val lesson = getLessonForTimeSlot(rowIndex, columnIndex)
+                            val remainingDuration = getRemainingDurationForCell(rowIndex, columnIndex, lesson)
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .border(1.dp, Color.Black)
+                                    .background(
+                                        if (lesson != null) lesson.color.copy(alpha = 0.3f) else Color.Transparent
+                                    )
+                                    .clickable(enabled = columnIndex > 0 && lesson == null) {
+                                        if (columnIndex > 0 && lesson == null) {
+                                            val dayName = dayNames[columnIndex]
+                                            val timeSlot = String.format("%02d:00", 8 + rowIndex)
+                                            onAddLesson(dayName, timeSlot)
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = when {
+                                        columnIndex == 0 -> "${8 + rowIndex}:00\n${9 + rowIndex}:00"
+                                        lesson != null -> {
+                                            if (lesson.notes.isNotBlank()) {
+                                                "${lesson.subject}\n${lesson.notes}\n$remainingDuration dk"
+                                            } else {
+                                                "${lesson.subject}\n$remainingDuration dk"
+                                            }
+                                        }
+                                        else -> ""
+                                    },
+                                    fontSize = 9.sp,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 4,
+                                    fontWeight = if (lesson != null) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
+                        }
+                    }
                 }
             }
+
+            // Add some bottom padding to account for the floating action button
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+
+        // Floating Action Button
+        FloatingActionButton(
+            onClick = { onAddLesson(null, null) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Lesson"
+            )
         }
     }
 }

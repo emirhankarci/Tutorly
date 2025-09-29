@@ -143,8 +143,8 @@ fun Navigation() {
                 MainScaffold(navController = navController) { modifier ->
                     ScheduleScreen(
                         modifier = modifier,
-                        onAddLesson = {
-                            navController.navigate(Route.AddLessonScreen)
+                        onAddLesson = { day, time ->
+                            navController.navigate(Route.AddLessonScreen(day, time))
                         },
                         onEditLesson = { lesson ->
                             // For demo purposes, navigate to edit with lesson as string
@@ -274,12 +274,15 @@ fun Navigation() {
                 }
             }
 
-            composable<Route.AddLessonScreen> {
+            composable<Route.AddLessonScreen> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.AddLessonScreen>()
                 val scheduleViewModel: com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel =
                     hiltViewModel(navController.getBackStackEntry(Route.MainGraph))
                 MainScaffold(navController = navController) { modifier ->
                     AddLessonScreen(
                         modifier = modifier,
+                        preSelectedDay = route.day,
+                        preSelectedTime = route.time,
                         onSaveLesson = { lesson ->
                             scheduleViewModel.addLesson(lesson)
                             navController.popBackStack()
