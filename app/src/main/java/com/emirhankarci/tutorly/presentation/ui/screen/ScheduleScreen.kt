@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider as Divider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,15 +34,27 @@ import com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
     onAddLesson: (String?, String?) -> Unit = { _, _ -> },
-    onEditLesson: (Any) -> Unit = {},
+    onEditLesson: (ScheduleItem) -> Unit = {},
     onNavigateToProgress: () -> Unit = {},
+    onNavigateToLessonPlanChat: () -> Unit = {},
     viewModel: ScheduleViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lessons = uiState.lessons
+    var showLessonPlanDialog by remember { mutableStateOf(false) }
+    var selectedLesson by remember { mutableStateOf<ScheduleItem?>(null) }
+    var showLessonActionDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     val days = listOf("Çalışma Saatleri", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar")
     val dayNames = listOf("", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar")
+
+    // Show dialog when lesson plan is generated
+    LaunchedEffect(uiState.generatedLessonPlan) {
+        if (uiState.generatedLessonPlan != null) {
+            showLessonPlanDialog = true
+        }
+    }
 
     // Function to get lesson for a specific time slot and day
     fun getLessonForTimeSlot(rowIndex: Int, columnIndex: Int): ScheduleItem? {
@@ -141,11 +154,18 @@ fun ScheduleScreen(
                                     .background(
                                         if (lesson != null) lesson.color.copy(alpha = 0.3f) else Color.Transparent
                                     )
-                                    .clickable(enabled = columnIndex > 0 && lesson == null) {
-                                        if (columnIndex > 0 && lesson == null) {
-                                            val dayName = dayNames[columnIndex]
-                                            val timeSlot = String.format("%02d:00", 8 + rowIndex)
-                                            onAddLesson(dayName, timeSlot)
+                                    .clickable(enabled = columnIndex > 0) {
+                                        if (columnIndex > 0) {
+                                            if (lesson != null) {
+                                                // Show action dialog for existing lesson
+                                                selectedLesson = lesson
+                                                showLessonActionDialog = true
+                                            } else {
+                                                // Add new lesson
+                                                val dayName = dayNames[columnIndex]
+                                                val timeSlot = String.format("%02d:00", 8 + rowIndex)
+                                                onAddLesson(dayName, timeSlot)
+                                            }
                                         }
                                     },
                                 contentAlignment = Alignment.Center
@@ -180,15 +200,197 @@ fun ScheduleScreen(
 
         // Floating Action Button
         FloatingActionButton(
-            onClick = { onAddLesson(null, null) },
+            onClick = { onNavigateToLessonPlanChat() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Add Lesson"
+                contentDescription = "Create Lesson Plan with AI"
             )
+        }
+
+        // Lesson Action Dialog
+        if (showLessonActionDialog && selectedLesson != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    showLessonActionDialog = false
+                    selectedLesson = null
+                },
+                title = {
+                    Text("Ders Seçenekleri")
+                },
+                text = {
+                    Text("${selectedLesson!!.subject} dersi için ne yapmak istiyorsunuz?")
+                },
+                confirmButton = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        TextButton(
+                            onClick = {
+                                selectedLesson?.let { lesson ->
+                                    onEditLesson(lesson)
+                                }
+                                showLessonActionDialog = false
+                                selectedLesson = null
+                            }
+                        ) {
+                            Text("Düzenle")
+                        }
+
+                        TextButton(
+                            onClick = {
+                                showDeleteConfirmation = true
+                                showLessonActionDialog = false
+                            }
+                        ) {
+                            Text("Sil")
+                        }
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showLessonActionDialog = false
+                            selectedLesson = null
+                        }
+                    ) {
+                        Text("İptal")
+                    }
+                }
+            )
+        }
+
+        // Delete Confirmation Dialog
+        if (showDeleteConfirmation && selectedLesson != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    showDeleteConfirmation = false
+                    selectedLesson = null
+                },
+                title = {
+                    Text("Dersi Sil")
+                },
+                text = {
+                    Text("${selectedLesson!!.subject} dersini silmek istediğinize emin misiniz?")
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            selectedLesson?.let { lesson ->
+                                viewModel.removeLesson(lesson)
+                            }
+                            showDeleteConfirmation = false
+                            selectedLesson = null
+                        }
+                    ) {
+                        Text("Sil")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showDeleteConfirmation = false
+                            selectedLesson = null
+                        }
+                    ) {
+                        Text("İptal")
+                    }
+                }
+            )
+        }
+
+        // Lesson Plan Dialog
+        if (showLessonPlanDialog && uiState.generatedLessonPlan != null) {
+            Dialog(
+                onDismissRequest = {
+                    showLessonPlanDialog = false
+                    viewModel.clearGeneratedLessonPlan()
+                }
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "🤖 AI Ders Planı",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Divider()
+
+                        Text(
+                            text = "AI Cevabı:",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Text(
+                            text = uiState.generatedLessonPlan!!,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .padding(8.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Parse Edilen Dersler:",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        // Show parsed lessons
+                        val parsedLessons = com.emirhankarci.tutorly.domain.util.LessonPlanParser.parseAILessonPlan(uiState.generatedLessonPlan!!)
+                        parsedLessons.forEach { lesson ->
+                            Text(
+                                text = "• ${lesson.subject} - ${lesson.day} ${lesson.time} (${lesson.duration})",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    showLessonPlanDialog = false
+                                    viewModel.clearGeneratedLessonPlan()
+                                }
+                            ) {
+                                Text("Kapat")
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

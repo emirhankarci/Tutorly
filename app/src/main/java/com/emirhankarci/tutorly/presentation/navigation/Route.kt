@@ -83,4 +83,7 @@ sealed interface Route {
     @Serializable
     data object ProfileBuildingScreen : Route
 
+    @Serializable
+    data object LessonPlanChatScreen : Route
+
 }

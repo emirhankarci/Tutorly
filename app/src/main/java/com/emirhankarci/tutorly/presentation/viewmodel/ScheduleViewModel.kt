@@ -16,7 +16,8 @@ import javax.inject.Inject
 data class ScheduleUiState(
     val lessons: List<ScheduleItem> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val generatedLessonPlan: String? = null
 )
 
 @HiltViewModel
@@ -80,21 +81,61 @@ class ScheduleViewModel @Inject constructor(
     }
 
     fun removeLesson(lesson: ScheduleItem) {
-        // For now, just remove from local state
-        // To implement deletion, we'd need lesson IDs from Firebase
-        val currentLessons = _uiState.value.lessons.toMutableList()
-        currentLessons.remove(lesson)
-        _uiState.value = _uiState.value.copy(lessons = currentLessons)
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            if (currentUser != null) {
+                // Remove from local state immediately for better UX
+                val currentLessons = _uiState.value.lessons.toMutableList()
+                currentLessons.remove(lesson)
+                _uiState.value = _uiState.value.copy(lessons = currentLessons)
+
+                // Delete from Firebase using lesson ID
+                val result = scheduleRepository.deleteLesson(currentUser.uid, lesson.id)
+                if (!result.isSuccess) {
+                    // If deletion fails, re-add the lesson to local state
+                    val updatedLessons = _uiState.value.lessons.toMutableList()
+                    updatedLessons.add(lesson)
+                    _uiState.value = _uiState.value.copy(
+                        lessons = updatedLessons,
+                        errorMessage = result.exceptionOrNull()?.message ?: "Failed to delete lesson"
+                    )
+                }
+            }
+        }
+    }
+
+    fun removeLessonById(lessonId: String) {
+        val lesson = _uiState.value.lessons.find { it.id == lessonId }
+        lesson?.let { removeLesson(it) }
     }
 
     fun updateLesson(oldLesson: ScheduleItem, newLesson: ScheduleItem) {
-        // For now, just update local state
-        // To implement updates, we'd need lesson IDs from Firebase
-        val currentLessons = _uiState.value.lessons.toMutableList()
-        val index = currentLessons.indexOf(oldLesson)
-        if (index != -1) {
-            currentLessons[index] = newLesson
-            _uiState.value = _uiState.value.copy(lessons = currentLessons)
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            if (currentUser != null) {
+                // Update local state immediately for better UX
+                val currentLessons = _uiState.value.lessons.toMutableList()
+                val index = currentLessons.indexOf(oldLesson)
+                if (index != -1) {
+                    currentLessons[index] = newLesson
+                    _uiState.value = _uiState.value.copy(lessons = currentLessons)
+                }
+
+                // Update in Firebase using lesson ID
+                val result = scheduleRepository.updateLesson(currentUser.uid, oldLesson.id, newLesson)
+                if (!result.isSuccess) {
+                    // If update fails, revert the local state
+                    val revertedLessons = _uiState.value.lessons.toMutableList()
+                    val revertIndex = revertedLessons.indexOf(newLesson)
+                    if (revertIndex != -1) {
+                        revertedLessons[revertIndex] = oldLesson
+                        _uiState.value = _uiState.value.copy(
+                            lessons = revertedLessons,
+                            errorMessage = result.exceptionOrNull()?.message ?: "Failed to update lesson"
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -104,5 +145,35 @@ class ScheduleViewModel @Inject constructor(
 
     fun refreshLessons() {
         loadUserLessons()
+    }
+
+    fun setGeneratedLessonPlan(lessonPlan: String) {
+        _uiState.value = _uiState.value.copy(generatedLessonPlan = lessonPlan)
+    }
+
+    fun clearGeneratedLessonPlan() {
+        _uiState.value = _uiState.value.copy(generatedLessonPlan = null)
+    }
+
+    fun addLessonsFromAI(newLessons: List<ScheduleItem>) {
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            if (currentUser != null) {
+                // Add lessons to local state immediately
+                val currentLessons = _uiState.value.lessons.toMutableList()
+                currentLessons.addAll(newLessons)
+                _uiState.value = _uiState.value.copy(lessons = currentLessons)
+
+                // Save each lesson to Firebase
+                newLessons.forEach { lesson ->
+                    val result = scheduleRepository.saveLesson(currentUser.uid, lesson)
+                    if (!result.isSuccess) {
+                        _uiState.value = _uiState.value.copy(
+                            errorMessage = result.exceptionOrNull()?.message ?: "Failed to save lesson: ${lesson.subject}"
+                        )
+                    }
+                }
+            }
+        }
     }
 }

@@ -30,3 +30,13 @@ data class ImageResponse(
     val all_images: List<String>? = null,
     val total_images: Int? = null
 )
+
+data class LessonPlanRequest(
+    val prompt: String
+)
+
+data class LessonPlanResponse(
+    val success: Boolean,
+    val lesson_plan: String,
+    val error_message: String?
+)

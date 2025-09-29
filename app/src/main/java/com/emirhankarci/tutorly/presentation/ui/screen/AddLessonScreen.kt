@@ -66,15 +66,16 @@ fun AddLessonScreen(
     modifier: Modifier = Modifier,
     preSelectedDay: String? = null,
     preSelectedTime: String? = null,
+    existingLesson: ScheduleItem? = null,
     onSaveLesson: (ScheduleItem) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
-    var subject by remember { mutableStateOf("") }
-    var selectedDay by remember { mutableStateOf(preSelectedDay ?: "Pazartesi") }
-    var time by remember { mutableStateOf(preSelectedTime ?: "") }
-    var duration by remember { mutableStateOf("") }
-    var selectedColor by remember { mutableStateOf(Color(0xFF2196F3)) }
-    var notes by remember { mutableStateOf("") }
+    var subject by remember { mutableStateOf(existingLesson?.subject ?: "") }
+    var selectedDay by remember { mutableStateOf(existingLesson?.day ?: preSelectedDay ?: "Pazartesi") }
+    var time by remember { mutableStateOf(existingLesson?.time ?: preSelectedTime ?: "") }
+    var duration by remember { mutableStateOf(existingLesson?.duration?.replace(" dk", "") ?: "") }
+    var selectedColor by remember { mutableStateOf(existingLesson?.color ?: Color(0xFF2196F3)) }
+    var notes by remember { mutableStateOf(existingLesson?.notes ?: "") }
 
     val subjectColors = listOf(
         Color(0xFF2196F3), // Blue
@@ -147,6 +148,7 @@ fun AddLessonScreen(
                 enabled = subject.isNotBlank() && time.isNotBlank() && duration.isNotBlank(),
                 onSave = {
                     val newLesson = ScheduleItem(
+                        id = existingLesson?.id ?: java.util.UUID.randomUUID().toString(),
                         subject = subject,
                         time = time,
                         duration = "$duration dk",

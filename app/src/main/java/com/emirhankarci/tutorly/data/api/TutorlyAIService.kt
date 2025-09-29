@@ -17,4 +17,7 @@ interface TutorlyAIService {
 
     @POST("/image/generate")
     suspend fun generateImage(@Body request: ImageRequest): Response<ImageResponse>
+
+    @POST("/lesson-plan/generate")
+    suspend fun generateLessonPlan(@Body request: LessonPlanRequest): Response<LessonPlanResponse>
 }

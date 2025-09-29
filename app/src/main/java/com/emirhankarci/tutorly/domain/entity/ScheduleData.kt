@@ -3,6 +3,7 @@ package com.emirhankarci.tutorly.domain.entity
 import androidx.compose.ui.graphics.Color
 
 data class ScheduleItem(
+    val id: String = java.util.UUID.randomUUID().toString(),
     val subject: String,
     val time: String,
     val duration: String,
@@ -13,12 +14,12 @@ data class ScheduleItem(
 
 object ScheduleData {
     val sampleSchedule = listOf(
-        ScheduleItem("Matematik", "09:00", "90 dk", Color(0xFF2196F3), "Pazartesi"),
-        ScheduleItem("Fizik", "11:00", "60 dk", Color(0xFFF44336), "Pazartesi"),
-        ScheduleItem("Kimya", "14:00", "90 dk", Color(0xFF4CAF50), "Salı"),
-        ScheduleItem("Türkçe", "10:00", "60 dk", Color(0xFF9C27B0), "Çarşamba"),
-        ScheduleItem("Matematik", "15:00", "90 dk", Color(0xFF2196F3), "Perşembe"),
-        ScheduleItem("Biyoloji", "09:30", "60 dk", Color(0xFFFF9800), "Cuma")
+        ScheduleItem(subject = "Matematik", time = "09:00", duration = "90 dk", color = Color(0xFF2196F3), day = "Pazartesi"),
+        ScheduleItem(subject = "Fizik", time = "11:00", duration = "60 dk", color = Color(0xFFF44336), day = "Pazartesi"),
+        ScheduleItem(subject = "Kimya", time = "14:00", duration = "90 dk", color = Color(0xFF4CAF50), day = "Salı"),
+        ScheduleItem(subject = "Türkçe", time = "10:00", duration = "60 dk", color = Color(0xFF9C27B0), day = "Çarşamba"),
+        ScheduleItem(subject = "Matematik", time = "15:00", duration = "90 dk", color = Color(0xFF2196F3), day = "Perşembe"),
+        ScheduleItem(subject = "Biyoloji", time = "09:30", duration = "60 dk", color = Color(0xFFFF9800), day = "Cuma")
     )
 
     val weekDays = listOf("Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar")

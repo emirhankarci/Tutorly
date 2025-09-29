@@ -147,11 +147,13 @@ fun Navigation() {
                             navController.navigate(Route.AddLessonScreen(day, time))
                         },
                         onEditLesson = { lesson ->
-                            // For demo purposes, navigate to edit with lesson as string
-                            navController.navigate(Route.EditLessonScreen(lesson.toString()))
+                            navController.navigate(Route.EditLessonScreen(lesson.id))
                         },
                         onNavigateToProgress = {
                             navController.navigate(Route.ProgressScreen)
+                        },
+                        onNavigateToLessonPlanChat = {
+                            navController.navigate(Route.LessonPlanChatScreen)
                         },
                         viewModel = scheduleViewModel
                     )
@@ -295,17 +297,22 @@ fun Navigation() {
             }
 
             composable<Route.EditLessonScreen> { backStackEntry ->
-                val editRoute = backStackEntry.arguments?.getString("lessonId")
+                val route = backStackEntry.toRoute<Route.EditLessonScreen>()
+                val scheduleViewModel: com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel =
+                    hiltViewModel(navController.getBackStackEntry(Route.MainGraph))
+                val scheduleUiState by scheduleViewModel.uiState.collectAsState()
+                val existingLesson = scheduleUiState.lessons.find { it.id == route.lessonId }
+
                 MainScaffold(navController = navController) { modifier ->
-                    EditLessonScreen(
+                    AddLessonScreen(
                         modifier = modifier,
-                        lesson = com.emirhankarci.tutorly.domain.entity.ScheduleData.sampleSchedule.find { it.subject == editRoute },
+                        existingLesson = existingLesson,
                         onSaveLesson = { lesson ->
-                            // TODO: Update lesson in data source
-                            navController.popBackStack()
-                        },
-                        onDeleteLesson = { lesson ->
-                            // TODO: Delete lesson from data source
+                            if (existingLesson != null) {
+                                scheduleViewModel.updateLesson(existingLesson, lesson)
+                            } else {
+                                scheduleViewModel.addLesson(lesson)
+                            }
                             navController.popBackStack()
                         },
                         onBackPressed = {
@@ -379,6 +386,21 @@ fun Navigation() {
                     StudyWithImageScreen(
                         modifier = modifier,
                         onBackPressed = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+            }
+
+            composable<Route.LessonPlanChatScreen> {
+                val scheduleViewModel: com.emirhankarci.tutorly.presentation.viewmodel.ScheduleViewModel =
+                    hiltViewModel(navController.getBackStackEntry(Route.MainGraph))
+                MainScaffold(navController = navController) { modifier ->
+                    LessonPlanChatScreen(
+                        modifier = modifier,
+                        onLessonPlanGenerated = { lessonPlan, parsedLessons ->
+                            scheduleViewModel.setGeneratedLessonPlan(lessonPlan)
+                            scheduleViewModel.addLessonsFromAI(parsedLessons)
                             navController.popBackStack()
                         }
                     )

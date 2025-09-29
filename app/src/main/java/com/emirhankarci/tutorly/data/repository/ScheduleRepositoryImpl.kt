@@ -20,6 +20,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun saveLesson(userId: String, lesson: ScheduleItem): Result<Unit> {
         return try {
             val lessonData = mapOf(
+                "id" to lesson.id,
                 "subject" to lesson.subject,
                 "time" to lesson.time,
                 "duration" to lesson.duration,
@@ -33,7 +34,8 @@ class ScheduleRepositoryImpl @Inject constructor(
             firestore.collection(COLLECTION_USER_SCHEDULES)
                 .document(userId)
                 .collection(COLLECTION_LESSONS)
-                .add(lessonData)
+                .document(lesson.id) // Use lesson ID as document ID
+                .set(lessonData)
                 .await()
 
             Result.success(Unit)
@@ -54,6 +56,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 try {
                     val data = document.data ?: return@mapNotNull null
                     ScheduleItem(
+                        id = data["id"] as? String ?: document.id, // Use stored ID or document ID as fallback
                         subject = data["subject"] as? String ?: "",
                         time = data["time"] as? String ?: "",
                         duration = data["duration"] as? String ?: "",
