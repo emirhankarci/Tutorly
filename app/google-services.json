@@ -38,6 +38,14 @@
           }
         },
         {
+          "client_id": "323880773297-uvuje5d3o0963gr9qp587pb4mjm8f0ke.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emirhankarci.tutorly",
+            "certificate_hash": "f43348fa59369ed0fe3a71209773605cf786cdd5"
+          }
+        },
+        {
           "client_id": "323880773297-j2f7kncj0qjjislb451jiuaaqk6vncpk.apps.googleusercontent.com",
           "client_type": 3
         }
