@@ -9,6 +9,8 @@ import dagger.hilt.android.HiltAndroidApp
 class TutorlyApplication : Application(){
     override fun onCreate() {
         super.onCreate()
+
+        // Initialize Adapty SDK
         Adapty.activate(
             applicationContext,
             AdaptyConfig.Builder("public_live_Zb5iflSN.7tfhd9p3Vjd9xNzPLpbu")

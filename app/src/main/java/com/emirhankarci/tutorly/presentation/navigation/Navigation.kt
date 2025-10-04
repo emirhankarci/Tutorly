@@ -38,6 +38,11 @@ fun Navigation() {
                     navController.navigate(Route.ProfileBuildingScreen) {
                         popUpTo(Route.SplashScreen) { inclusive = true }
                     }
+                },
+                onNavigateToPaywall = {
+                    navController.navigate(Route.PaywallScreen) {
+                        popUpTo(Route.SplashScreen) { inclusive = true }
+                    }
                 }
             )
         }
@@ -61,6 +66,11 @@ fun Navigation() {
                     when (authFlowState.authFlowState) {
                         com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_PROFILE_SETUP -> {
                             navController.navigate(Route.ProfileBuildingScreen) {
+                                popUpTo(Route.AuthGraph) { inclusive = true }
+                            }
+                        }
+                        com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_SUBSCRIPTION -> {
+                            navController.navigate(Route.PaywallScreen) {
                                 popUpTo(Route.AuthGraph) { inclusive = true }
                             }
                         }
@@ -90,6 +100,11 @@ fun Navigation() {
                     when (authFlowState.authFlowState) {
                         com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_PROFILE_SETUP -> {
                             navController.navigate(Route.ProfileBuildingScreen) {
+                                popUpTo(Route.AuthGraph) { inclusive = true }
+                            }
+                        }
+                        com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_SUBSCRIPTION -> {
+                            navController.navigate(Route.PaywallScreen) {
                                 popUpTo(Route.AuthGraph) { inclusive = true }
                             }
                         }
@@ -411,12 +426,12 @@ fun Navigation() {
 
         // Profile Building Screen - Standalone outside main graph
         composable<Route.ProfileBuildingScreen> {
-            val authFlowViewModel: com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowViewModel = hiltViewModel()
-            val authFlowState by authFlowViewModel.uiState.collectAsState()
-
             ProfileBuildingScreen(
                 onProfileCompleted = { userProfile ->
-                    authFlowViewModel.onProfileCompleted()
+                    // After profile is completed, go to paywall
+                    navController.navigate(Route.PaywallScreen) {
+                        popUpTo(Route.ProfileBuildingScreen) { inclusive = true }
+                    }
                 },
                 onNavigateBack = {
                     navController.navigate(Route.AuthGraph) {
@@ -424,15 +439,18 @@ fun Navigation() {
                     }
                 }
             )
+        }
 
-            // Listen for auth state changes and navigate when profile is completed
-            LaunchedEffect(authFlowState.authFlowState) {
-                if (authFlowState.authFlowState == com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.AUTHENTICATED) {
+        // Paywall Screen - Required before accessing main app
+        composable<Route.PaywallScreen> {
+            PaywallScreen(
+                onSubscriptionSuccess = {
+                    // After successful subscription, go to main app
                     navController.navigate(Route.MainGraph) {
-                        popUpTo(Route.ProfileBuildingScreen) { inclusive = true }
+                        popUpTo(Route.PaywallScreen) { inclusive = true }
                     }
                 }
-            }
+            )
         }
     }
 }

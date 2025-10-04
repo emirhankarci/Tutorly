@@ -36,6 +36,7 @@ fun SplashScreen(
     onNavigateToAuth: () -> Unit = {},
     onNavigateToMain: () -> Unit = {},
     onNavigateToProfileBuilding: () -> Unit = {},
+    onNavigateToPaywall: () -> Unit = {},
     viewModel: AuthFlowViewModel = hiltViewModel()
 ) {
     var currentState by remember { mutableStateOf(AnimationState.START) }
@@ -51,6 +52,7 @@ fun SplashScreen(
         when (uiState.authFlowState) {
             com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_LOGIN -> onNavigateToAuth()
             com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_PROFILE_SETUP -> onNavigateToProfileBuilding()
+            com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.NEED_SUBSCRIPTION -> onNavigateToPaywall()
             com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.AUTHENTICATED -> onNavigateToMain()
             com.emirhankarci.tutorly.presentation.viewmodel.AuthFlowState.LOADING -> {
                 // Stay on splash screen

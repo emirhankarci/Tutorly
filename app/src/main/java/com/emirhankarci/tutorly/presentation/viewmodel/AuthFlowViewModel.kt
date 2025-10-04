@@ -2,6 +2,7 @@ package com.emirhankarci.tutorly.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emirhankarci.tutorly.data.manager.SubscriptionManager
 import com.emirhankarci.tutorly.domain.repository.AuthRepository
 import com.emirhankarci.tutorly.domain.repository.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ enum class AuthFlowState {
     LOADING,
     NEED_LOGIN,
     NEED_PROFILE_SETUP,
+    NEED_SUBSCRIPTION,
     AUTHENTICATED
 }
 
@@ -27,7 +29,8 @@ data class AuthFlowUiState(
 @HiltViewModel
 class AuthFlowViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val userProfileRepository: UserProfileRepository
+    private val userProfileRepository: UserProfileRepository,
+    private val subscriptionManager: SubscriptionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthFlowUiState())
@@ -51,20 +54,34 @@ class AuthFlowViewModel @Inject constructor(
                 if (isSignedIn && isTokenValid) {
                     val currentUser = authRepository.getCurrentUser()
                     if (currentUser != null) {
+                        // Identify user with Adapty
+                        subscriptionManager.identifyUser(currentUser.uid)
+
                         // Add a small delay to ensure any recent Firestore writes are available
                         kotlinx.coroutines.delay(500)
                         val profileResult = userProfileRepository.isProfileCompleted(currentUser.uid)
 
                         if (profileResult.isSuccess) {
                             val isProfileCompleted = profileResult.getOrDefault(false)
-                            _uiState.value = _uiState.value.copy(
-                                isLoading = false,
-                                authFlowState = if (isProfileCompleted) {
-                                    AuthFlowState.AUTHENTICATED
-                                } else {
-                                    AuthFlowState.NEED_PROFILE_SETUP
-                                }
-                            )
+
+                            if (isProfileCompleted) {
+                                // Check subscription status
+                                val hasActiveSubscription = subscriptionManager.hasActiveSubscription()
+
+                                _uiState.value = _uiState.value.copy(
+                                    isLoading = false,
+                                    authFlowState = if (hasActiveSubscription) {
+                                        AuthFlowState.AUTHENTICATED
+                                    } else {
+                                        AuthFlowState.NEED_SUBSCRIPTION
+                                    }
+                                )
+                            } else {
+                                _uiState.value = _uiState.value.copy(
+                                    isLoading = false,
+                                    authFlowState = AuthFlowState.NEED_PROFILE_SETUP
+                                )
+                            }
                         } else {
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,

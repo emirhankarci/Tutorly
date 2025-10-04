@@ -84,6 +84,9 @@ sealed interface Route {
     data object ProfileBuildingScreen : Route
 
     @Serializable
+    data object PaywallScreen : Route
+
+    @Serializable
     data object LessonPlanChatScreen : Route
 
 }
