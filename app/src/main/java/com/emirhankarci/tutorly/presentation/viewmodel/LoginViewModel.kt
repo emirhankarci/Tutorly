@@ -72,6 +72,31 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun deleteAccount(onSuccess: () -> Unit, onError: () -> Unit) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try {
+                val success = authRepository.deleteAccount()
+                if (success) {
+                    _uiState.value = LoginUiState()
+                    onSuccess()
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = "Hesap silinemedi. Lütfen tekrar deneyin."
+                    )
+                    onError()
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = e.message ?: "Hesap silinirken bir hata oluştu"
+                )
+                onError()
+            }
+        }
+    }
+
     fun startGoogleSignIn(onIntentReady: (Intent) -> Unit) {
         _uiState.value = _uiState.value.copy(
             isLoading = true,

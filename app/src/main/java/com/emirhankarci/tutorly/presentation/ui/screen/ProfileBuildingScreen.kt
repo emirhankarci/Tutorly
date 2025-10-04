@@ -126,7 +126,7 @@ fun ProfileBuildingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Previous",
+                        contentDescription = "Önceki",
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -168,7 +168,7 @@ fun ProfileBuildingScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = if (isLastQuestion) Icons.Default.Check else Icons.Default.ArrowForward,
-                        contentDescription = if (isLastQuestion) "Complete" else "Next",
+                        contentDescription = if (isLastQuestion) "Tamamla" else "Sonraki",
                         modifier = Modifier.size(18.dp)
                     )
                 }

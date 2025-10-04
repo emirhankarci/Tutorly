@@ -89,4 +89,13 @@ sealed interface Route {
     @Serializable
     data object LessonPlanChatScreen : Route
 
+    @Serializable
+    data object PrivacyPolicyScreen : Route
+
+    @Serializable
+    data object TermsOfServiceScreen : Route
+
+    @Serializable
+    data object FAQScreen : Route
+
 }

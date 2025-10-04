@@ -112,7 +112,7 @@ fun LoginScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Star,
-                            contentDescription = "Tutorly Logo",
+                            contentDescription = "Tutorly Logosu",
                             modifier = Modifier.size(40.dp),
                             tint = Color.White
                         )
@@ -121,7 +121,7 @@ fun LoginScreen(
 
                 // App Title
                 Text(
-                    text = "Welcome to Tutorly",
+                    text = "Tutorly'e Hoş Geldiniz",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -131,7 +131,7 @@ fun LoginScreen(
 
                 // Subtitle
                 Text(
-                    text = "Your AI-powered learning companion\nUnlock your potential with personalized education",
+                    text = "Yapay zekâ destekli öğrenme arkadaşınız\nKişiselleştirilmiş eğitimle potansiyelinizi açığa çıkarın",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
@@ -196,7 +196,7 @@ fun LoginScreen(
                                         .padding(6.dp)
                                 )
                                 Text(
-                                    text = "Continue with Google",
+                                    text = "Google ile Devam Et",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF333333)
@@ -234,16 +234,16 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    FeatureItem("🎯", "Personalized")
-                    FeatureItem("🤖", "AI-Powered")
-                    FeatureItem("📚", "Comprehensive")
+                    FeatureItem("🎯", "Kişiselleştirilmiş")
+                    FeatureItem("🤖", "Yapay Zekâ Destekli")
+                    FeatureItem("📚", "Kapsamlı")
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // Terms and privacy notice
                 Text(
-                    text = "By continuing, you agree to our Terms of Service and Privacy Policy",
+                    text = "Devam ederek Hizmet Şartları ve Gizlilik Politikası'nı kabul etmiş olursunuz",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center,

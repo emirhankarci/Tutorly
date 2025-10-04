@@ -67,14 +67,14 @@ fun EnglishLearningScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "English Learning Chat",
+                        text = "İngilizce Öğrenme Sohbeti",
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                     if (uiState.detectedLevel.isNotEmpty()) {
                         Text(
-                            text = "Level: ${uiState.detectedLevel}",
+                            text = "Seviye: ${uiState.detectedLevel}",
                             color = Color.White,
                             fontSize = 12.sp
                         )
@@ -131,7 +131,7 @@ fun EnglishLearningScreen(
                 item {
                     EnglishChatMessageBubble(
                         message = ChatMessage(
-                            content = "Thinking...",
+                            content = "Düşünüyorum...",
                             isUser = false
                         ),
                         isLoading = true,
@@ -166,7 +166,7 @@ fun EnglishLearningScreen(
                     )
                     TextButton(onClick = { viewModel.clearError() }) {
                         Text(
-                            text = "Close",
+                            text = "Kapat",
                             color = Color(0xFFD32F2F),
                             fontSize = 12.sp
                         )
@@ -192,10 +192,10 @@ fun EnglishLearningScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
                         val suggestions = listOf(
-                            "Help me with grammar",
-                            "Let's practice conversation",
-                            "Explain vocabulary",
-                            "Correct my writing"
+                            "Dil bilgisi konusunda yardım et",
+                            "Konuşma pratiği yapalım",
+                            "Kelime bilgisini açıkla",
+                            "Yazımı düzelt"
                         )
                         items(suggestions) { suggestion ->
                             SuggestionChip(
@@ -223,7 +223,7 @@ fun EnglishLearningScreen(
                         value = messageText,
                         onValueChange = { messageText = it },
                         modifier = Modifier.weight(1f),
-                        placeholder = { Text("Type your message in English...") },
+                        placeholder = { Text("Mesajınızı İngilizce yazın...") },
                         shape = RoundedCornerShape(24.dp),
                         maxLines = 4,
                         enabled = !uiState.isLoading
@@ -238,7 +238,7 @@ fun EnglishLearningScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear Chat",
+                            contentDescription = "Sohbeti Temizle",
                             tint = Color(0xFF9E9E9E)
                         )
                     }
@@ -261,7 +261,7 @@ fun EnglishLearningScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Send Message"
+                            contentDescription = "Mesaj Gönder"
                         )
                     }
                 }

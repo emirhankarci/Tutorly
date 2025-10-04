@@ -54,13 +54,13 @@ val grade10BiologyChapters = listOf(
 )
 
 val grade10GeographyChapters = listOf(
-    ChapterInfo("Coğrafyanın Doğası", "Coğrafya biliminin tanımı, kapsamı ve araştırma yöntemleri", 5, Color(0xFF2196F3), Color(0xFF2196F3)),
-    ChapterInfo("Mekânsal Bilgi Teknolojileri", "Harita, GPS ve coğrafi bilgi sistemlerinin kullanımı", 6, Color(0xFF2196F3), Color(0xFF2196F3)),
-    ChapterInfo("Doğal Sistemler ve Süreçler", "İklim, topografya ve doğal çevrenin özellikleri", 8, Color(0xFF2196F3), Color(0xFF2196F3)),
-    ChapterInfo("Beşeri Sistemler ve Süreçler", "Nüfus, yerleşme ve toplumsal yapıların coğrafi dağılımı", 7, Color(0xFF2196F3), Color(0xFF2196F3)),
-    ChapterInfo("Ekonomik Faaliyetler ve Etkileri", "Tarım, sanayi ve ticaretin mekânsal etkileri", 7, Color(0xFF2196F3), Color(0xFF2196F3)),
-    ChapterInfo("Afetler ve Sürdürülebilir Çevre", "Doğal afetler ve çevresel sürdürülebilirlik ilkeleri", 6, Color(0xFF2196F3), Color(0xFF2196F3)),
-    ChapterInfo("Bölgeler, Ülkeler ve Küresel Bağlantılar", "Dünya coğrafyası ve küresel etkileşimler", 8, Color(0xFF2196F3), Color(0xFF2196F3))
+    ChapterInfo("Coğrafyanın Doğası", "Coğrafya biliminin tanımı, kapsamı ve araştırma yöntemleri", 5, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Mekânsal Bilgi Teknolojileri", "Harita, GPS ve coğrafi bilgi sistemlerinin kullanımı", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Doğal Sistemler ve Süreçler", "İklim, topografya ve doğal çevrenin özellikleri", 8, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Beşeri Sistemler ve Süreçler", "Nüfus, yerleşme ve toplumsal yapıların coğrafi dağılımı", 7, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Ekonomik Faaliyetler ve Etkileri", "Tarım, sanayi ve ticaretin mekânsal etkileri", 7, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Afetler ve Sürdürülebilir Çevre", "Doğal afetler ve çevresel sürdürülebilirlik ilkeleri", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Bölgeler, Ülkeler ve Küresel Bağlantılar", "Dünya coğrafyası ve küresel etkileşimler", 8, Color(0xFFFFC107), Color(0xFFFFC107))
 )
 
 val grade10PhilosophyChapters = listOf(
@@ -143,18 +143,18 @@ val grade9ChemistryChapters = listOf(
 )
 
 val grade9BiologyChapters = listOf(
-    ChapterInfo("Yasam", "Canlılık belirtileri ve yaşamın temel özelliklerinin incelenmesi", 7, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Organizasyon", "Hücre yapısı ve canlılardaki organizasyon düzeylerinin öğrenilmesi", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
+    ChapterInfo("Yasam", "Canlılık belirtileri ve yaşamın temel özelliklerinin incelenmesi", 7, Color(0xFF4CAF50), Color(0xFF4CAF50)),
+    ChapterInfo("Organizasyon", "Hücre yapısı ve canlılardaki organizasyon düzeylerinin öğrenilmesi", 6, Color(0xFF4CAF50), Color(0xFF4CAF50)),
 )
 
 val grade9GeographyChapters = listOf(
-    ChapterInfo("Cografyanin Dogasi", "Coğrafya biliminin tanımı, kapsamı ve araştırma yöntemleri", 7, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Mekansal Bilgi Teknolojileri", "Harita, GPS ve coğrafi bilgi sistemlerinin kullanımı", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Dogal Sistemler ve Surecler", "İklim, topografya ve doğal çevrenin özellikleri", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Beseri Sistemler ve Surecler", "Nüfus, yerleşme ve toplumsal yapıların coğrafi dağılımı", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Ekonomik Faaliyetler ve Etkileri", "Tarım, sanayi ve ticaretin mekânsal etkileri", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Afetler ve Surdurulebilir Cevre", "Doğal afetler ve çevresel sürdürülebilirlik ilkeleri", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
-    ChapterInfo("Bolgeler Ulkeler ve Kuresel Baglantilar", "Dünya coğrafyası ve küresel etkileşimler", 6, Color(0xFFFF5722), Color(0xFFFF5722)),
+    ChapterInfo("Cografyanin Dogasi", "Coğrafya biliminin tanımı, kapsamı ve araştırma yöntemleri", 7, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Mekansal Bilgi Teknolojileri", "Harita, GPS ve coğrafi bilgi sistemlerinin kullanımı", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Dogal Sistemler ve Surecler", "İklim, topografya ve doğal çevrenin özellikleri", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Beseri Sistemler ve Surecler", "Nüfus, yerleşme ve toplumsal yapıların coğrafi dağılımı", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Ekonomik Faaliyetler ve Etkileri", "Tarım, sanayi ve ticaretin mekânsal etkileri", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Afetler ve Surdurulebilir Cevre", "Doğal afetler ve çevresel sürdürülebilirlik ilkeleri", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
+    ChapterInfo("Bolgeler Ulkeler ve Kuresel Baglantilar", "Dünya coğrafyası ve küresel etkileşimler", 6, Color(0xFFFFC107), Color(0xFFFFC107)),
 )
 
 val grade9ReligionChapters = listOf(

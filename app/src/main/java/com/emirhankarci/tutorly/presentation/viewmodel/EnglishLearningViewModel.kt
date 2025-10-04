@@ -79,19 +79,19 @@ class EnglishLearningViewModel : ViewModel() {
     }
 
     private fun generateWelcomeMessage(): String {
-        return "Hello! I'm your English learning AI assistant! 🌟\n\n" +
-                "I can help you improve your English at different levels (A1-C2). You can:\n" +
-                "• Practice conversations\n" +
-                "• Learn grammar rules\n" +
-                "• Expand your vocabulary\n" +
-                "• Get writing help\n\n" +
-                "To get started, you can specify your level like: \"ingilizce seviyesi: b1\" or just start chatting!\n\n" +
-                "What would you like to practice today?"
+        return "Merhaba! Ben İngilizce öğrenme için yapay zekâ asistanınım! 🌟\n\n" +
+                "İngilizcenizi farklı seviyelerde (A1-C2) geliştirmenize yardımcı olabilirim. Şunları yapabilirsiniz:\n" +
+                "• Konuşma pratiği yapın\n" +
+                "• Dil bilgisi kurallarını öğrenin\n" +
+                "• Kelime bilginizi geliştirin\n" +
+                "• Yazım konusunda yardım alın\n\n" +
+                "Başlamak için seviyenizi şu şekilde belirtebilirsiniz: \"ingilizce seviyesi: b1\" ya da direkt sohbete başlayın!\n\n" +
+                "Bugün ne çalışmak istersiniz?"
     }
 
     fun sendMessage(message: String) {
         if (message.isBlank()) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Please enter a message")
+            _uiState.value = _uiState.value.copy(errorMessage = "Lütfen bir mesaj girin")
             return
         }
 
@@ -119,7 +119,7 @@ class EnglishLearningViewModel : ViewModel() {
                 onFailure = { error ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = "Failed to send message: ${error.message}"
+                        errorMessage = "Mesaj gönderilemedi: ${error.message}"
                     )
                 }
             )

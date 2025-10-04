@@ -27,16 +27,18 @@ import androidx.compose.runtime.getValue
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     onEditProfile: () -> Unit = {},
-    onNotificationSettings: () -> Unit = {},
-    onLanguageSettings: () -> Unit = {},
-    onPrivacySettings: () -> Unit = {},
-    onHelpSupport: () -> Unit = {},
+    onPrivacyPolicy: () -> Unit = {},
+    onTermsOfService: () -> Unit = {},
+    onFAQ: () -> Unit = {},
     onLogout: () -> Unit = {},
-    onFirestoreTest: () -> Unit = {},
-    userProfileViewModel: UserProfileViewModel = hiltViewModel()
+    onDeleteAccount: () -> Unit = {},
+    userProfileViewModel: UserProfileViewModel = hiltViewModel(),
+    loginViewModel: com.emirhankarci.tutorly.presentation.viewmodel.LoginViewModel = hiltViewModel()
 ) {
     val userProfileState by userProfileViewModel.uiState.collectAsState()
+    val loginUiState by loginViewModel.uiState.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showDeleteAccountDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -66,34 +68,22 @@ fun SettingsScreen(
                         subtitle = "Kişisel bilgilerinizi güncelleyin",
                         onClick = onEditProfile
                     )
-                    SettingsItem(
-                        icon = Icons.Default.Notifications,
-                        title = "Bildirimler",
-                        subtitle = "Bildirim tercihlerinizi yönetin",
-                        onClick = onNotificationSettings
-                    )
-                    SettingsItem(
-                        icon = Icons.Default.Home,
-                        title = "Dil",
-                        subtitle = "Uygulama dilini değiştirin",
-                        onClick = onLanguageSettings
-                    )
                 }
             }
 
             item {
                 SettingsCategory(title = "Gizlilik ve Güvenlik") {
                     SettingsItem(
-                        icon = Icons.Default.Home,
-                        title = "Gizlilik Ayarları",
+                        icon = Icons.Default.Lock,
+                        title = "Gizlilik Politikası",
                         subtitle = "Veri kullanımı ve gizlilik",
-                        onClick = onPrivacySettings
+                        onClick = onPrivacyPolicy
                     )
                     SettingsItem(
-                        icon = Icons.Default.Lock,
-                        title = "Şifre Değiştir",
-                        subtitle = "Hesap güvenliğinizi artırın",
-                        onClick = { }
+                        icon = Icons.Default.Info,
+                        title = "Kullanım Koşulları",
+                        subtitle = "Hizmet şartları ve koşulları",
+                        onClick = onTermsOfService
                     )
                 }
             }
@@ -102,9 +92,9 @@ fun SettingsScreen(
                 SettingsCategory(title = "Destek") {
                     SettingsItem(
                         icon = Icons.Default.Home,
-                        title = "Yardım ve Destek",
-                        subtitle = "SSS ve iletişim",
-                        onClick = onHelpSupport
+                        title = "Sıkça Sorulan Sorular",
+                        subtitle = "SSS ve yardım",
+                        onClick = onFAQ
                     )
                     SettingsItem(
                         icon = Icons.Default.Info,
@@ -116,18 +106,12 @@ fun SettingsScreen(
             }
 
             item {
-                SettingsCategory(title = "Geliştirici Araçları") {
-                    SettingsItem(
-                        icon = Icons.Default.Build,
-                        title = "Firestore Test",
-                        subtitle = "Firestore bağlantısını test edin",
-                        onClick = onFirestoreTest
-                    )
-                }
+                Spacer(modifier = Modifier.height(16.dp))
+                DeleteAccountButton(onClick = { showDeleteAccountDialog = true })
             }
 
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 LogoutButton(onClick = { showLogoutDialog = true })
             }
         }
@@ -144,6 +128,29 @@ fun SettingsScreen(
                 showLogoutDialog = false
             }
         )
+    }
+
+    // Delete Account Confirmation Dialog
+    if (showDeleteAccountDialog) {
+        DeleteAccountConfirmationDialog(
+            isLoading = loginUiState.isLoading,
+            errorMessage = loginUiState.errorMessage,
+            onConfirm = {
+                onDeleteAccount()
+            },
+            onDismiss = {
+                if (!loginUiState.isLoading) {
+                    showDeleteAccountDialog = false
+                }
+            }
+        )
+    }
+    
+    // Auto-dismiss dialog on successful account deletion
+    LaunchedEffect(loginUiState.isSignedIn) {
+        if (!loginUiState.isSignedIn && !loginUiState.isLoading && showDeleteAccountDialog) {
+            showDeleteAccountDialog = false
+        }
     }
 }
 
@@ -175,7 +182,7 @@ private fun ProfileSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "Profile",
+                    contentDescription = "Profil",
                     tint = Color.White,
                     modifier = Modifier.size(32.dp)
                 )
@@ -200,7 +207,7 @@ private fun ProfileSection(
             IconButton(onClick = onEditProfile) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Profile",
+                    contentDescription = "Profili Düzenle",
                     tint = Color(0xFF6B7280)
                 )
             }
@@ -282,9 +289,41 @@ private fun SettingsItem(
 
             Icon(
                 imageVector = Icons.Default.Home,
-                contentDescription = "Arrow",
+                contentDescription = "Ok",
                 tint = Color(0xFF6B7280),
                 modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DeleteAccountButton(onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFD32F2F))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Hesabı Sil",
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "Hesabı Sil",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.White
             )
         }
     }
@@ -307,7 +346,7 @@ private fun LogoutButton(onClick: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.ExitToApp,
-                contentDescription = "Logout",
+                contentDescription = "Çıkış Yap",
                 tint = Color.White,
                 modifier = Modifier.size(24.dp)
             )
@@ -320,6 +359,101 @@ private fun LogoutButton(onClick: () -> Unit) {
             )
         }
     }
+}
+
+@Composable
+private fun DeleteAccountConfirmationDialog(
+    isLoading: Boolean = false,
+    errorMessage: String? = null,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { if (!isLoading) onDismiss() },
+        title = {
+            Text(
+                text = "Hesabı Sil",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color(0xFF2C3E50)
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.",
+                    fontSize = 16.sp,
+                    color = Color(0xFF6B7280),
+                    lineHeight = 22.sp
+                )
+                
+                if (isLoading) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color(0xFFD32F2F)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Hesabınız siliniyor...",
+                            fontSize = 14.sp,
+                            color = Color(0xFF6B7280)
+                        )
+                    }
+                }
+                
+                errorMessage?.let { error ->
+                    Text(
+                        text = error,
+                        fontSize = 14.sp,
+                        color = Color(0xFFD32F2F),
+                        lineHeight = 20.sp
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                enabled = !isLoading,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = Color(0xFFD32F2F),
+                    disabledContentColor = Color(0xFF6B7280)
+                )
+            ) {
+                Text(
+                    text = "Evet",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                enabled = !isLoading,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = Color(0xFF6B7280),
+                    disabledContentColor = Color(0xFF9CA3AF)
+                )
+            ) {
+                Text(
+                    text = "Hayır",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            }
+        },
+        shape = RoundedCornerShape(16.dp),
+        containerColor = Color.White,
+        tonalElevation = 8.dp
+    )
 }
 
 @Composable

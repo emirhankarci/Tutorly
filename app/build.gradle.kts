@@ -124,4 +124,7 @@ dependencies {
 
     // Adapty
     implementation("io.adapty:android-sdk:3.11.1")
+
+    implementation("com.airbnb.android:lottie-compose:6.3.0")
+
 }

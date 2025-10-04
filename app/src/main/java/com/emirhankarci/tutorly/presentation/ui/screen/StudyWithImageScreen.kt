@@ -208,7 +208,7 @@ fun StudyWithImageScreen(
                                     ) {
                                         AsyncImage(
                                             model = imageUrl,
-                                            contentDescription = "Generated educational image",
+                                            contentDescription = "Üretilen eğitim görseli",
                                             modifier = Modifier.fillMaxSize(),
                                             contentScale = ContentScale.Crop
                                         )
@@ -243,8 +243,8 @@ fun StudyWithImageScreen(
                         Column(
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text(
-                                text = "Error",
+                Text(
+                    text = "Hata",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color(0xFFD32F2F)
@@ -344,7 +344,7 @@ fun ImageViewerDialog(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
+                    contentDescription = "Kapat",
                     tint = Color.White
                 )
             }
@@ -403,7 +403,7 @@ fun ImageViewerDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Previous",
+                            contentDescription = "Önceki",
                             tint = Color.White
                         )
                     }
@@ -428,7 +428,7 @@ fun ImageViewerDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowForward,
-                            contentDescription = "Next",
+                            contentDescription = "Sonraki",
                             tint = Color.White
                         )
                     }
@@ -445,7 +445,7 @@ fun ImageViewerDialog(
                 )
             ) {
                 Text(
-                    text = "Pinch to zoom • Drag to pan • Tap arrows to navigate",
+                    text = "Yakınlaştırmak için çimdikleyin • Taşımak için sürükleyin • Gezinmek için okları kullanın",
                     color = Color.White,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),

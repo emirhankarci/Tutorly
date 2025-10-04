@@ -76,7 +76,7 @@ fun PaywallScreen(
 
                     // Header Section
                     Text(
-                        text = "Unlock Your\nPotential",
+                        text = "Potansiyelini\nOrtaya Çıkar",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
                         color = darkBlue,
@@ -87,7 +87,7 @@ fun PaywallScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Choose a plan to start learning today.",
+                        text = "Bugün öğrenmeye başlamak için bir plan seç.",
                         fontSize = 14.sp,
                         color = Color.Gray,
                         textAlign = TextAlign.Center
@@ -143,7 +143,7 @@ fun PaywallScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Start Learning",
+                            text = "Öğrenmeye Başla",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
@@ -174,7 +174,7 @@ fun PaywallScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Restore Purchase",
+                            text = "Satın Alımı Geri Yükle",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
@@ -261,7 +261,7 @@ private fun PlanCard(
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
-                    text = "Best Value",
+                    text = "En İyi Değer",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -285,7 +285,7 @@ private fun LoadingView() {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Loading subscription options...",
+                text = "Abonelik seçenekleri yükleniyor...",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -306,7 +306,7 @@ private fun PurchasingView() {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Processing purchase...",
+                text = "Satın alma işleniyor...",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -328,7 +328,7 @@ private fun ErrorView(
             modifier = Modifier.padding(24.dp)
         ) {
             Text(
-                text = "Error",
+                text = "Hata",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -340,7 +340,7 @@ private fun ErrorView(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = onRetry) {
-                Text("Retry")
+                Text("Tekrar Dene")
             }
         }
     }

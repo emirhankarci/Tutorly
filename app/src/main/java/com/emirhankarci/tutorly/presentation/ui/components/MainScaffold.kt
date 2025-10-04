@@ -133,7 +133,7 @@ fun MainScaffold(
                             IconButton(onClick = { }) {
                                 Icon(
                                     imageVector = Icons.Default.Home,
-                                    contentDescription = "Home",
+                                    contentDescription = "Ana Sayfa",
                                     tint = Color.White
                                 )
                             }
@@ -142,7 +142,7 @@ fun MainScaffold(
                             IconButton(onClick = { }) {
                                 Icon(
                                     imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings",
+                                    contentDescription = "Ayarlar",
                                     tint = Color.White
                                 )
                             }
@@ -183,7 +183,7 @@ fun MainScaffold(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = "Back",
+                                        contentDescription = "Geri",
                                         tint = Color(0xFF0C83B7),
                                         modifier = Modifier
                                             .size(22.dp)
@@ -310,7 +310,7 @@ fun MainScaffold(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = "Back",
+                                        contentDescription = "Geri",
                                         tint = Color(0xFF0C83B7),
                                         modifier = Modifier
                                             .size(22.dp)
@@ -339,7 +339,8 @@ fun MainScaffold(
                                 Text(
                                     text = when {
                                         currentRoute == Route.ScheduleScreen::class.qualifiedName -> "Ders Programı"
-                                        currentRoute == Route.AddLessonScreen::class.qualifiedName -> "Yeni Ders Ekle"
+                                        currentRoute == Route.AddLessonScreen::class.qualifiedName -> "Ders Planı Asistanı"
+                                        currentRoute == Route.LessonPlanChatScreen::class.qualifiedName -> "Ders Planı Asistanı"
                                         currentRoute == Route.SettingsScreen::class.qualifiedName -> "Ayarlar"
                                         else -> "Tutorly"
                                     },

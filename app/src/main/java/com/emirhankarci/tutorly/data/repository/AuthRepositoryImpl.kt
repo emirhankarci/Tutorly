@@ -109,6 +109,25 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteAccount(): Boolean {
+        return try {
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                // Delete user from Firebase Authentication
+                user.delete().await()
+                // Sign out from Google
+                googleSignInClient.signOut().await()
+                // Clear all tokens and data
+                tokenRepository.clearAllTokens()
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     override suspend fun getCurrentUser(): FirebaseUser? {
         return firebaseAuth.currentUser
     }

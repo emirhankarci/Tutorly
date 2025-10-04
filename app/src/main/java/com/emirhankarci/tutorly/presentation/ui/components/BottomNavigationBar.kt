@@ -107,14 +107,12 @@ fun BottomNavigationBar(
                             }
                         }
                         Route.HomeScreen -> {
-                            if (currentRoute != Route.HomeScreen::class.qualifiedName) {
-                                navController.navigate(Route.HomeScreen) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
+                            navController.navigate(Route.HomeScreen) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
                                 }
+                                launchSingleTop = true
+                                restoreState = true
                             }
                         }
                         else -> {

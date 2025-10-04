@@ -19,7 +19,7 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Route.SplashScreen
+        startDestination = Route.MainGraph
     ) {
         // Splash Screen - First screen shown
         composable<Route.SplashScreen> {
@@ -141,6 +141,9 @@ fun Navigation() {
                         onNavigateToStudyWithImage = {
                             navController.navigate(Route.StudyWithImageScreen)
                         },
+                        onNavigateToSettings = {
+                            navController.navigate(Route.SettingsScreen)
+                        },
                         scheduleViewModel = scheduleViewModel
                     )
                 }
@@ -190,17 +193,64 @@ fun Navigation() {
                 MainScaffold(navController = navController) { modifier ->
                     SettingsScreen(
                         modifier = modifier,
-                        onFirestoreTest = {
-                            navController.navigate(Route.FirestoreTestScreen)
+                        loginViewModel = loginViewModel,
+                        onPrivacyPolicy = {
+                            navController.navigate(Route.PrivacyPolicyScreen)
+                        },
+                        onTermsOfService = {
+                            navController.navigate(Route.TermsOfServiceScreen)
+                        },
+                        onFAQ = {
+                            navController.navigate(Route.FAQScreen)
                         },
                         onLogout = {
                             loginViewModel.signOut()
                             navController.navigate(Route.AuthGraph) {
                                 popUpTo(Route.MainGraph) { inclusive = true }
                             }
+                        },
+                        onDeleteAccount = {
+                            loginViewModel.deleteAccount(
+                                onSuccess = {
+                                    navController.navigate(Route.AuthGraph) {
+                                        popUpTo(Route.MainGraph) { inclusive = true }
+                                    }
+                                },
+                                onError = {
+                                    // Error message is already handled in viewmodel
+                                }
+                            )
                         }
                     )
                 }
+            }
+
+            composable<Route.PrivacyPolicyScreen> {
+                WebViewScreen(
+                    title = "Gizlilik Politikası",
+                    htmlFileName = "privacy-policy.html",
+                    onBackPressed = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<Route.TermsOfServiceScreen> {
+                WebViewScreen(
+                    title = "Kullanım Koşulları",
+                    htmlFileName = "terms-of-service.html",
+                    onBackPressed = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<Route.FAQScreen> {
+                FAQScreen(
+                    onBackPressed = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             composable<Route.FirestoreTestScreen> {

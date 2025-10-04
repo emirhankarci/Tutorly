@@ -426,7 +426,7 @@ fun ColorSelectionItem(
             if (isSelected) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Selected",
+                contentDescription = "Seçildi",
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
@@ -529,7 +529,7 @@ private fun TimePickerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Time") },
+        title = { Text("Saat Seç") },
         text = {
             TimePicker(state = timePickerState)
         },
@@ -539,12 +539,12 @@ private fun TimePickerDialog(
                     onTimeSelected(timePickerState.hour, timePickerState.minute)
                 }
             ) {
-                Text("OK")
+                Text("Tamam")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text("İptal")
             }
         }
     )

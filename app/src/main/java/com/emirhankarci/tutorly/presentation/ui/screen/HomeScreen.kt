@@ -82,6 +82,7 @@ fun HomeScreen(
     onNavigateToSchedule: () -> Unit = {},
     onNavigateToEnglishLearning: () -> Unit = {},
     onNavigateToStudyWithImage: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     scheduleViewModel: ScheduleViewModel? = null
 ) {
     HomeScreenContent(
@@ -90,6 +91,7 @@ fun HomeScreen(
         onNavigateToSchedule = onNavigateToSchedule,
         onNavigateToEnglishLearning = onNavigateToEnglishLearning,
         onNavigateToStudyWithImage = onNavigateToStudyWithImage,
+        onNavigateToSettings = onNavigateToSettings,
         scheduleViewModel = scheduleViewModel ?: hiltViewModel()
     )
 }
@@ -102,6 +104,7 @@ fun HomeScreenContent(
     onNavigateToSchedule: () -> Unit = {},
     onNavigateToEnglishLearning: () -> Unit = {},
     onNavigateToStudyWithImage: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     userProfileViewModel: UserProfileViewModel = hiltViewModel(),
     scheduleViewModel: ScheduleViewModel = hiltViewModel()
 ) {
@@ -148,7 +151,7 @@ fun HomeScreenContent(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Face,
-                            contentDescription = "Profile",
+                            contentDescription = "Profil",
                             tint = Color.White,
                             modifier = Modifier.size(24.dp)
                         )
@@ -164,7 +167,7 @@ fun HomeScreenContent(
                             color = Color(0xFF2D3748)
                         )
                         Text(
-                            text = "Ready to learn something new?",
+                            text = "Yeni bir şey öğrenmeye hazır mısın?",
                             fontSize = 14.sp,
                             color = Color(0xFF6B7280),
                             modifier = Modifier.padding(top = 2.dp)
@@ -179,7 +182,7 @@ fun HomeScreenContent(
                 borderColor = Color(0xFF667eea),
                 textColor = Color.White,
                 icon = R.drawable.homescreen_ai_1,
-                title = "AI Chat",
+                title = "AI Sohbet",
                 description = "İngilizce öğrenmek için AI ile konuş",
                 cardHeight = 150.dp,
                 modifier = Modifier.fillMaxWidth(),
@@ -192,7 +195,7 @@ fun HomeScreenContent(
 
         item {
             Text(
-                "Quick Actions",
+                "Hızlı Eylemler",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
                 textAlign = TextAlign.Start,
@@ -229,8 +232,10 @@ fun HomeScreenContent(
                             130.dp,
                             Modifier.fillMaxWidth(),
                             when (item.title) {
-                                "Go to Subjects" -> { { onNavigateToGradeSelection() } }
-                                "Study with Image" -> { { onNavigateToStudyWithImage() } }
+                                "Konulara Git" -> { { onNavigateToGradeSelection() } }
+                                "Görsel ile Çalış" -> { { onNavigateToStudyWithImage() } }
+                                "Çalışma Planı" -> { { onNavigateToSchedule() } }
+                                "Profil" -> { { onNavigateToSettings() } }
                                 else -> { {} }
                             }
                         )
@@ -252,14 +257,14 @@ fun HomeScreenContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    "What's Next",
+                    "Sırada Ne Var",
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
                     color = Color.Black
                 )
                 Text(
-                    "View All",
+                    "Tümünü Gör",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Start,
@@ -290,8 +295,8 @@ fun HomeScreenContent(
                     borderColor = Color(0xFFed8936),
                     textColor = Color.White,
                     icon = Icons.Default.DateRange,
-                    title = "No Lessons Today",
-                    description = "You're all caught up! 🎉",
+                    title = "Bugün Ders Yok",
+                    description = "Her şey yolunda! 🎉",
                     cardHeight = 150.dp,
                     modifier = Modifier.fillMaxWidth(),
                     isMainCard = true,

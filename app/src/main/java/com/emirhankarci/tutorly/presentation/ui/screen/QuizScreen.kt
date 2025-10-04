@@ -335,9 +335,9 @@ fun QuizScreen(
                 )
                 if (showFeedback && !isLastQuestion) {
                     Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = "Next",
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Sonraki",
                         modifier = Modifier.size(18.dp)
                     )
                 }
