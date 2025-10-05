@@ -493,10 +493,16 @@ fun Navigation() {
 
         // Paywall Screen - Required before accessing main app
         composable<Route.PaywallScreen> {
-            PaywallScreen(
-                onSubscriptionSuccess = {
+            AdaptyPaywallScreen(
+                onPurchaseSuccess = {
                     // After successful subscription, go to main app
                     navController.navigate(Route.MainGraph) {
+                        popUpTo(Route.PaywallScreen) { inclusive = true }
+                    }
+                },
+                onClose = {
+                    // User can go back to profile building or auth
+                    navController.navigate(Route.ProfileBuildingScreen) {
                         popUpTo(Route.PaywallScreen) { inclusive = true }
                     }
                 }

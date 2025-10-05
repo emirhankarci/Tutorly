@@ -1,234 +1,214 @@
 package com.emirhankarci.tutorly.presentation.ui.screen
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import android.app.Activity
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.emirhankarci.tutorly.R
+import androidx.compose.ui.viewinterop.AndroidView
+import com.adapty.Adapty
+import com.adapty.errors.AdaptyError
+import com.adapty.models.AdaptyPaywall
+import com.adapty.models.AdaptyPaywallProduct
+import com.adapty.models.AdaptyProfile
+import com.adapty.models.AdaptyPurchaseResult
+import com.adapty.ui.AdaptyUI
+import com.adapty.ui.listeners.AdaptyUiDefaultEventListener
+import com.adapty.utils.AdaptyResult
 
 @Composable
-fun AdaptyPaywallScreen() {
-    var selectedPlan by remember { mutableStateOf("monthly") }
+fun AdaptyPaywallScreen(
+    onPurchaseSuccess: () -> Unit = {},
+    onClose: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val activity = context as? Activity
 
-    val orangeColor = Color(0xFFFF9D42)
-    val darkBlue = Color(0xFF1A2B4A)
+    var paywallState by remember { mutableStateOf<PaywallState>(PaywallState.Loading) }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // Background Image
-        Image(
-            painter = painterResource(id = R.drawable.bg_image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+    LaunchedEffect(Unit) {
+        // Fetch the paywall from Adapty
+        Adapty.getPaywall("subscription_screen") { paywallResult ->
+            when (paywallResult) {
+                is AdaptyResult.Success -> {
+                    val paywall = paywallResult.value
+                    Log.d("AdaptyPaywall", "Paywall fetched successfully")
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Spacer(modifier = Modifier.weight(0.3f))
+                    // Fetch view configuration
+                    AdaptyUI.getViewConfiguration(paywall) { viewConfigResult ->
+                        when (viewConfigResult) {
+                            is AdaptyResult.Success -> {
+                                val viewConfig = viewConfigResult.value
+                                Log.d("AdaptyPaywall", "View configuration fetched successfully")
 
-            // Header Section
-            Text(
-                text = "Unlock Your\nPotential",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = darkBlue,
-                textAlign = TextAlign.Center,
-                lineHeight = 38.sp
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Choose a plan to start learning today.",
-                fontSize = 14.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            // Weekly Plan Card
-            PlanCard(
-                title = "Weekly",
-                price = "$9.99",
-                period = "/week",
-                isSelected = selectedPlan == "weekly",
-                orangeColor = orangeColor,
-                darkBlue = darkBlue,
-                showBadge = false,
-                onClick = { selectedPlan = "weekly" }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Monthly Plan Card
-            PlanCard(
-                title = "Monthly",
-                price = "$29.99",
-                period = "/month",
-                isSelected = selectedPlan == "monthly",
-                orangeColor = orangeColor,
-                darkBlue = darkBlue,
-                showBadge = true,
-                onClick = { selectedPlan = "monthly" }
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Start Learning Button
-            Button(
-                onClick = { /* Handle start learning */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = orangeColor
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = "Start Learning",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
+                                // Fetch products for the paywall
+                                Adapty.getPaywallProducts(paywall) { productsResult ->
+                                    when (productsResult) {
+                                        is AdaptyResult.Success -> {
+                                            val products = productsResult.value
+                                            Log.d("AdaptyPaywall", "Products fetched: ${products.size} products")
+                                            paywallState = PaywallState.Success(paywall, viewConfig, products)
+                                        }
+                                        is AdaptyResult.Error -> {
+                                            val error = productsResult.error
+                                            Log.e("AdaptyPaywall", "Error fetching products: ${error.message}", error)
+                                            paywallState = PaywallState.Error(error.message ?: "Unknown error")
+                                        }
+                                    }
+                                }
+                            }
+                            is AdaptyResult.Error -> {
+                                val error = viewConfigResult.error
+                                Log.e("AdaptyPaywall", "Error fetching view configuration: ${error.message}", error)
+                                paywallState = PaywallState.Error(error.message ?: "Unknown error")
+                            }
+                        }
+                    }
+                }
+                is AdaptyResult.Error -> {
+                    val error = paywallResult.error
+                    Log.e("AdaptyPaywall", "Error fetching paywall: ${error.message}", error)
+                    paywallState = PaywallState.Error(error.message ?: "Unknown error")
+                }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Restore Purchase Button
-            Button(
-                onClick = { /* Handle restore purchase */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFD1D5DB)
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = "Restore Purchase",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(0.2f))
         }
     }
-}
 
-@Composable
-fun PlanCard(
-    title: String,
-    price: String,
-    period: String,
-    isSelected: Boolean,
-    orangeColor: Color,
-    darkBlue: Color,
-    showBadge: Boolean,
-    onClick: () -> Unit
-) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        // Main Card
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(
-                    if (isSelected) orangeColor.copy(alpha = 0.15f)
-                    else Color.White
-                )
-                .border(
-                    width = if (isSelected) 3.dp else 1.dp,
-                    color = if (isSelected) orangeColor else Color(0xFFE5E7EB),
-                    shape = RoundedCornerShape(16.dp)
-                )
-                .clickable(onClick = onClick)
-                .padding(20.dp)
-        ) {
-            Column {
-                Text(
-                    text = title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = darkBlue
-                )
+        when (val state = paywallState) {
+            is PaywallState.Loading -> {
+                CircularProgressIndicator()
+            }
+            is PaywallState.Success -> {
+                if (activity != null) {
+                    AndroidView(
+                        factory = { ctx ->
+                            AdaptyUI.getPaywallView(
+                                activity = activity,
+                                viewConfiguration = state.viewConfiguration,
+                                products = state.products,
+                                eventListener = object : AdaptyUiDefaultEventListener() {
+                                    override fun onActionPerformed(
+                                        action: AdaptyUI.Action,
+                                        context: Context
+                                    ) {
+                                        when (action) {
+                                            is AdaptyUI.Action.Close -> {
+                                                Log.d("AdaptyPaywall", "Close button clicked")
+                                                onClose()
+                                            }
+                                            else -> super.onActionPerformed(action, context)
+                                        }
+                                    }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                                    override fun onProductSelected(
+                                        product: AdaptyPaywallProduct,
+                                        context: Context
+                                    ) {
+                                        Log.d("AdaptyPaywall", "Product selected: ${product.vendorProductId}")
+                                    }
 
-                Row(
-                    verticalAlignment = Alignment.Bottom
+                                    override fun onPurchaseStarted(
+                                        product: AdaptyPaywallProduct,
+                                        context: Context
+                                    ) {
+                                        Log.d("AdaptyPaywall", "Purchase started: ${product.vendorProductId}")
+                                    }
+
+                                    override fun onPurchaseFinished(
+                                        purchaseResult: AdaptyPurchaseResult,
+                                        product: AdaptyPaywallProduct,
+                                        context: Context
+                                    ) {
+                                        Log.d("AdaptyPaywall", "Purchase successful: ${product.vendorProductId}")
+                                        onPurchaseSuccess()
+                                    }
+
+                                    override fun onPurchaseFailure(
+                                        error: AdaptyError,
+                                        product: AdaptyPaywallProduct,
+                                        context: Context
+                                    ) {
+                                        Log.e("AdaptyPaywall", "Purchase failed: ${error.message}", error)
+                                    }
+
+                                    override fun onRestoreSuccess(
+                                        profile: AdaptyProfile,
+                                        context: Context
+                                    ) {
+                                        Log.d("AdaptyPaywall", "Restore successful")
+                                        onPurchaseSuccess()
+                                    }
+
+                                    override fun onRestoreFailure(
+                                        error: AdaptyError,
+                                        context: Context
+                                    ) {
+                                        Log.e("AdaptyPaywall", "Restore failed: ${error.message}", error)
+                                    }
+
+                                    override fun onRenderingError(
+                                        error: AdaptyError,
+                                        context: Context
+                                    ) {
+                                        Log.e("AdaptyPaywall", "Rendering error: ${error.message}", error)
+                                    }
+
+                                    override fun onLoadingProductsFailure(
+                                        error: AdaptyError,
+                                        context: Context
+                                    ): Boolean {
+                                        Log.e("AdaptyPaywall", "Loading products failed: ${error.message}", error)
+                                        return false
+                                    }
+                                }
+                            )
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Text(
+                        text = "Activity context required",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+            is PaywallState.Error -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(24.dp)
                 ) {
                     Text(
-                        text = price,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = darkBlue
+                        text = "Failed to load paywall",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.error
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = period,
-                        fontSize = 14.sp,
-                        color = darkBlue,
-                        modifier = Modifier.padding(bottom = 4.dp)
+                        text = state.message,
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
         }
-
-        // Best Value Badge
-        if (showBadge) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-16).dp, y = (-8).dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(orangeColor)
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-            ) {
-                Text(
-                    text = "Best Value",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-        }
     }
 }
 
-// Preview
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PreviewAdaptyPaywallScreen() {
-    MaterialTheme {
-        AdaptyPaywallScreen()
-    }
+sealed class PaywallState {
+    data object Loading : PaywallState()
+    data class Success(
+        val paywall: AdaptyPaywall,
+        val viewConfiguration: AdaptyUI.LocalizedViewConfiguration,
+        val products: List<AdaptyPaywallProduct>
+    ) : PaywallState()
+    data class Error(val message: String) : PaywallState()
 }
