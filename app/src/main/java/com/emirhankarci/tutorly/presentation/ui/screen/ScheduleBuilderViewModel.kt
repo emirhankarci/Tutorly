@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.emirhankarci.tutorly.data.repository.UserDataRepository
 import com.emirhankarci.tutorly.domain.entity.ScheduleData
 import com.emirhankarci.tutorly.domain.entity.UserScheduleItem
+import com.emirhankarci.tutorly.domain.entity.getSubjectsForGrade
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,17 +17,7 @@ import javax.inject.Inject
 data class ScheduleBuilderUiState(
     val days: List<String> = ScheduleData.weekDays,
     val hours: List<String> = (0..23).map { String.format("%02d:00", it) },
-    val subjects: List<String> = listOf(
-        "Matematik",
-        "Fizik",
-        "Kimya",
-        "Biyoloji",
-        "Türk Dili ve Edebiyatı",
-        "Tarih",
-        "Coğrafya",
-        "Din Kültürü ve Ahlak Bilgisi",
-        "Felsefe"
-    ),
+    val subjects: List<String> = emptyList(),
     val currentDayIndex: Int = 0,
     val selections: Map<String, List<UserScheduleItem>> = emptyMap(),
     val isSaving: Boolean = false,
@@ -41,6 +32,39 @@ class ScheduleBuilderViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ScheduleBuilderUiState())
     val uiState: StateFlow<ScheduleBuilderUiState> = _uiState.asStateFlow()
+
+    init {
+        loadUserSubjects()
+    }
+
+    private fun loadUserSubjects() {
+        viewModelScope.launch {
+            try {
+                val uid = userDataRepository.getCurrentUserId()
+                if (uid != null) {
+                    val userProfileResult = userDataRepository.getUserProfile(uid)
+                    val userData = userProfileResult.getOrNull()
+                    val userGrade = userData?.grade ?: 9
+                    val availableSubjects = getSubjectsForGrade(userGrade)
+                        .map { it.title }
+                    _uiState.value = _uiState.value.copy(subjects = availableSubjects)
+                }
+            } catch (e: Exception) {
+                // Hata durumunda varsayılan listeyı kullan
+                _uiState.value = _uiState.value.copy(
+                    subjects = listOf(
+                        "Matematik",
+                        "Fizik",
+                        "Kimya",
+                        "Biyoloji",
+                        "Türk Dili ve Edebiyatı",
+                        "Tarih",
+                        "Coğrafya"
+                    )
+                )
+            }
+        }
+    }
 
     fun addLesson(day: String, time: String, subject: String, notes: String = "") {
         val newItem = UserScheduleItem(
