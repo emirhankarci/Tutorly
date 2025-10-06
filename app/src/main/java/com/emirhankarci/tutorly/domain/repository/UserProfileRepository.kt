@@ -7,4 +7,8 @@ interface UserProfileRepository {
     suspend fun getUserProfile(userId: String): Result<UserProfile?>
     suspend fun isProfileCompleted(userId: String): Result<Boolean>
     suspend fun deleteUserProfile(userId: String): Result<Unit>
+
+    // Subscription tracking for security
+    suspend fun markSubscriptionPurchased(userId: String): Result<Unit>
+    suspend fun hasCompletedPurchase(userId: String): Result<Boolean>
 }

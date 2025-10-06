@@ -65,17 +65,35 @@ class AuthFlowViewModel @Inject constructor(
                             val isProfileCompleted = profileResult.getOrDefault(false)
 
                             if (isProfileCompleted) {
-                                // Check subscription status
-                                val hasActiveSubscription = subscriptionManager.hasActiveSubscription()
+                                // Security: Check if user has completed purchase
+                                // This prevents bypass if user closes app during payment
+                                val hasCompletedPurchaseResult = userProfileRepository.hasCompletedPurchase(currentUser.uid)
+                                val hasCompletedPurchase = hasCompletedPurchaseResult.getOrDefault(false)
 
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = false,
-                                    authFlowState = if (hasActiveSubscription) {
-                                        AuthFlowState.AUTHENTICATED
-                                    } else {
-                                        AuthFlowState.NEED_SUBSCRIPTION
-                                    }
-                                )
+                                if (!hasCompletedPurchase) {
+                                    // User closed app without paying - FORCE LOGOUT
+                                    android.util.Log.d("AuthFlowViewModel", "User has no purchase record - forcing logout")
+                                    authRepository.signOut()
+                                    subscriptionManager.logoutUser()
+
+                                    _uiState.value = _uiState.value.copy(
+                                        isLoading = false,
+                                        authFlowState = AuthFlowState.NEED_LOGIN
+                                    )
+                                } else {
+                                    // User has purchase record, verify active subscription
+                                    val hasActiveSubscription = subscriptionManager.hasActiveSubscription()
+
+                                    _uiState.value = _uiState.value.copy(
+                                        isLoading = false,
+                                        authFlowState = if (hasActiveSubscription) {
+                                            AuthFlowState.AUTHENTICATED
+                                        } else {
+                                            // Subscription expired - show paywall
+                                            AuthFlowState.NEED_SUBSCRIPTION
+                                        }
+                                    )
+                                }
                             } else {
                                 _uiState.value = _uiState.value.copy(
                                     isLoading = false,

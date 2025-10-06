@@ -3,6 +3,7 @@ package com.emirhankarci.tutorly.presentation.ui.screen
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.adapty.Adapty
 import com.adapty.errors.AdaptyError
 import com.adapty.models.AdaptyPaywall
@@ -20,16 +22,24 @@ import com.adapty.models.AdaptyPurchaseResult
 import com.adapty.ui.AdaptyUI
 import com.adapty.ui.listeners.AdaptyUiDefaultEventListener
 import com.adapty.utils.AdaptyResult
+import com.emirhankarci.tutorly.presentation.viewmodel.PaywallViewModel
 
 @Composable
 fun AdaptyPaywallScreen(
     onPurchaseSuccess: () -> Unit = {},
-    onClose: () -> Unit = {}
+    onClose: () -> Unit = {},
+    isDismissible: Boolean = false, // Security: Make paywall mandatory by default
+    viewModel: PaywallViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
     var paywallState by remember { mutableStateOf<PaywallState>(PaywallState.Loading) }
+
+    // Handle back button - only allow dismissal if explicitly permitted
+    BackHandler(enabled = isDismissible) {
+        onClose()
+    }
 
     LaunchedEffect(Unit) {
         // Fetch the paywall from Adapty
@@ -102,8 +112,14 @@ fun AdaptyPaywallScreen(
                                     ) {
                                         when (action) {
                                             is AdaptyUI.Action.Close -> {
-                                                Log.d("AdaptyPaywall", "Close button clicked")
-                                                onClose()
+                                                // Security: Only allow closing if paywall is dismissible
+                                                if (isDismissible) {
+                                                    Log.d("AdaptyPaywall", "Close button clicked")
+                                                    onClose()
+                                                } else {
+                                                    Log.d("AdaptyPaywall", "Close button clicked but paywall is mandatory")
+                                                    // Do nothing - user must complete payment
+                                                }
                                             }
                                             else -> super.onActionPerformed(action, context)
                                         }
@@ -129,6 +145,8 @@ fun AdaptyPaywallScreen(
                                         context: Context
                                     ) {
                                         Log.d("AdaptyPaywall", "Purchase successful: ${product.vendorProductId}")
+                                        // Security: Record purchase in Firestore for verification
+                                        viewModel.recordPurchaseInFirestore()
                                         onPurchaseSuccess()
                                     }
 
@@ -145,6 +163,8 @@ fun AdaptyPaywallScreen(
                                         context: Context
                                     ) {
                                         Log.d("AdaptyPaywall", "Restore successful")
+                                        // Security: Record purchase in Firestore for verification
+                                        viewModel.recordPurchaseInFirestore()
                                         onPurchaseSuccess()
                                     }
 

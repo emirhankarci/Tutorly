@@ -19,7 +19,7 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Route.MainGraph
+        startDestination = Route.SplashScreen
     ) {
         // Splash Screen - First screen shown
         composable<Route.SplashScreen> {
@@ -479,9 +479,8 @@ fun Navigation() {
             ProfileBuildingScreen(
                 onProfileCompleted = { userProfile ->
                     // After profile is completed, go to paywall
-                    navController.navigate(Route.PaywallScreen) {
-                        popUpTo(Route.ProfileBuildingScreen) { inclusive = true }
-                    }
+                    // Keep ProfileBuildingScreen in back stack for proper back navigation
+                    navController.navigate(Route.PaywallScreen)
                 },
                 onNavigateBack = {
                     navController.navigate(Route.AuthGraph) {
@@ -496,16 +495,17 @@ fun Navigation() {
             AdaptyPaywallScreen(
                 onPurchaseSuccess = {
                     // After successful subscription, go to main app
+                    // Clear entire back stack to prevent going back to paywall
                     navController.navigate(Route.MainGraph) {
-                        popUpTo(Route.PaywallScreen) { inclusive = true }
+                        popUpTo(Route.MainGraph) { inclusive = true }
+                        launchSingleTop = true
                     }
                 },
                 onClose = {
-                    // User can go back to profile building or auth
-                    navController.navigate(Route.ProfileBuildingScreen) {
-                        popUpTo(Route.PaywallScreen) { inclusive = true }
-                    }
-                }
+                    // This should never be called since isDismissible = false
+                    // But if it is, do nothing to prevent bypass
+                },
+                isDismissible = false // Security: Paywall is mandatory, cannot be dismissed
             )
         }
     }

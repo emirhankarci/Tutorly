@@ -18,7 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PaywallViewModel @Inject constructor(
-    private val subscriptionManager: SubscriptionManager
+    private val subscriptionManager: SubscriptionManager,
+    val userProfileRepository: com.emirhankarci.tutorly.domain.repository.UserProfileRepository,
+    val authRepository: com.emirhankarci.tutorly.domain.repository.AuthRepository
 ) : ViewModel() {
 
     companion object {
@@ -170,6 +172,9 @@ class PaywallViewModel @Inject constructor(
             try {
                 val hasSubscription = subscriptionManager.restorePurchases()
                 if (hasSubscription) {
+                    // Security: Record purchase in Firestore
+                    recordPurchaseInFirestore()
+
                     _subscriptionStatus.value = true
                     _uiState.value = PaywallUiState.PurchaseSuccess
                     onSuccess()
@@ -181,6 +186,30 @@ class PaywallViewModel @Inject constructor(
                 Log.e(TAG, "Error restoring purchases", e)
                 _uiState.value = PaywallUiState.Ready(_products.value)
                 onError("Failed to restore purchases: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Security: Record purchase completion in Firestore
+     * This provides a secondary verification independent of Adapty
+     */
+    fun recordPurchaseInFirestore() {
+        viewModelScope.launch {
+            try {
+                val currentUser = authRepository.getCurrentUser()
+                if (currentUser != null) {
+                    val result = userProfileRepository.markSubscriptionPurchased(currentUser.uid)
+                    if (result.isSuccess) {
+                        Log.d(TAG, "Purchase recorded in Firestore for user: ${currentUser.uid}")
+                    } else {
+                        Log.e(TAG, "Failed to record purchase in Firestore: ${result.exceptionOrNull()?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "Cannot record purchase: No current user")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error recording purchase in Firestore", e)
             }
         }
     }

@@ -5,7 +5,15 @@
       "Bash(find:*)",
       "WebFetch(domain:stackoverflow.com)",
       "Bash(.gradlew build)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "WebFetch(domain:docs.adapty.io)",
+      "WebFetch(domain:adapty.io)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:kotlin.adapty.io)",
+      "Bash(dir:*)",
+      "Bash(./gradlew.bat build:*)",
+      "Bash(./gradlew.bat assembleDebug:*)"
     ],
     "deny": [],
     "ask": []

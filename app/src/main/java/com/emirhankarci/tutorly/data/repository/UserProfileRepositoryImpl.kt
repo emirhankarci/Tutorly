@@ -105,4 +105,39 @@ class UserProfileRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun markSubscriptionPurchased(userId: String): Result<Unit> {
+        return try {
+            // Update the user's profile document with subscription info
+            firestore.collection(COLLECTION_USER_PROFILES)
+                .document(userId)
+                .update(
+                    mapOf(
+                        "hasCompletedPurchase" to true,
+                        "firstPurchaseAt" to com.google.firebase.Timestamp.now()
+                    )
+                )
+                .await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun hasCompletedPurchase(userId: String): Result<Boolean> {
+        return try {
+            val document = firestore.collection(COLLECTION_USER_PROFILES)
+                .document(userId)
+                .get()
+                .await()
+
+            val hasCompleted = document.exists() &&
+                              (document.data?.get("hasCompletedPurchase") as? Boolean ?: false)
+
+            Result.success(hasCompleted)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
