@@ -213,6 +213,35 @@ class PaywallViewModel @Inject constructor(
             }
         }
     }
+
+    /**
+     * Security: Verify restored subscription belongs to current user
+     * Prevents cross-account subscription bypass
+     */
+    fun verifyAndRecordRestore(
+        adaptyCustomerId: String?,
+        onVerified: () -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val currentUser = authRepository.getCurrentUser()
+                if (currentUser != null) {
+                    if (adaptyCustomerId == currentUser.uid) {
+                        Log.d(TAG, "Restore verified - subscription belongs to current user: ${currentUser.uid}")
+                        recordPurchaseInFirestore()
+                        onVerified()
+                    } else {
+                        Log.w(TAG, "Restore blocked - subscription belongs to different user (Adapty: $adaptyCustomerId, Firebase: ${currentUser.uid})")
+                        // Don't grant access - user must purchase with their own account
+                    }
+                } else {
+                    Log.e(TAG, "Cannot verify restore: No current user")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error verifying restore", e)
+            }
+        }
+    }
 }
 
 /**

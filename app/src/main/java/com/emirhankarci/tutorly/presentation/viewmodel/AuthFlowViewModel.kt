@@ -71,14 +71,11 @@ class AuthFlowViewModel @Inject constructor(
                                 val hasCompletedPurchase = hasCompletedPurchaseResult.getOrDefault(false)
 
                                 if (!hasCompletedPurchase) {
-                                    // User closed app without paying - FORCE LOGOUT
-                                    android.util.Log.d("AuthFlowViewModel", "User has no purchase record - forcing logout")
-                                    authRepository.signOut()
-                                    subscriptionManager.logoutUser()
-
+                                    // User has no purchase - show mandatory paywall (no logout)
+                                    android.util.Log.d("AuthFlowViewModel", "User has no purchase record - showing paywall")
                                     _uiState.value = _uiState.value.copy(
                                         isLoading = false,
-                                        authFlowState = AuthFlowState.NEED_LOGIN
+                                        authFlowState = AuthFlowState.NEED_SUBSCRIPTION
                                     )
                                 } else {
                                     // User has purchase record, verify active subscription

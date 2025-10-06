@@ -145,7 +145,7 @@ fun AdaptyPaywallScreen(
                                         context: Context
                                     ) {
                                         Log.d("AdaptyPaywall", "Purchase successful: ${product.vendorProductId}")
-                                        // Security: Record purchase in Firestore for verification
+                                        // Record purchase in Firestore for current user
                                         viewModel.recordPurchaseInFirestore()
                                         onPurchaseSuccess()
                                     }
@@ -163,9 +163,11 @@ fun AdaptyPaywallScreen(
                                         context: Context
                                     ) {
                                         Log.d("AdaptyPaywall", "Restore successful")
-                                        // Security: Record purchase in Firestore for verification
-                                        viewModel.recordPurchaseInFirestore()
-                                        onPurchaseSuccess()
+                                        // Security: Verify the restored subscription belongs to current user
+                                        viewModel.verifyAndRecordRestore(
+                                            adaptyCustomerId = profile.customerUserId,
+                                            onVerified = onPurchaseSuccess
+                                        )
                                     }
 
                                     override fun onRestoreFailure(
