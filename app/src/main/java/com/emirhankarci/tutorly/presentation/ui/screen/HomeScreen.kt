@@ -139,8 +139,25 @@ fun HomeScreenContent(
                         .padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Profile Avatar
-                    Box(
+                    // Time-based icon
+                    userProfileState.greetingData?.let { greetingData ->
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(
+                                    color = greetingData.iconColor.copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(24.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = greetingData.iconRes),
+                                contentDescription = "Time icon",
+                                tint = greetingData.iconColor,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    } ?: Box(
                         modifier = Modifier
                             .size(48.dp)
                             .background(
@@ -161,7 +178,7 @@ fun HomeScreenContent(
 
                     Column {
                         Text(
-                            text = userProfileState.greeting,
+                            text = userProfileState.greetingData?.text ?: userProfileState.greeting,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF2D3748)
