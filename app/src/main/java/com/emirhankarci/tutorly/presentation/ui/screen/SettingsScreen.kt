@@ -60,16 +60,16 @@ fun SettingsScreen(
             }
 
             // Settings Categories
-            item {
-                SettingsCategory(title = "Hesap Ayarları") {
-                    SettingsItem(
-                        icon = Icons.Default.Person,
-                        title = "Profili Düzenle",
-                        subtitle = "Kişisel bilgilerinizi güncelleyin",
-                        onClick = onEditProfile
-                    )
-                }
-            }
+//            item {
+//                SettingsCategory(title = "Hesap Ayarları") {
+//                    SettingsItem(
+//                        icon = Icons.Default.Person,
+//                        title = "Profili Düzenle",
+//                        subtitle = "Kişisel bilgilerinizi güncelleyin",
+//                        onClick = onEditProfile
+//                    )
+//                }
+//            }
 
             item {
                 SettingsCategory(title = "Gizlilik ve Güvenlik") {
