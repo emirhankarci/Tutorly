@@ -468,7 +468,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Emirhan Karcı** - *Project Lead & Developer* - [GitHub](https://github.com/emirhankarci)
+- **Emirhan Karcı** - *Project Lead & Android Developer* - [GitHub](https://github.com/emirhankarci)
+- **Kaan Kılıç** - *Android Developer* - [GitHub](https://github.com/kaanklcc)
+- **Halil İbrahim Kaya** - *Data Science & AI Engineer* - [GitHub](https://github.com/halilkkaya)
 
 ## 🙏 Acknowledgments
 
