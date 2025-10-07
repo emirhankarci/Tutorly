@@ -102,12 +102,12 @@ fun MainScaffold(
             currentRoute == Route.LessonPlanChatScreen::class.qualifiedName -> scheduleGradient
             currentRoute == Route.AddLessonScreen::class.qualifiedName -> addLessonGradient
             currentRoute == Route.SettingsScreen::class.qualifiedName -> settingsGradient
+            currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> studyGradient
             currentRoute == Route.GradeSelectionScreen::class.qualifiedName ||
             currentRoute?.substringBefore("/") in setOf(
                 Route.SubjectSelectionScreen::class.qualifiedName?.substringBefore("/"),
                 Route.ChapterSelectionScreen::class.qualifiedName?.substringBefore("/"),
                 Route.StudyMethodScreen::class.qualifiedName?.substringBefore("/"),
-                Route.AIChatScreen::class.qualifiedName?.substringBefore("/"),
                 Route.SummaryScreen::class.qualifiedName?.substringBefore("/"),
                 Route.QuizScreen::class.qualifiedName?.substringBefore("/")
             ) -> studyGradient
@@ -181,7 +181,14 @@ fun MainScaffold(
                             }
                         },
                         actions = {
-                            Box(modifier = Modifier.size(48.dp))
+                            IconButton(onClick = { navController.navigate(Route.HomeScreen) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Home,
+                                    contentDescription = "Ana Sayfa",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent
@@ -228,7 +235,14 @@ fun MainScaffold(
                             }
                         },
                         actions = {
-                            Box(modifier = Modifier.size(48.dp))
+                            IconButton(onClick = { navController.navigate(Route.HomeScreen) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Home,
+                                    contentDescription = "Ana Sayfa",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent
@@ -275,7 +289,81 @@ fun MainScaffold(
                             }
                         },
                         actions = {
-                            Box(modifier = Modifier.size(48.dp))
+                            IconButton(onClick = { navController.navigate(Route.HomeScreen) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Home,
+                                    contentDescription = "Ana Sayfa",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .background(brush)
+                            .statusBarsPadding()
+                    )
+                }
+                currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> {
+                    val grade = arguments?.getInt("grade") ?: 9
+                    val subject = arguments?.getString("subject") ?: "Matematik"
+                    val chapter = arguments?.getString("chapter") ?: "Konu"
+
+                    TopAppBar(
+                        title = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "AI Sohbet",
+                                        fontSize = 22.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    Text(
+                                        text = "${grade}. Sınıf $subject - $chapter",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.White.copy(alpha = 0.9f)
+                                    )
+                                }
+                            }
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(
+                                            color = Color.White,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Geri",
+                                        tint = Color(0xFF0C83B7),
+                                        modifier = Modifier
+                                            .size(22.dp)
+                                    )
+                                }
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { navController.navigate(Route.HomeScreen) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Home,
+                                    contentDescription = "Ana Sayfa",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent
@@ -289,7 +377,6 @@ fun MainScaffold(
                 currentRoute?.startsWith("${Route.SubjectSelectionScreen::class.qualifiedName}") == true ||
                 currentRoute?.startsWith("${Route.ChapterSelectionScreen::class.qualifiedName}") == true ||
                 currentRoute?.startsWith("${Route.StudyMethodScreen::class.qualifiedName}") == true ||
-                currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true ||
                 currentRoute?.startsWith("${Route.SummaryScreen::class.qualifiedName}") == true ||
                 currentRoute?.startsWith("${Route.QuizScreen::class.qualifiedName}") == true -> {
                     TopAppBar(
@@ -299,27 +386,6 @@ fun MainScaffold(
                                 contentAlignment = Alignment.Center
                             ) {
                                 when {
-                                    currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true -> {
-                                        val grade = arguments?.getInt("grade") ?: 9
-                                        val subject = arguments?.getString("subject") ?: "Matematik"
-                                        val chapter = arguments?.getString("chapter") ?: "Konu"
-
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text(
-                                                text = "AI Sohbet",
-                                                fontSize = 22.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White
-                                            )
-                                            Text(
-                                                text = "${grade}. Sınıf $subject - $chapter",
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = Color.White.copy(alpha = 0.9f)
-                                            )
-                                        }
-                                    }
                                     currentRoute?.startsWith("${Route.SummaryScreen::class.qualifiedName}") == true -> {
                                         val grade = arguments?.getInt("grade") ?: 9
                                         val subject = arguments?.getString("subject") ?: "Matematik"
@@ -444,7 +510,15 @@ fun MainScaffold(
             }
         },
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            // Hide bottom navigation for AI chat screens
+            val hideBottomBar = currentRoute == Route.EnglishLearningScreen::class.qualifiedName ||
+                    currentRoute?.startsWith("${Route.AIChatScreen::class.qualifiedName}") == true ||
+                    currentRoute == Route.StudyWithImageScreen::class.qualifiedName ||
+                    currentRoute == Route.LessonPlanChatScreen::class.qualifiedName
+
+            if (!hideBottomBar) {
+                BottomNavigationBar(navController = navController)
+            }
         }
     ) { paddingValues ->
         content(Modifier.padding(paddingValues))
