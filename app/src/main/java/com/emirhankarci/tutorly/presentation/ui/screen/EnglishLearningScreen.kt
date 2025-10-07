@@ -54,7 +54,7 @@ fun EnglishLearningScreen(
                 .fillMaxWidth()
                 .padding(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF667eea)
+                containerColor = Color(0xFFCC0000)
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -99,7 +99,7 @@ fun EnglishLearningScreen(
                             selected = uiState.selectedLevel == level.code,
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Color.White,
-                                selectedLabelColor = Color(0xFF667eea),
+                                selectedLabelColor = Color(0xFFCC0000),
                                 containerColor = Color.White.copy(alpha = 0.2f),
                                 labelColor = Color.White
                             )
