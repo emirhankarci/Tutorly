@@ -78,6 +78,11 @@ fun MainScaffold(
             colors = listOf(Color(0xFF37474F), Color(0xFF455A64))
         )
     }
+    val englishLearningGradient = remember {
+        Brush.linearGradient(
+            colors = listOf(Color(0xFFB30E0E), Color(0xFF6B0000))
+        )
+    }
 
     val brush = remember(currentRoute, arguments) {
         when {
@@ -91,8 +96,10 @@ fun MainScaffold(
                 Brush.linearGradient(colors = listOf(subjectColor, subjectColor))
             }
             currentRoute == Route.HomeScreen::class.qualifiedName -> homeGradient
+            currentRoute == Route.EnglishLearningScreen::class.qualifiedName -> englishLearningGradient
             currentRoute == Route.StudyWithImageScreen::class.qualifiedName -> studyWithImageGradient
             currentRoute == Route.ScheduleScreen::class.qualifiedName -> scheduleGradient
+            currentRoute == Route.LessonPlanChatScreen::class.qualifiedName -> scheduleGradient
             currentRoute == Route.AddLessonScreen::class.qualifiedName -> addLessonGradient
             currentRoute == Route.SettingsScreen::class.qualifiedName -> settingsGradient
             currentRoute == Route.GradeSelectionScreen::class.qualifiedName ||
@@ -129,23 +136,52 @@ fun MainScaffold(
                                 )
                             }
                         },
-                        navigationIcon = {
-                            IconButton(onClick = { }) {
-                                Icon(
-                                    imageVector = Icons.Default.Home,
-                                    contentDescription = "Ana Sayfa",
-                                    tint = Color.White
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .background(brush)
+                            .statusBarsPadding()
+                    )
+                }
+                currentRoute == Route.EnglishLearningScreen::class.qualifiedName -> {
+                    TopAppBar(
+                        title = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "İngilizce Çalışma Ekranı",
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
                                 )
                             }
                         },
-                        actions = {
-                            IconButton(onClick = { }) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Ayarlar",
-                                    tint = Color.White
-                                )
+                        navigationIcon = {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(
+                                            color = Color.White,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Geri",
+                                        tint = Color(0xFFCC0000),
+                                        modifier = Modifier
+                                            .size(22.dp)
+                                    )
+                                }
                             }
+                        },
+                        actions = {
+                            Box(modifier = Modifier.size(48.dp))
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent
@@ -185,6 +221,53 @@ fun MainScaffold(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                         contentDescription = "Geri",
                                         tint = Color(0xFF0C83B7),
+                                        modifier = Modifier
+                                            .size(22.dp)
+                                    )
+                                }
+                            }
+                        },
+                        actions = {
+                            Box(modifier = Modifier.size(48.dp))
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .background(brush)
+                            .statusBarsPadding()
+                    )
+                }
+                currentRoute == Route.LessonPlanChatScreen::class.qualifiedName -> {
+                    TopAppBar(
+                        title = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Ders Planı Asistanı",
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(
+                                            color = Color.White,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Geri",
+                                        tint = Color(0xFF8E24AA),
                                         modifier = Modifier
                                             .size(22.dp)
                                     )
