@@ -30,8 +30,9 @@ object ProfileQuestionData {
                 "10. Sınıf",
                 "11. Sınıf",
                 "12. Sınıf",
+                "İlkokul",
+                "Ortaokul",
                 "Mezun",
-                "Üniversite Öğrencisi"
             )
         ),
         ProfileQuestion(
@@ -42,9 +43,7 @@ object ProfileQuestionData {
                 "AYT (Alan Yeterlilik Testi)",
                 "YKS (Yükseköğretim Kurumları Sınavı)",
                 "YDT (Yabancı Dil Testi)",
-                "KPSS",
-                "DGS",
-                "ALES",
+                "Okul Sınavlarım",
                 "Henüz karar vermedim"
             )
         ),
@@ -60,7 +59,8 @@ object ProfileQuestionData {
                 "Tarih",
                 "Coğrafya",
                 "İngilizce",
-                "Edebiyat"
+                "Edebiyat",
+                "Din Kültürü"
             )
         ),
         ProfileQuestion(
@@ -91,6 +91,8 @@ object ProfileQuestionData {
             id = 6,
             question = "Hangi yaş aralığı sana uygun?",
             answers = listOf(
+                "7-12 yaş",
+                "12-14 yaş",
                 "14-16 yaş",
                 "17-18 yaş",
                 "19-22 yaş",
