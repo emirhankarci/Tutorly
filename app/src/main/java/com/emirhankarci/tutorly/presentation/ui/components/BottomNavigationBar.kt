@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
@@ -78,7 +79,9 @@ fun BottomNavigationBar(
         ).filterNotNull().toSet()
     }
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = Color(0xFFFAFAFA)
+    ) {
         bottomNavItems.forEach { item ->
             val isSelected = remember(currentRoute) {
                 when (item.route) {
