@@ -3,6 +3,7 @@ package com.emirhankarci.tutorly.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emirhankarci.tutorly.core.utils.GreetingUtils
+import com.emirhankarci.tutorly.core.utils.GreetingData
 import com.emirhankarci.tutorly.domain.entity.AppUser
 import com.emirhankarci.tutorly.domain.repository.AuthRepository
 import com.emirhankarci.tutorly.data.repository.UserDataRepository
@@ -17,7 +18,8 @@ import javax.inject.Inject
 data class UserProfileUiState(
     val user: AppUser = AppUser.empty(),
     val isLoading: Boolean = false,
-    val greeting: String = ""
+    val greeting: String = "",
+    val greetingData: GreetingData? = null
 )
 
 @HiltViewModel
@@ -45,25 +47,31 @@ class UserProfileViewModel @Inject constructor(
                     userDataRepository.observeUserProfile(uid).collectLatest { profile ->
                         val user = profile ?: authUser ?: AppUser.empty()
                         val greeting = GreetingUtils.getFullGreeting(user.greetingName, useTurkish = true)
+                        val greetingData = GreetingUtils.getGreetingWithIcon(user.greetingName, useTurkish = true)
                         _uiState.value = _uiState.value.copy(
                             user = user,
                             greeting = greeting,
+                            greetingData = greetingData,
                             isLoading = false
                         )
                     }
                 } else {
                     val fallback = authUser ?: AppUser.empty()
                     val greeting = GreetingUtils.getFullGreeting(fallback.greetingName, useTurkish = true)
+                    val greetingData = GreetingUtils.getGreetingWithIcon(fallback.greetingName, useTurkish = true)
                     _uiState.value = _uiState.value.copy(
                         user = fallback,
                         greeting = greeting,
+                        greetingData = greetingData,
                         isLoading = false
                     )
                 }
             } catch (e: Exception) {
+                val greetingData = GreetingUtils.getGreetingWithIcon("there", useTurkish = true)
                 _uiState.value = _uiState.value.copy(
                     user = AppUser.empty(),
                     greeting = GreetingUtils.getFullGreeting("there", useTurkish = true),
+                    greetingData = greetingData,
                     isLoading = false
                 )
             }
@@ -77,6 +85,7 @@ class UserProfileViewModel @Inject constructor(
     fun updateGreeting() {
         val currentUser = _uiState.value.user
         val newGreeting = GreetingUtils.getFullGreeting(currentUser.greetingName, useTurkish = true)
-        _uiState.value = _uiState.value.copy(greeting = newGreeting)
+        val newGreetingData = GreetingUtils.getGreetingWithIcon(currentUser.greetingName, useTurkish = true)
+        _uiState.value = _uiState.value.copy(greeting = newGreeting, greetingData = newGreetingData)
     }
 }
