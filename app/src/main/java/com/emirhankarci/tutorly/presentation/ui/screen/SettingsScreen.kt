@@ -204,13 +204,6 @@ private fun ProfileSection(
                 )
             }
 
-            IconButton(onClick = onEditProfile) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Profili Düzenle",
-                    tint = Color(0xFF6B7280)
-                )
-            }
         }
     }
 }
@@ -288,7 +281,7 @@ private fun SettingsItem(
             }
 
             Icon(
-                imageVector = Icons.Default.Home,
+                imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Ok",
                 tint = Color(0xFF6B7280),
                 modifier = Modifier.size(20.dp)
